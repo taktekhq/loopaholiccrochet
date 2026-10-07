@@ -1,0 +1,1136 @@
+{
+  "currency": "USD",
+  "updated": "2026-10-08",
+  "products": [
+    {
+      "id": "p003",
+      "slug": "elephant-plush",
+      "category": "animal",
+      "colors": [
+        "blue-grey",
+        "pink"
+      ],
+      "size_approx": "~18 cm sitting",
+      "price_usd": 26,
+      "price_is_draft": true,
+      "lead_time_days": [
+        10,
+        21
+      ],
+      "made_to_order": true,
+      "title": {
+        "en": "Elephant Amigurumi Plush",
+        "ar": "فيل كروشيه محشو"
+      },
+      "description": {
+        "en": "A soft amigurumi elephant in dusty blue-grey with pink-lined ears, crocheted by hand and stuffed to sit on its own.",
+        "ar": "فيل كروشيه ناعم بلون أزرق رمادي فاتح وأذنين مبطنتين بالوردي، محشو بالكامل ويقف بثبات بمفرده."
+      },
+      "image": {
+        "main": "assets/img/products/p003/main.jpg",
+        "thumb": "assets/img/products/p003/thumb.jpg"
+      },
+      "stripe_payment_link": ""
+    },
+    {
+      "id": "p005",
+      "slug": "panda-plush",
+      "category": "animal",
+      "colors": [
+        "black",
+        "white",
+        "pink"
+      ],
+      "size_approx": "~20 cm sitting",
+      "price_usd": 28,
+      "price_is_draft": true,
+      "lead_time_days": [
+        10,
+        21
+      ],
+      "made_to_order": true,
+      "title": {
+        "en": "Panda Amigurumi Plush",
+        "ar": "باندا كروشيه محشو"
+      },
+      "description": {
+        "en": "A black-and-white amigurumi panda with a small crocheted flower clip, sitting with its arms and legs out.",
+        "ar": "باندا كروشيه بالأسود والأبيض مع زهرة صغيرة مكروشيه على الرأس، تجلس مع تمديد يديها وقدميها."
+      },
+      "image": {
+        "main": "assets/img/products/p005/main.jpg",
+        "thumb": "assets/img/products/p005/thumb.jpg"
+      },
+      "stripe_payment_link": ""
+    },
+    {
+      "id": "p008",
+      "slug": "mermaid-twins-dolls",
+      "category": "doll",
+      "colors": [
+        "brown hair",
+        "purple tail",
+        "pink tail"
+      ],
+      "size_approx": "~20 cm each",
+      "price_usd": 42,
+      "price_is_draft": true,
+      "lead_time_days": [
+        14,
+        28
+      ],
+      "made_to_order": true,
+      "title": {
+        "en": "Mermaid Twins Dolls (Set of 2)",
+        "ar": "دمى حوريتي بحر توأم (قطعتان)"
+      },
+      "description": {
+        "en": "Two amigurumi mermaid dolls with curly brown hair, sold together — one in a purple tail, one in pink.",
+        "ar": "دميتا حورية بحر بشعر بني مجدول، تُباعان معًا: واحدة بذيل بنفسجي والأخرى بذيل وردي."
+      },
+      "image": {
+        "main": "assets/img/products/p008/main.jpg",
+        "thumb": "assets/img/products/p008/thumb.jpg"
+      },
+      "stripe_payment_link": ""
+    },
+    {
+      "id": "p009",
+      "slug": "grey-kitten-plush",
+      "category": "animal",
+      "colors": [
+        "grey",
+        "pink"
+      ],
+      "size_approx": "~16 cm sitting",
+      "price_usd": 24,
+      "price_is_draft": true,
+      "lead_time_days": [
+        10,
+        21
+      ],
+      "made_to_order": true,
+      "title": {
+        "en": "Grey Striped Kitten Plush",
+        "ar": "قطة كروشيه رمادية مخططة"
+      },
+      "description": {
+        "en": "A grey tabby-striped amigurumi kitten with big green-button eyes and a pink nose and ears.",
+        "ar": "قطة كروشيه رمادية مخططة بعينين كبيرتين خضراوين وأنف وأذنين وردية اللون."
+      },
+      "image": {
+        "main": "assets/img/products/p009/main.jpg",
+        "thumb": "assets/img/products/p009/thumb.jpg"
+      },
+      "stripe_payment_link": ""
+    },
+    {
+      "id": "p012",
+      "slug": "purple-lily-stem",
+      "category": "flower",
+      "colors": [
+        "purple",
+        "green"
+      ],
+      "size_approx": "~35 cm stem",
+      "price_usd": 13,
+      "price_is_draft": true,
+      "lead_time_days": [
+        5,
+        10
+      ],
+      "made_to_order": true,
+      "title": {
+        "en": "Purple Lily Stem",
+        "ar": "زهرة الزنبق البنفسجية"
+      },
+      "description": {
+        "en": "A single crocheted lily on a wire-and-yarn stem, petals in deep purple with a green calyx and leaves.",
+        "ar": "زهرة زنبق واحدة مكروشيه على ساق من سلك مغطى بالصوف، بتلات بنفسجية غامقة وأوراق خضراء."
+      },
+      "image": {
+        "main": "assets/img/products/p012/main.jpg",
+        "thumb": "assets/img/products/p012/thumb.jpg"
+      },
+      "stripe_payment_link": ""
+    },
+    {
+      "id": "p013",
+      "slug": "lotus-flower-coaster",
+      "category": "flower",
+      "colors": [
+        "pink",
+        "yellow",
+        "green"
+      ],
+      "size_approx": "~18 cm across",
+      "price_usd": 17,
+      "price_is_draft": true,
+      "lead_time_days": [
+        7,
+        12
+      ],
+      "made_to_order": true,
+      "title": {
+        "en": "Lotus Flower Coaster",
+        "ar": "مفرش كوب على شكل زهرة اللوتس"
+      },
+      "description": {
+        "en": "A pink crocheted lotus flower with a yellow centre, mounted flat on a green lily-pad coaster.",
+        "ar": "زهرة لوتس وردية بمركز أصفر، مثبتة بشكل مسطح على مفرش دائري أخضر يشبه ورقة النيلوفر."
+      },
+      "image": {
+        "main": "assets/img/products/p013/main.jpg",
+        "thumb": "assets/img/products/p013/thumb.jpg"
+      },
+      "stripe_payment_link": ""
+    },
+    {
+      "id": "p014",
+      "slug": "strawberry-floral-decor",
+      "category": "fun",
+      "colors": [
+        "red",
+        "white",
+        "green"
+      ],
+      "size_approx": "~14 cm",
+      "price_usd": 19,
+      "price_is_draft": true,
+      "lead_time_days": [
+        7,
+        14
+      ],
+      "made_to_order": true,
+      "title": {
+        "en": "Strawberry & Flower Decor Piece",
+        "ar": "قطعة ديكور فراولة وزهور"
+      },
+      "description": {
+        "en": "A plump crocheted strawberry topped with a small white flower and layered green leaves, for a shelf or desk.",
+        "ar": "فراولة كروشيه منتفخة تعلوها زهرة بيضاء صغيرة وأوراق خضراء متدرجة، مناسبة لرف أو مكتب."
+      },
+      "image": {
+        "main": "assets/img/products/p014/main.jpg",
+        "thumb": "assets/img/products/p014/thumb.jpg"
+      },
+      "stripe_payment_link": ""
+    },
+    {
+      "id": "p016",
+      "slug": "pink-bunny-plush",
+      "category": "animal",
+      "colors": [
+        "pink"
+      ],
+      "size_approx": "~20 cm sitting, long ears",
+      "price_usd": 25,
+      "price_is_draft": true,
+      "lead_time_days": [
+        10,
+        21
+      ],
+      "made_to_order": true,
+      "title": {
+        "en": "Pink Bunny Amigurumi Plush",
+        "ar": "أرنب كروشيه وردي"
+      },
+      "description": {
+        "en": "A soft pink amigurumi bunny with long floppy ears and a round, huggable body.",
+        "ar": "أرنب كروشيه وردي ناعم بأذنين طويلتين مسترخيتين وجسم مستدير مناسب للعناق."
+      },
+      "image": {
+        "main": "assets/img/products/p016/main.jpg",
+        "thumb": "assets/img/products/p016/thumb.jpg"
+      },
+      "stripe_payment_link": ""
+    },
+    {
+      "id": "p017",
+      "slug": "boy-doll",
+      "category": "doll",
+      "colors": [
+        "black hair",
+        "red",
+        "green"
+      ],
+      "size_approx": "~22 cm standing",
+      "price_usd": 30,
+      "price_is_draft": true,
+      "lead_time_days": [
+        14,
+        28
+      ],
+      "made_to_order": true,
+      "title": {
+        "en": "Amigurumi Boy Doll",
+        "ar": "دمية كروشيه لصبي"
+      },
+      "description": {
+        "en": "A crocheted boy doll with black hair, a red striped top and green trousers, standing on felt-soled feet.",
+        "ar": "دمية كروشيه لصبي بشعر أسود وقميص مخطط أحمر وبنطال أخضر، يقف على قدمين بنعل من اللباد."
+      },
+      "image": {
+        "main": "assets/img/products/p017/main.jpg",
+        "thumb": "assets/img/products/p017/thumb.jpg"
+      },
+      "stripe_payment_link": ""
+    },
+    {
+      "id": "p021",
+      "slug": "octopus-plush",
+      "category": "animal",
+      "colors": [
+        "teal/blue"
+      ],
+      "size_approx": "~16 cm across",
+      "price_usd": 24,
+      "price_is_draft": true,
+      "lead_time_days": [
+        10,
+        21
+      ],
+      "made_to_order": true,
+      "title": {
+        "en": "Octopus Amigurumi Plush",
+        "ar": "أخطبوط كروشيه محشو"
+      },
+      "description": {
+        "en": "A chunky teal-blue amigurumi octopus with eight curled arms and oversized button eyes.",
+        "ar": "أخطبوط كروشيه بلون أزرق مخضر بثماني أذرع ملتفة وعينين كبيرتين."
+      },
+      "image": {
+        "main": "assets/img/products/p021/main.jpg",
+        "thumb": "assets/img/products/p021/thumb.jpg"
+      },
+      "stripe_payment_link": ""
+    },
+    {
+      "id": "p036",
+      "slug": "puppy-plush",
+      "category": "animal",
+      "colors": [
+        "tan",
+        "cream"
+      ],
+      "size_approx": "~20 cm sitting",
+      "price_usd": 27,
+      "price_is_draft": true,
+      "lead_time_days": [
+        10,
+        21
+      ],
+      "made_to_order": true,
+      "title": {
+        "en": "Puppy Amigurumi Plush",
+        "ar": "جرو كروشيه محشو"
+      },
+      "description": {
+        "en": "A tan-and-cream amigurumi puppy sitting up with floppy ears and a round snout.",
+        "ar": "جرو كروشيه بلونين بيج وكريمي، يجلس بأذنين مسترخيتين وخطم مستدير."
+      },
+      "image": {
+        "main": "assets/img/products/p036/main.jpg",
+        "thumb": "assets/img/products/p036/thumb.jpg"
+      },
+      "stripe_payment_link": ""
+    },
+    {
+      "id": "p043",
+      "slug": "tulip-duo-gift-box",
+      "category": "giftset",
+      "colors": [
+        "blue",
+        "green",
+        "cream"
+      ],
+      "size_approx": "~20 cm, boxed",
+      "price_usd": 28,
+      "price_is_draft": true,
+      "lead_time_days": [
+        10,
+        18
+      ],
+      "made_to_order": true,
+      "title": {
+        "en": "Tulip Duo in a Gift Box",
+        "ar": "باقة زنبق في علبة هدية"
+      },
+      "description": {
+        "en": "Two crocheted tulips in a mini cream mug, ribbon-tied and boxed ready to give as a gift.",
+        "ar": "زهرتا زنبق كروشيه في كوب كريمي صغير، مربوطتان بشريط وموضوعتان في علبة جاهزة للتقديم كهدية."
+      },
+      "image": {
+        "main": "assets/img/products/p043/main.jpg",
+        "thumb": "assets/img/products/p043/thumb.jpg"
+      },
+      "stripe_payment_link": ""
+    },
+    {
+      "id": "p046",
+      "slug": "strawberry-cupcake-plush",
+      "category": "fun",
+      "colors": [
+        "pink",
+        "cream",
+        "red"
+      ],
+      "size_approx": "~12 cm",
+      "price_usd": 18,
+      "price_is_draft": true,
+      "lead_time_days": [
+        7,
+        14
+      ],
+      "made_to_order": true,
+      "title": {
+        "en": "Strawberry Cupcake Plush",
+        "ar": "حلوى كب كيك فراولة كروشيه"
+      },
+      "description": {
+        "en": "A round amigurumi 'cupcake' with a pink frosting swirl, a cream base and a crocheted strawberry on top.",
+        "ar": "كب كيك كروشيه مستدير بطبقة وردية علوية وقاعدة كريمية وفراولة كروشيه فوقه."
+      },
+      "image": {
+        "main": "assets/img/products/p046/main.jpg",
+        "thumb": "assets/img/products/p046/thumb.jpg"
+      },
+      "stripe_payment_link": ""
+    },
+    {
+      "id": "p063",
+      "slug": "monkey-plush",
+      "category": "animal",
+      "colors": [
+        "brown",
+        "cream"
+      ],
+      "size_approx": "~20 cm sitting",
+      "price_usd": 27,
+      "price_is_draft": true,
+      "lead_time_days": [
+        10,
+        21
+      ],
+      "made_to_order": true,
+      "title": {
+        "en": "Monkey Amigurumi Plush",
+        "ar": "قرد كروشيه محشو"
+      },
+      "description": {
+        "en": "A brown-and-cream amigurumi monkey sitting with long dangling arms and a friendly round face.",
+        "ar": "قرد كروشيه بلونين بني وكريمي، يجلس بذراعين طويلتين متدليتين ووجه مستدير ودود."
+      },
+      "image": {
+        "main": "assets/img/products/p063/main.jpg",
+        "thumb": "assets/img/products/p063/thumb.jpg"
+      },
+      "stripe_payment_link": ""
+    },
+    {
+      "id": "p064",
+      "slug": "giraffe-plush",
+      "category": "animal",
+      "colors": [
+        "yellow",
+        "brown"
+      ],
+      "size_approx": "~22 cm sitting",
+      "price_usd": 27,
+      "price_is_draft": true,
+      "lead_time_days": [
+        10,
+        21
+      ],
+      "made_to_order": true,
+      "title": {
+        "en": "Giraffe Amigurumi Plush",
+        "ar": "زرافة كروشيه محشوة"
+      },
+      "description": {
+        "en": "A yellow amigurumi giraffe with brown spots and tufted ears, sitting with its long legs out front.",
+        "ar": "زرافة كروشيه صفراء ببقع بنية وأذنين مزغبتين، تجلس مع تمديد رجليها الطويلتين."
+      },
+      "image": {
+        "main": "assets/img/products/p064/main.jpg",
+        "thumb": "assets/img/products/p064/thumb.jpg"
+      },
+      "stripe_payment_link": ""
+    },
+    {
+      "id": "p065",
+      "slug": "rose-stem",
+      "category": "flower",
+      "colors": [
+        "red",
+        "green"
+      ],
+      "size_approx": "~32 cm stem",
+      "price_usd": 12,
+      "price_is_draft": true,
+      "lead_time_days": [
+        5,
+        10
+      ],
+      "made_to_order": true,
+      "title": {
+        "en": "Rose Stem",
+        "ar": "ساق وردة واحدة"
+      },
+      "description": {
+        "en": "A single crocheted red rose, fully bloomed, on a long green stem with two leaves.",
+        "ar": "وردة حمراء واحدة مكروشيه ومتفتحة بالكامل على ساق أخضر طويل مع ورقتين."
+      },
+      "image": {
+        "main": "assets/img/products/p065/main.jpg",
+        "thumb": "assets/img/products/p065/thumb.jpg"
+      },
+      "stripe_payment_link": ""
+    },
+    {
+      "id": "p066",
+      "slug": "daisy-flower-friend",
+      "category": "flower",
+      "colors": [
+        "white",
+        "yellow",
+        "green"
+      ],
+      "size_approx": "~16 cm",
+      "price_usd": 15,
+      "price_is_draft": true,
+      "lead_time_days": [
+        7,
+        12
+      ],
+      "made_to_order": true,
+      "title": {
+        "en": "Daisy Flower Friend",
+        "ar": "صديقة الزهرة الأقحوان"
+      },
+      "description": {
+        "en": "A white daisy crocheted with a smiling face and little green legs, part flower, part character.",
+        "ar": "زهرة أقحوان بيضاء مكروشيه بوجه مبتسم وأرجل خضراء صغيرة، بين الزهرة والشخصية اللطيفة."
+      },
+      "image": {
+        "main": "assets/img/products/p066/main.jpg",
+        "thumb": "assets/img/products/p066/thumb.jpg"
+      },
+      "stripe_payment_link": ""
+    },
+    {
+      "id": "p070",
+      "slug": "cow-plush",
+      "category": "animal",
+      "colors": [
+        "white",
+        "pink",
+        "brown"
+      ],
+      "size_approx": "~18 cm sitting",
+      "price_usd": 26,
+      "price_is_draft": true,
+      "lead_time_days": [
+        10,
+        21
+      ],
+      "made_to_order": true,
+      "title": {
+        "en": "Cow Amigurumi Plush",
+        "ar": "بقرة كروشيه محشوة"
+      },
+      "description": {
+        "en": "A white-and-pink amigurumi cow with brown horns and a little bell at the neck.",
+        "ar": "بقرة كروشيه بيضاء ووردية بقرنين بنيين وجرس صغير حول الرقبة."
+      },
+      "image": {
+        "main": "assets/img/products/p070/main.jpg",
+        "thumb": "assets/img/products/p070/thumb.jpg"
+      },
+      "stripe_payment_link": ""
+    },
+    {
+      "id": "p072",
+      "slug": "lion-plush",
+      "category": "animal",
+      "colors": [
+        "tan",
+        "brown"
+      ],
+      "size_approx": "~20 cm sitting",
+      "price_usd": 27,
+      "price_is_draft": true,
+      "lead_time_days": [
+        10,
+        21
+      ],
+      "made_to_order": true,
+      "title": {
+        "en": "Lion Amigurumi Plush",
+        "ar": "أسد كروشيه محشو"
+      },
+      "description": {
+        "en": "A tan amigurumi lion with a textured brown mane, sitting with its front paws planted forward.",
+        "ar": "أسد كروشيه بيج بلبدة بنية ذات ملمس بارز، يجلس مع مد كفيه الأماميتين إلى الأمام."
+      },
+      "image": {
+        "main": "assets/img/products/p072/main.jpg",
+        "thumb": "assets/img/products/p072/thumb.jpg"
+      },
+      "stripe_payment_link": ""
+    },
+    {
+      "id": "p076",
+      "slug": "sunflower-stem",
+      "category": "flower",
+      "colors": [
+        "yellow",
+        "brown",
+        "green"
+      ],
+      "size_approx": "~34 cm stem",
+      "price_usd": 12,
+      "price_is_draft": true,
+      "lead_time_days": [
+        5,
+        10
+      ],
+      "made_to_order": true,
+      "title": {
+        "en": "Sunflower Stem",
+        "ar": "ساق زهرة عباد الشمس"
+      },
+      "description": {
+        "en": "A single crocheted sunflower with a brown centre and bright yellow petals on a leafy green stem.",
+        "ar": "زهرة عباد شمس واحدة مكروشيه بمركز بني وبتلات صفراء زاهية على ساق أخضر مورق."
+      },
+      "image": {
+        "main": "assets/img/products/p076/main.jpg",
+        "thumb": "assets/img/products/p076/thumb.jpg"
+      },
+      "stripe_payment_link": ""
+    },
+    {
+      "id": "p092",
+      "slug": "shark-plush",
+      "category": "animal",
+      "colors": [
+        "blue-grey",
+        "white"
+      ],
+      "size_approx": "~22 cm, comes with wooden stand",
+      "price_usd": 28,
+      "price_is_draft": true,
+      "lead_time_days": [
+        10,
+        21
+      ],
+      "made_to_order": true,
+      "title": {
+        "en": "Shark Amigurumi Plush (on stand)",
+        "ar": "قرش كروشيه محشو مع قاعدة"
+      },
+      "description": {
+        "en": "A blue-grey amigurumi shark with a white belly, posed upright on a small wooden display stand.",
+        "ar": "قرش كروشيه بلون أزرق رمادي وبطن أبيض، موضوع بشكل مستقيم على قاعدة عرض خشبية صغيرة."
+      },
+      "image": {
+        "main": "assets/img/products/p092/main.jpg",
+        "thumb": "assets/img/products/p092/thumb.jpg"
+      },
+      "stripe_payment_link": ""
+    },
+    {
+      "id": "p093",
+      "slug": "coiled-snake-plush",
+      "category": "animal",
+      "colors": [
+        "green",
+        "yellow",
+        "black"
+      ],
+      "size_approx": "~24 cm coiled",
+      "price_usd": 25,
+      "price_is_draft": true,
+      "lead_time_days": [
+        10,
+        21
+      ],
+      "made_to_order": true,
+      "title": {
+        "en": "Coiled Snake Amigurumi",
+        "ar": "ثعبان كروشيه ملتف"
+      },
+      "description": {
+        "en": "A green-and-yellow amigurumi snake crocheted in a coiled ring, with a patterned back and button eyes.",
+        "ar": "ثعبان كروشيه بلونين أخضر وأصفر، مكروشيه بشكل حلقة ملتفة مع نقشة على الظهر وعينين."
+      },
+      "image": {
+        "main": "assets/img/products/p093/main.jpg",
+        "thumb": "assets/img/products/p093/thumb.jpg"
+      },
+      "stripe_payment_link": ""
+    },
+    {
+      "id": "p099",
+      "slug": "heart-bouquet-stand",
+      "category": "seasonal",
+      "colors": [
+        "red",
+        "pink"
+      ],
+      "size_approx": "~22 cm on stand",
+      "price_usd": 32,
+      "price_is_draft": true,
+      "lead_time_days": [
+        10,
+        18
+      ],
+      "made_to_order": true,
+      "title": {
+        "en": "Heart Bouquet Stand",
+        "ar": "باقة قلوب على قاعدة"
+      },
+      "description": {
+        "en": "A crocheted red heart character with pink heart balloons on crinkle-wire strings, mounted on a stand — a Valentine's/gifting piece.",
+        "ar": "قلب أحمر كروشيه بشخصية لطيفة مع بالونات قلوب وردية على أسلاك متعرجة، مثبت على قاعدة — قطعة مناسبة لعيد الحب أو كهدية."
+      },
+      "image": {
+        "main": "assets/img/products/p099/main.jpg",
+        "thumb": "assets/img/products/p099/thumb.jpg"
+      },
+      "stripe_payment_link": ""
+    },
+    {
+      "id": "p103",
+      "slug": "koala-plush",
+      "category": "animal",
+      "colors": [
+        "lilac",
+        "grey",
+        "white"
+      ],
+      "size_approx": "~20 cm",
+      "price_usd": 26,
+      "price_is_draft": true,
+      "lead_time_days": [
+        10,
+        21
+      ],
+      "made_to_order": true,
+      "title": {
+        "en": "Koala Amigurumi Plush",
+        "ar": "كوالا كروشيه محشوة"
+      },
+      "description": {
+        "en": "A lilac amigurumi koala with grey ears and a round white belly patch, arms out for a hug.",
+        "ar": "كوالا كروشيه بلون بنفسجي فاتح وأذنين رماديتين وبطن أبيض مستدير، بذراعين مفتوحتين للعناق."
+      },
+      "image": {
+        "main": "assets/img/products/p103/main.jpg",
+        "thumb": "assets/img/products/p103/thumb.jpg"
+      },
+      "stripe_payment_link": ""
+    },
+    {
+      "id": "p104",
+      "slug": "sea-turtle-plush",
+      "category": "animal",
+      "colors": [
+        "green",
+        "teal"
+      ],
+      "size_approx": "~22 cm",
+      "price_usd": 25,
+      "price_is_draft": true,
+      "lead_time_days": [
+        10,
+        21
+      ],
+      "made_to_order": true,
+      "title": {
+        "en": "Sea Turtle Amigurumi Plush",
+        "ar": "سلحفاة بحر كروشيه محشوة"
+      },
+      "description": {
+        "en": "A green-and-teal amigurumi sea turtle, crocheted flat with little flippers and a rounded shell.",
+        "ar": "سلحفاة بحر كروشيه بلونين أخضر وأزرق مخضر، بزعانف صغيرة وصدفة مستديرة."
+      },
+      "image": {
+        "main": "assets/img/products/p104/main.jpg",
+        "thumb": "assets/img/products/p104/thumb.jpg"
+      },
+      "stripe_payment_link": ""
+    },
+    {
+      "id": "p128",
+      "slug": "striped-crochet-pouch",
+      "category": "accessory",
+      "colors": [
+        "olive",
+        "yellow",
+        "orange",
+        "red"
+      ],
+      "size_approx": "~18 cm long",
+      "price_usd": 26,
+      "price_is_draft": true,
+      "lead_time_days": [
+        10,
+        18
+      ],
+      "made_to_order": true,
+      "title": {
+        "en": "Striped Crochet Pouch",
+        "ar": "محفظة كروشيه مخططة"
+      },
+      "description": {
+        "en": "A zippered crochet pouch in bold olive, yellow, orange and red stripes — big enough for cards or small essentials.",
+        "ar": "محفظة كروشيه بسحاب بخطوط جريئة بألوان زيتي وأصفر وبرتقالي وأحمر، بحجم كافٍ للبطاقات أو الأساسيات الصغيرة."
+      },
+      "image": {
+        "main": "assets/img/products/p128/main.jpg",
+        "thumb": "assets/img/products/p128/thumb.jpg"
+      },
+      "stripe_payment_link": ""
+    },
+    {
+      "id": "p150",
+      "slug": "teddy-bear-plush",
+      "category": "animal",
+      "colors": [
+        "brown",
+        "cream"
+      ],
+      "size_approx": "~20 cm sitting",
+      "price_usd": 27,
+      "price_is_draft": true,
+      "lead_time_days": [
+        10,
+        21
+      ],
+      "made_to_order": true,
+      "title": {
+        "en": "Classic Teddy Bear Plush",
+        "ar": "دبدوب كروشيه كلاسيكي"
+      },
+      "description": {
+        "en": "A classic brown-and-cream amigurumi teddy bear, soft and simple, sitting with its paws together.",
+        "ar": "دبدوب كروشيه كلاسيكي بلونين بني وكريمي، بسيط وناعم، يجلس مع تقريب كفيه."
+      },
+      "image": {
+        "main": "assets/img/products/p150/main.jpg",
+        "thumb": "assets/img/products/p150/thumb.jpg"
+      },
+      "stripe_payment_link": ""
+    },
+    {
+      "id": "p154",
+      "slug": "duck-teether-ring",
+      "category": "baby",
+      "colors": [
+        "yellow",
+        "orange",
+        "natural wood"
+      ],
+      "size_approx": "~11 cm ring",
+      "price_usd": 16,
+      "price_is_draft": true,
+      "lead_time_days": [
+        7,
+        14
+      ],
+      "made_to_order": true,
+      "title": {
+        "en": "Duck Wooden Teether Ring",
+        "ar": "حلقة تسنين خشبية بشكل بطة"
+      },
+      "description": {
+        "en": "A crocheted duck head on a natural wooden teething ring — a baby-safe rattle and teether in one.",
+        "ar": "رأس بطة كروشيه مثبت على حلقة تسنين خشبية طبيعية — خشخيشة وحلقة تسنين آمنة للأطفال معًا."
+      },
+      "image": {
+        "main": "assets/img/products/p154/main.jpg",
+        "thumb": "assets/img/products/p154/thumb.jpg"
+      },
+      "stripe_payment_link": ""
+    },
+    {
+      "id": "p160",
+      "slug": "lamb-teether-ring",
+      "category": "baby",
+      "colors": [
+        "white",
+        "tan",
+        "natural wood"
+      ],
+      "size_approx": "~11 cm ring",
+      "price_usd": 16,
+      "price_is_draft": true,
+      "lead_time_days": [
+        7,
+        14
+      ],
+      "made_to_order": true,
+      "title": {
+        "en": "Lamb Wooden Teether Ring",
+        "ar": "حلقة تسنين خشبية بشكل خروف"
+      },
+      "description": {
+        "en": "A crocheted lamb head with a fluffy white head on a natural wooden teething ring.",
+        "ar": "رأس خروف كروشيه برأس أبيض مزغب مثبت على حلقة تسنين خشبية طبيعية."
+      },
+      "image": {
+        "main": "assets/img/products/p160/main.jpg",
+        "thumb": "assets/img/products/p160/thumb.jpg"
+      },
+      "stripe_payment_link": ""
+    },
+    {
+      "id": "p173",
+      "slug": "ballerina-doll",
+      "category": "doll",
+      "colors": [
+        "brown hair",
+        "lilac"
+      ],
+      "size_approx": "~20 cm",
+      "price_usd": 30,
+      "price_is_draft": true,
+      "lead_time_days": [
+        14,
+        28
+      ],
+      "made_to_order": true,
+      "title": {
+        "en": "Ballerina Doll",
+        "ar": "دمية باليرينا كروشيه"
+      },
+      "description": {
+        "en": "An amigurumi ballerina doll with braided brown hair and a lilac tutu, posed mid-pose on one leg.",
+        "ar": "دمية باليرينا كروشيه بشعر بني مضفّر وتوتو بنفسجي فاتح، في وضعية رقص على قدم واحدة."
+      },
+      "image": {
+        "main": "assets/img/products/p173/main.jpg",
+        "thumb": "assets/img/products/p173/thumb.jpg"
+      },
+      "stripe_payment_link": ""
+    },
+    {
+      "id": "p188",
+      "slug": "zebra-pattern-plush",
+      "category": "animal",
+      "colors": [
+        "black",
+        "white"
+      ],
+      "size_approx": "~22 cm",
+      "price_usd": 27,
+      "price_is_draft": true,
+      "lead_time_days": [
+        10,
+        21
+      ],
+      "made_to_order": true,
+      "title": {
+        "en": "Zebra-Striped Amigurumi Plush",
+        "ar": "حيوان كروشيه مخطط كالحمار الوحشي"
+      },
+      "description": {
+        "en": "An amigurumi animal crocheted entirely in bold black-and-white zebra stripes, with little tufted ears.",
+        "ar": "حيوان كروشيه مكروش بالكامل بخطوط سوداء وبيضاء جريئة على طراز الحمار الوحشي، بأذنين صغيرتين مزغبتين."
+      },
+      "image": {
+        "main": "assets/img/products/p188/main.jpg",
+        "thumb": "assets/img/products/p188/thumb.jpg"
+      },
+      "stripe_payment_link": ""
+    },
+    {
+      "id": "p207",
+      "slug": "bee-costume-kitten",
+      "category": "animal",
+      "colors": [
+        "white",
+        "orange",
+        "black",
+        "yellow"
+      ],
+      "size_approx": "~15 cm",
+      "price_usd": 26,
+      "price_is_draft": true,
+      "lead_time_days": [
+        10,
+        21
+      ],
+      "made_to_order": true,
+      "title": {
+        "en": "Kitten in a Bee Costume",
+        "ar": "قطة كروشيه بتنكر نحلة"
+      },
+      "description": {
+        "en": "A white amigurumi kitten dressed in a little orange-and-black bee costume hood.",
+        "ar": "قطة كروشيه بيضاء ترتدي غطاء رأس صغير بتنكر نحلة بلونين برتقالي وأسود."
+      },
+      "image": {
+        "main": "assets/img/products/p207/main.jpg",
+        "thumb": "assets/img/products/p207/thumb.jpg"
+      },
+      "stripe_payment_link": ""
+    },
+    {
+      "id": "p251",
+      "slug": "ballerina-mouse-plush",
+      "category": "doll",
+      "colors": [
+        "grey",
+        "pink"
+      ],
+      "size_approx": "~18 cm",
+      "price_usd": 28,
+      "price_is_draft": true,
+      "lead_time_days": [
+        14,
+        24
+      ],
+      "made_to_order": true,
+      "title": {
+        "en": "Ballerina Mouse Plush",
+        "ar": "فأرة باليرينا كروشيه"
+      },
+      "description": {
+        "en": "A grey amigurumi mouse in a pink tutu, posed up on its toes like a dancer.",
+        "ar": "فأرة كروشيه رمادية بتوتو وردي، في وضعية رقص على أطراف أصابعها."
+      },
+      "image": {
+        "main": "assets/img/products/p251/main.jpg",
+        "thumb": "assets/img/products/p251/thumb.jpg"
+      },
+      "stripe_payment_link": ""
+    },
+    {
+      "id": "p318",
+      "slug": "elephant-teether-ring",
+      "category": "baby",
+      "colors": [
+        "blue-grey",
+        "yellow",
+        "natural wood"
+      ],
+      "size_approx": "~12 cm ring",
+      "price_usd": 16,
+      "price_is_draft": true,
+      "lead_time_days": [
+        7,
+        14
+      ],
+      "made_to_order": true,
+      "title": {
+        "en": "Elephant Wooden Teether Ring",
+        "ar": "حلقة تسنين خشبية بشكل فيل"
+      },
+      "description": {
+        "en": "A crocheted elephant head with big ears on a natural wooden teething ring.",
+        "ar": "رأس فيل كروشيه بأذنين كبيرتين مثبت على حلقة تسنين خشبية طبيعية."
+      },
+      "image": {
+        "main": "assets/img/products/p318/main.jpg",
+        "thumb": "assets/img/products/p318/thumb.jpg"
+      },
+      "stripe_payment_link": ""
+    },
+    {
+      "id": "p369",
+      "slug": "potted-lavender",
+      "category": "flower",
+      "colors": [
+        "purple",
+        "green",
+        "navy"
+      ],
+      "size_approx": "~22 cm in pot",
+      "price_usd": 24,
+      "price_is_draft": true,
+      "lead_time_days": [
+        10,
+        18
+      ],
+      "made_to_order": true,
+      "title": {
+        "en": "Potted Lavender Plant",
+        "ar": "نبتة لافندر في وعاء"
+      },
+      "description": {
+        "en": "A small crocheted lavender bunch in a navy pot, a low-maintenance 'plant' that never needs water.",
+        "ar": "باقة لافندر كروشيه صغيرة في وعاء كحلي، 'نبتة' لا تحتاج ماءً أبدًا."
+      },
+      "image": {
+        "main": "assets/img/products/p369/main.jpg",
+        "thumb": "assets/img/products/p369/thumb.jpg"
+      },
+      "stripe_payment_link": ""
+    },
+    {
+      "id": "p445",
+      "slug": "kawaii-sushi-duo",
+      "category": "fun",
+      "colors": [
+        "white",
+        "pink",
+        "yellow"
+      ],
+      "size_approx": "~6 cm each, set of 2",
+      "price_usd": 22,
+      "price_is_draft": true,
+      "lead_time_days": [
+        7,
+        14
+      ],
+      "made_to_order": true,
+      "title": {
+        "en": "Kawaii Sushi Duo",
+        "ar": "ثنائي السوشي الكاواي"
+      },
+      "description": {
+        "en": "Two amigurumi sushi pieces with cartoon faces — one topped pink, one wrapped in a yellow omelette strip.",
+        "ar": "قطعتا سوشي كروشيه بوجوه كارتونية لطيفة: واحدة بتغطية وردية والأخرى ملفوفة بشريط بيض أصفر."
+      },
+      "image": {
+        "main": "assets/img/products/p445/main.jpg",
+        "thumb": "assets/img/products/p445/thumb.jpg"
+      },
+      "stripe_payment_link": ""
+    },
+    {
+      "id": "p077",
+      "slug": "strawberry-amigurumi",
+      "category": "fun",
+      "colors": [
+        "red",
+        "green",
+        "white"
+      ],
+      "size_approx": "~14 cm",
+      "price_usd": 18,
+      "price_is_draft": true,
+      "lead_time_days": [
+        7,
+        14
+      ],
+      "made_to_order": true,
+      "title": {
+        "en": "Strawberry Amigurumi Plush",
+        "ar": "فراولة كروشيه محشوة"
+      },
+      "description": {
+        "en": "A big-eyed crocheted strawberry with a green leaf crown and a cheerful face.",
+        "ar": "فراولة كروشيه بعينين كبيرتين وتاج من الأوراق الخضراء ووجه مبتسم."
+      },
+      "image": {
+        "main": "assets/img/products/p077/main.jpg",
+        "thumb": "assets/img/products/p077/thumb.jpg"
+      },
+      "stripe_payment_link": ""
+    }
+  ]
+}
