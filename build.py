@@ -20,11 +20,15 @@ GA = "G-EQ20EYFSY3"
 INSTAGRAM = "https://instagram.com/loopaholic.crochet"      # profile ("follow us")
 INSTAGRAM_DM = "https://ig.me/m/loopaholic.crochet"          # opens a direct message (ordering)
 INSTAGRAM_HANDLE = "@loopaholic.crochet"
-# No business WhatsApp number is confirmed yet (ask in workstream log).
-# Set this once Rana/Nizar give one: the primary order button, its event
-# (whatsapp_click) and the "WhatsApp or Instagram" copy all come back on rebuild.
-WHATSAPP_NUMBER = None  # e.g. "+9613XXXXXX"
+# Orders go to taktekbot's WhatsApp (Nizar, 8 Oct 22:00: "Order on WhatsApp should take you to bot taktek.").
+# The bot (phone-bridge) sees the prefilled "Loopaholic order:" marker, thanks the buyer once and posts the chat
+# to Slack #loopaholic, where Nizar answers. Keep the marker at the start of every wa_text (WA_MARK below).
+# None brings back the Instagram-only buttons and copy (R8).
+WHATSAPP_NUMBER = "+96181511232"
 HAS_WHATSAPP = bool(WHATSAPP_NUMBER)
+# How the bot recognises a shop order (phone-bridge chatctx.LOOPAHOLIC_PREFILL): change both together.
+WA_MARK = {"en": "Loopaholic order:", "ar": "طلب من Loopaholic:"}
+WA_MARK_CUSTOM = {"en": "Loopaholic custom order:", "ar": "طلب خاص من Loopaholic:"}
 # Sizes and making times in catalog.json (and the FAQ's day ranges) were never
 # confirmed by Rana. Flip to True once she confirms them: sizes and making
 # times reappear on product pages and in JSON-LD, and the FAQ/shipping copy
@@ -809,8 +813,8 @@ def build_product(p, t, outdir):
     desc = p["description"][t["lang"]]
     cat = CATEGORY_LABEL[p["category"]][t["lang"]]
     ctx = f"{{product:'{p['slug']}'}}"
-    wa_text = (f"Hi! I'd like to order: {p['title']['en']} ({BASE_URL}{path_en}). My area: "
-               if t["lang"] == "en" else f"مرحبا! بدي اطلب: {p['title']['ar']} ({BASE_URL}{path_ar}). منطقتي: ")
+    wa_text = (f"{WA_MARK['en']} {title}\n{BASE_URL}{path_en}\nHi! I'd like to order this piece. My area: "
+               if t["lang"] == "en" else f"{WA_MARK['ar']} {title}\n{BASE_URL}{path_ar}\nمرحباً! أود طلب هذه القطعة. منطقتي: ")
 
     facts = [(t["colors_label"], colors_text(p, t))]
     if SHOW_UNCONFIRMED_DETAILS:
@@ -882,7 +886,8 @@ def build_product(p, t, outdir):
 
 def build_custom(t, outdir):
     path_en, path_ar = "/custom-orders/", "/ar/custom-orders/"
-    wa_text = "Hi! I'd like to ask about a custom order." if t["lang"] == "en" else "مرحبا، أريد الاستفسار عن طلب خاص."
+    wa_text = (f"{WA_MARK_CUSTOM['en']} Hi! I'd like to ask about a custom piece." if t["lang"] == "en"
+               else f"{WA_MARK_CUSTOM['ar']} مرحباً، أريد الاستفسار عن قطعة خاصة.")
     examples = "".join(
         f'<figure><div class="tile">{picture(pid, t[key], "(min-width: 40em) 17rem, 46vw")}</div><figcaption>{t[key]}</figcaption></figure>'
         for pid, key in CUSTOM_EXAMPLES)

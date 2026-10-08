@@ -11,8 +11,11 @@ python3 build.py                          # regenerate every page from catalog.j
 ```
 
 Flags at the top of `build.py`:
-- `WHATSAPP_NUMBER`: set it and the order buttons, `whatsapp_click` events and
-  "WhatsApp or Instagram" copy come back on the next build.
+- `WHATSAPP_NUMBER` (now taktekbot's phone, +961 81 511 232): the order buttons,
+  `whatsapp_click` events and "WhatsApp or Instagram" copy. `None` brings back
+  Instagram-only. Every prefilled text starts with `WA_MARK` ("Loopaholic order:" /
+  "طلب من Loopaholic:"), which is how the bot's phone-bridge recognises an order:
+  it thanks the buyer once and posts the chat to Slack #loopaholic for a reply.
 - `SHOW_UNCONFIRMED_DETAILS = False`: sizes and making times (catalog.json) stay
   hidden on pages and JSON-LD, and the FAQ says "we confirm the making time when
   you message us", until Rana confirms them.
