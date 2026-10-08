@@ -791,7 +791,7 @@ GAME_JS_KEYS = ["enc_met", "enc_card", "enc_again", "enc_full", "enc_full_link",
 
 def game_i18n(t):
     data = {k: t[k] for k in GAME_JS_KEYS}
-    data.update(lang=t["lang"], total=len(PRODUCTS), book=L(t, "/book/"))
+    data.update(lang=t["lang"], total=len(PRODUCTS), book=L(t, "/book/"), home=L(t, "/"))
     return f'<script type="application/json" id="game-i18n">{json.dumps(data, ensure_ascii=False)}</script>'
 
 
@@ -1066,8 +1066,8 @@ def build_product(p, t, outdir):
     {grid(others, t)}
   </div>
 </section>'''
-    sticky = (f'<div class="sticky-cta" aria-hidden="true"><span class="name">{esc(title)}</span>'
-              f'{order_cta(t, ctx, wa_text, block=False, secondary=False).replace("<a ", "<a tabindex=" + chr(34) + "-1" + chr(34) + " ", 1)}</div>')
+    sticky = (f'<aside class="sticky-cta" aria-label="{t["order_instagram"]}" aria-hidden="true"><span class="name">{esc(title)}</span>'
+              f'{order_cta(t, ctx, wa_text, block=False, secondary=False).replace("<a ", "<a tabindex=" + chr(34) + "-1" + chr(34) + " ", 1)}</aside>')
     head = product_jsonld(p, t) + "\n" + breadcrumb_ld(t, [(t["breadcrumb_home"], L(t, "/")), (t["breadcrumb_shop"], L(t, "/shop/")), (title, L(t, f"/shop/{p['slug']}/"))])
     html_ = page_shell(t, title=f"{title} | {t['site_name']}", description=desc,
                        canonical_path=path_en if t["lang"] == "en" else path_ar,
@@ -1157,8 +1157,8 @@ def build_custom(t, outdir):
     <div class="actions cta-block">{order_cta(t, ctx, wa_text, label_key="custom_cta", variant="btn-primary btn-quiet-wide")}</div>
   </div>
 </div>'''
-    sticky = (f'<div class="sticky-cta" aria-hidden="true"><span class="name">{t["custom_title"]}</span>'
-              f'{order_cta(t, ctx, wa_text, label_key="custom_cta", block=False, secondary=False).replace("<a ", "<a tabindex=" + chr(34) + "-1" + chr(34) + " ", 1)}</div>')
+    sticky = (f'<aside class="sticky-cta" aria-label="{t["order_instagram"]}" aria-hidden="true"><span class="name">{t["custom_title"]}</span>'
+              f'{order_cta(t, ctx, wa_text, label_key="custom_cta", block=False, secondary=False).replace("<a ", "<a tabindex=" + chr(34) + "-1" + chr(34) + " ", 1)}</aside>')
     html_ = page_shell(t, title=f"{t['custom_title'] if t['lang'] == 'ar' else 'Custom Orders'} | {t['site_name']}", description=t['custom_lead'],
                        canonical_path=path_en if t["lang"] == "en" else path_ar,
                        body=body, active="custom", path_en=path_en, path_ar=path_ar, sticky=sticky)

@@ -143,8 +143,11 @@
         return;
       }
       // the first visit always meets the piece already in the HTML (no image swap, stable LCP)
-      var staticId = live.dataset.id;
-      var c = first && !has(staticId) ? all.filter(function (x) { return x.id === staticId; })[0] : left[Math.floor(Math.random() * left.length)];
+      // a shared card links here as ?meet=<id>: the friend meets that one themselves
+      var staticId = live.dataset.id, want = first && new URLSearchParams(location.search).get('meet');
+      var pick = function (id) { return left.filter(function (x) { return x.id === id; })[0]; };
+      var c = (want && pick(want)) || (first && pick(staticId)) || left[Math.floor(Math.random() * left.length)];
+      if (want && c.id === want) track('shared_visit', { creature: want });
       if (!(first && c.id === staticId)) {
         live.innerHTML = '<div class="enc-stage"><span class="tile enc-tile">' + clue(c.id) + '</span>' + RING +
           '<a class="btn btn-primary enc-btn" role="button"></a></div><div class="enc-panel"><p class="enc-peek"></p></div>';
@@ -358,7 +361,7 @@
         var fname = 'loopaholic-' + card.dataset.creature + '.png';
         var file = new File([blob], fname, { type: 'image/png' });
         var text = fmt(I.share_text, { name: card.dataset.name, title: card.dataset.title });
-        var url = location.origin + location.pathname;
+        var url = location.origin + I.home + '?meet=' + card.dataset.creature;
         if (navigator.canShare && navigator.canShare({ files: [file] })) {
           navigator.share({ files: [file], text: text + ' ' + url }).then(function () { track('share_card', { creature: card.dataset.creature, method: 'share' }); }, function () {});
         } else {

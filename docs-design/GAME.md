@@ -17,7 +17,7 @@ Every one of Rana's 36 pieces is a character you meet. Meeting closes the kit's 
 ## Screens
 | Screen | Where | What |
 |---|---|---|
-| Encounter | home hero (JS) | A random character you haven't met hides as a lilac shadow inside the open ring. "Meet them" closes the ring, the photo colours in, and you get "You met Sami!", a type stamp, the personality line, "1 of 36 in your Stitch Book", **See Sami's card** (to the product page `#creature`) and "Meet someone else". "Browse the pieces" steps down to the outline button while the encounter is on screen, so there's one solid button. |
+| Encounter | home hero (static HTML, JS-enhanced) | The clue is a close-up of the hidden piece's real stitches inside the open ring ("Whose stitches are these?"). The first visit always gets the panda, from the HTML (stable LCP); after that it's random among the ones you haven't met, or the one from a shared `?meet=` link. Meeting closes the ring, then zooms out from the stitches to the whole piece. "Meet them" closes the ring, the photo colours in, and you get "You met Sami!", a type stamp, the personality line, "1 of 36 in your Stitch Book", **See Sami's card** (to the product page `#creature`) and "Meet someone else". "Browse the pieces" steps down to the outline button while the encounter is on screen, so there's one solid button. |
 | Stitch Book | `/book/`, `/ar/book/` | Progress line and bar, type chips with counts (Cozy, Sea, Garden, Nibbles, Darling, Storybook), sections of round slots. Unmet slots show a shadow and an open ring, and a tap meets them in place. Met slots link to the piece. Finishing a set shows "Complete". "Start the book over" asks to confirm first. |
 | Creature card | every product page, after the order block | Name in a closed-ring badge, type stamp, personality line, favourite thing, story, **Turn X around** (11 models), **Share X's card**, and the fiction note. Scrolling it into view meets the character if you haven't already, with a toast. "This one's called X." sits under the h1 and links to the card. |
 | Turn | product gallery (tap) | An 18-frame strip (±50°) rendered from the TripoSR model, scrubbed by drag, ‹ › or arrow keys, labelled "A 3D sketch made from the photo: colours and stitches differ from the real piece." It loads only on tap (about 55 KB) and has no WebGL at runtime. |
@@ -32,7 +32,7 @@ Photo only: the other 25 (smeared faces, flat, wrong colour or broken backs).
 Renderer: `tools/turntable/` (three.js in headless Chromium, unlit vertex colours with soft hemisphere light, 18 frames at 360 px, WebP q72).
 
 ## Measurement (GA4 G-EQ20EYFSY3)
-`encounter` (creature), `catch` (creature, source home/book/product), `view_book` (met), `product_view` (product), `view_creature` (creature), `turn_3d`, `share_card` (creature, method share/download), `copy_name`, `bring_home_click` (creature, met), plus the existing `instagram_click`.
+`encounter` (creature), `catch` (creature, source home/book/product), `view_book` (met), `product_view` (product), `view_creature` (creature), `turn_3d`, `share_card` (creature, method share/download), `copy_name`, `bring_home_click` (creature, met), `shared_visit` (creature, a friend arriving from a share link `/?meet=<id>`), plus the existing `instagram_click`.
 
 ## Ideas parked
 A starter companion on the book cover. Seasonal sets (Ramadan, Christmas). "Status: born" on a card once someone's order arrives (needs Rana). Sound (off by design).
