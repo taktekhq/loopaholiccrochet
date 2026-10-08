@@ -50,7 +50,7 @@ h3 { font-size: 1.15rem; }
 p { margin: 0 0 1em; color: var(--ink-soft); }
 a { color: var(--accent-dark); text-decoration: none; }
 a:hover { text-decoration: underline; }
-img { max-width: 100%; display: block; }
+img { max-width: 100%; height: auto; display: block; }
 
 .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 20px; }
 
