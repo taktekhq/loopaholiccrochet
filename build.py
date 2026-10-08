@@ -903,7 +903,7 @@ def build_custom(t, outdir):
   <div class="prose c-how">
     <h2>{t['custom_how_title']}</h2>
     {steps(t['custom_how'])}
-    <div class="actions cta-block">{order_cta(t, ctx, wa_text, label_key="custom_cta", variant="btn-secondary")}</div>
+    <div class="actions cta-block">{order_cta(t, ctx, wa_text, label_key="custom_cta", variant="btn-primary btn-quiet-wide")}</div>
   </div>
 </div>'''
     sticky = (f'<div class="sticky-cta" aria-hidden="true"><span class="name">{t["custom_title"]}</span>'
