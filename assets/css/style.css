@@ -314,7 +314,7 @@ bdi, [dir="ltr"] { unicode-bidi: isolate; }
 .hero h1 { font-size: var(--text-4); max-inline-size: 14ch; }
 /* 390: the encounter (a close-up of real stitches in the open loop) comes first in the DOM and the view */
 @media (max-width: 52.49em) { .hero-grid { gap: var(--space-l); } }
-@media (min-width: 52.5em) { .hero-grid > .encounter { order: 1; } }
+@media (min-width: 52.5em) { .hero-grid > .encounter { order: 1; } .hero-grid:has(.encounter) { align-items: start; } }
 :lang(ar) .hero h1 { max-inline-size: 13ch; }
 .hero .lead { margin-block-start: var(--space-s); }
 .hero .actions { margin-block-start: var(--space-l); }
@@ -531,6 +531,13 @@ body.has-sticky .toast { inset-block-end: calc(5rem + env(safe-area-inset-bottom
 .enc-btn[aria-disabled] { pointer-events: none; }
 .enc-tile .reveal, .slot-art .tile picture { transition: opacity var(--dur-3) var(--ease-out); }
 .enc-stage:not(.is-met) .reveal { opacity: 0; }
+/* the zoom-out: the photo starts magnified on the clue's stitches and settles to the whole piece */
+.enc-tile .reveal img { transform-origin: var(--ox, 50%) var(--oy, 50%); }
+.enc-stage:not(.is-met) .reveal img { transform: scale(3.2); }
+.enc-stage.is-met .reveal img { transition: transform 700ms var(--ease-out); }
+.enc-stage.is-met .clue { opacity: 0; transition: opacity var(--dur-2) var(--ease-out); }
+.enc-panel.is-pending { opacity: 0; }
+.enc-panel { transition: opacity var(--dur-3) var(--ease-out); }
 .enc-btn { position: absolute; inset-block-end: 2%; inset-inline: 0; margin-inline: auto; inline-size: max-content; box-shadow: var(--shadow-2); }
 .enc-panel { display: grid; gap: var(--space-2xs); justify-items: center; max-inline-size: 26rem; }
 .enc-peek { font-size: var(--text-1); color: var(--color-text-muted); }
@@ -591,6 +598,8 @@ button.text-link { background: none; border: 0; padding: 0; font: inherit; font-
 
 /* turn the 3D sketch */
 .gallery.is-turning > .tile, .gallery.is-turning > .loupe { visibility: hidden; }
+.gallery.is-turning + .loupe-hint { display: none; }
+.pdp .gallery .tile { clip-path: inset(0 round var(--radius-lg)); }
 .turn { position: absolute; inset: 0; display: grid; grid-template-rows: 1fr auto auto; border-radius: var(--radius-lg); background: var(--color-surface-2); overflow: hidden; z-index: 3; }
 .turn-stage { background-repeat: no-repeat; background-position: 50% 0; cursor: grab; touch-action: pan-y; opacity: 0; transition: opacity var(--dur-2) var(--ease-out); }
 .turn-stage.ready { opacity: 1; }
@@ -605,5 +614,6 @@ button.text-link { background: none; border: 0; padding: 0; font: inherit; font-
 @media (prefers-reduced-motion: reduce) {
   .is-closing .ring-stitch { transition: none; }
   .squash, .bump .book-ring { animation: none; }
-  .toast, .bar-fill, .turn-stage, .enc-tile .reveal { transition: none; }
+  .toast, .bar-fill, .turn-stage, .enc-tile .reveal, .enc-panel, .enc-stage.is-met .clue { transition: none; }
+  .enc-stage .reveal img, .enc-stage.is-met .reveal img { transform: none; transition: none; }
 }

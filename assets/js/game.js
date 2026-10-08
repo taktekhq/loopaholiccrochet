@@ -27,7 +27,6 @@
     document.querySelectorAll('[data-book-count]').forEach(function (el) {
       el.textContent = met.length + '/' + I.total;
       var a = el.closest('a');
-      if (a) a.setAttribute('aria-label', I.nav_book + ' ' + met.length + '/' + I.total);
       if (bump && !reduce) { a.classList.remove('bump'); void a.offsetWidth; a.classList.add('bump'); }
     });
   }
@@ -96,6 +95,8 @@
     var bind = function (c, focus) {
       var btn = live.querySelector('.enc-btn');
       track('encounter', { creature: c.id });
+      btn.setAttribute('role', 'button');
+      btn.addEventListener('keydown', function (e) { if (e.key === ' ') { e.preventDefault(); btn.click(); } });
       if (focus) btn.focus();
       btn.addEventListener('click', function (e) {
         e.preventDefault();
@@ -104,24 +105,29 @@
         var stage = live.querySelector('.enc-stage'), tile = live.querySelector('.enc-tile');
         var pic = photo(c.id, c.title);
         pic.className = 'reveal';
+        if (c.c) { pic.querySelector('img').style.setProperty('--ox', (c.c[0] * 100) + '%'); pic.querySelector('img').style.setProperty('--oy', (c.c[1] * 100) + '%'); }
         tile.appendChild(pic);
+        // the panel is laid out now, while the tap still counts as input (no layout shift later), and fades in once the ring is shut
+        var panel = live.querySelector('.enc-panel');
+        panel.classList.add('is-pending');
+        panel.innerHTML = '<p class="enc-title" tabindex="-1"></p><p class="cr-type"><span class="type-stamp"></span></p><p class="enc-line"></p>' +
+          '<p class="enc-progress"></p><div class="actions"><a class="btn btn-primary"></a><button class="text-link" type="button"></button></div>';
+        panel.querySelector('.enc-title').textContent = fmt(I.enc_met, { name: c.name });
+        panel.querySelector('.type-stamp').textContent = c.type;
+        panel.querySelector('.enc-line').textContent = c.line;
+        panel.querySelector('.enc-progress').textContent = fmt(I.progress, { n: met.length + 1, total: I.total });
+        var a = panel.querySelector('a');
+        a.href = c.url + '#creature';
+        a.textContent = fmt(I.enc_card, { name: c.name });
+        var again = panel.querySelector('button');
+        again.textContent = I.enc_again;
+        again.addEventListener('click', function () { showNext(true); });
         closeRing(stage, function () {
           btn.remove();
           add(c.id);
           track('catch', { creature: c.id, source: 'home' });
-          var panel = live.querySelector('.enc-panel');
-          panel.innerHTML = '<p class="enc-title" tabindex="-1"></p><p class="cr-type"><span class="type-stamp"></span></p><p class="enc-line"></p>' +
-            '<p class="enc-progress"></p><div class="actions"><a class="btn btn-primary"></a><button class="text-link" type="button"></button></div>';
-          panel.querySelector('.enc-title').textContent = fmt(I.enc_met, { name: c.name });
-          panel.querySelector('.type-stamp').textContent = c.type;
-          panel.querySelector('.enc-line').textContent = c.line;
           panel.querySelector('.enc-progress').textContent = fmt(I.progress, { n: met.length, total: I.total });
-          var a = panel.querySelector('a');
-          a.href = c.url + '#creature';
-          a.textContent = fmt(I.enc_card, { name: c.name });
-          var again = panel.querySelector('button');
-          again.textContent = I.enc_again;
-          again.addEventListener('click', function () { showNext(true); });
+          panel.classList.remove('is-pending');
           panel.querySelector('.enc-title').focus({ preventScroll: true });
         });
       });
@@ -336,7 +342,7 @@
         y += 108;
       });
       // the stamp
-      x.save(); x.translate(ar ? 300 : W - 300, 900); x.rotate(ar ? 0.1 : -0.1);
+      x.save(); x.translate(ar ? 300 : W - 300, 876); x.rotate(ar ? 0.1 : -0.1);
       x.font = '800 ' + (ar ? 52 : 50) + 'px ' + fam; x.textAlign = 'center'; x.direction = ar ? 'rtl' : 'ltr';
       var sw = x.measureText(I.id_stamp).width + 64;
       rr(-sw / 2, -60, sw, 104, 20); x.fillStyle = PAPER; x.fill(); x.lineWidth = 8; x.strokeStyle = ACC; x.stroke();

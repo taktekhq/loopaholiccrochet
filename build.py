@@ -345,6 +345,7 @@ GAME_T = {
         "book_link_label": "Your Stitch Book",
         "enc_h": "Meet a Loopaholic",
         "enc_peek": "Whose stitches are these?",
+        "enc_clue_alt": "Close-up of the stitches of someone you haven’t met yet",
         "enc_btn": "Meet them",
         "enc_met": "You met {name}!",
         "enc_card": "See {name}’s card",
@@ -367,11 +368,11 @@ GAME_T = {
         "card_h": "Meet {name}",
         "card_called": "This one’s called {name}.",
         "card_type": "Type",
-        "card_fav": "Favourite thing",
+        "card_fav": "Favorite thing",
         "card_fiction": "The name and story are make-believe; the piece in the photo is real.",
         "card_turn": "Turn {name} around",
         "card_share": "Share {name}’s card",
-        "turn_note": "A 3D sketch made from the photo: colours and stitches differ from the real piece.",
+        "turn_note": "A 3D sketch made from the photo: colors and stitches differ from the real piece.",
         "turn_back": "Back to the photo",
         "turn_left": "Turn left", "turn_right": "Turn right",
         "turn_label": "3D sketch of {name}. Drag, or use the arrow keys, to turn.",
@@ -382,7 +383,7 @@ GAME_T = {
         "share_text": "Hint: I’d love {name} ({title}) from Loopaholic.",
         "share_saved": "Card saved. Post it to your story, or send it to a friend.",
         "id_title": "Loopaholic friend card",
-        "id_name": "Name", "id_type": "Type", "id_fav": "Favourite thing",
+        "id_name": "Name", "id_type": "Type", "id_fav": "Favorite thing",
         "id_born": "Born", "id_born_v": "Lebanon, stitch by stitch",
         "id_status": "Status", "id_status_v": "Made when someone orders",
         "id_stamp": "Someone get me this",
@@ -393,6 +394,7 @@ GAME_T = {
         "book_link_label": "دفتر الغُرَز",
         "enc_h": "تعرّفوا على شخصية من Loopaholic",
         "enc_peek": "لمن هذه الغُرَز؟",
+        "enc_clue_alt": "صورة مقرّبة لغرز شخصية لم تتعرّفوا عليها بعد",
         "enc_btn": "تعرّفوا عليه",
         "enc_met": "تعرّفتم على {name}!",
         "enc_card": "بطاقة {name}",
@@ -677,7 +679,7 @@ def nav_links(t, active, key_only_shop=False):
         cls = ' class="key"' if (key_only_shop and name in ("shop", "book")) else ""
         if name == "book":
             # the Stitch Book: ring + "4/36" (filled by game.js); on phones the word hides behind the ring
-            label = (f'<span class="book-ring" aria-hidden="true"></span><span class="book-word">{t[key]}</span>'
+            label = (f'<span class="book-ring" aria-hidden="true"></span><span class="book-word">{t[key]}</span> '
                      f'<span class="book-count" data-book-count></span>')
             out.append(f'<li{cls}><a class="book-link" href="{L(t, href)}"{cur}>{label}</a></li>')
             continue
@@ -795,7 +797,7 @@ def game_i18n(t):
 def creatures_json(t):
     """Every creature, for the home encounter (book and product pages read their own markup)."""
     lang = t["lang"]
-    data = [{"id": p["id"], "name": CR[p["id"]]["name"][lang], "type": TYPES[CR[p["id"]]["type"]][lang],
+    data = [{"id": p["id"], "name": CR[p["id"]]["name"][lang], "c": STITCH_CENTRES.get(p["id"], [0.5, 0.5]), "type": TYPES[CR[p["id"]]["type"]][lang],
              "line": CR[p["id"]]["line"][lang], "title": p["title"][lang], "url": L(t, f"/shop/{p['slug']}/")} for p in PRODUCTS]
     return f'<script type="application/json" id="creatures">{json.dumps(data, ensure_ascii=False)}</script>'
 
@@ -907,7 +909,7 @@ def build_home(t, outdir):
       <h2 class="vh" id="enc-h">{t['enc_h']}</h2>
       <div class="enc" data-id="{hero['id']}">
         <div class="enc-stage">
-          <span class="tile enc-tile"><picture class="clue"><source type="image/avif" srcset="{sb}/stitch.avif"><source type="image/webp" srcset="{sb}/stitch.webp"><img src="{sb}/stitch.jpg" width="400" height="400" alt="{esc(t['loupe_alt'])}" fetchpriority="high" decoding="async"></picture></span>
+          <span class="tile enc-tile"><picture class="clue"><source type="image/avif" srcset="{sb}/stitch.avif"><source type="image/webp" srcset="{sb}/stitch.webp"><img src="{sb}/stitch.jpg" width="400" height="400" alt="{esc(t['enc_clue_alt'])}" fetchpriority="high" decoding="async"></picture></span>
           {ring_svg()}
           <a class="btn btn-primary enc-btn" href="{L(t, '/shop/' + hero['slug'] + '/')}#creature">{t['enc_btn']}</a>
         </div>
