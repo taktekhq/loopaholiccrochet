@@ -18,6 +18,7 @@ INSTAGRAM_HANDLE = "@loopaholic.crochet"
 # Set this once Rana/Nizar give one; WhatsApp buttons fall back to the
 # Instagram DM link until then.
 WHATSAPP_NUMBER = None  # e.g. "+9613XXXXXX"
+HAS_WHATSAPP = bool(WHATSAPP_NUMBER)
 
 CATALOG = json.load(open(os.path.join(ROOT, "catalog.json"), encoding="utf-8"))
 PRODUCTS = CATALOG["products"]
@@ -41,6 +42,20 @@ def whatsapp_link(text):
     from urllib.parse import quote
     return f"https://wa.me/{num}?text={quote(text)}"
 
+def price_link(t, wa_href, ctx_js):
+    """Single price/order CTA: WhatsApp once a number exists, Instagram until then."""
+    if HAS_WHATSAPP:
+        return f'<a href="{wa_href}" onclick="gtag(\'event\',\'whatsapp_click\',{ctx_js})">{t["price_cta"]}</a>'
+    return f'<a href="{INSTAGRAM}" onclick="gtag(\'event\',\'instagram_click\',{ctx_js})">{t["price_cta_ig"]}</a>'
+
+def order_buttons(t, wa_href, ctx_js):
+    """Order CTAs: WhatsApp + Instagram once a number exists, Instagram only until then
+    (both buttons point at the same Instagram DM otherwise, which is a duplicate, not a choice)."""
+    if HAS_WHATSAPP:
+        return (f'<a class="btn btn-primary" href="{wa_href}" onclick="gtag(\'event\',\'whatsapp_click\',{ctx_js})">{t["order_whatsapp"]}</a>\n'
+                f'          <a class="btn btn-outline" href="{INSTAGRAM}" onclick="gtag(\'event\',\'instagram_click\',{ctx_js})">{t["order_instagram"]}</a>')
+    return f'<a class="btn btn-primary" href="{INSTAGRAM}" onclick="gtag(\'event\',\'instagram_click\',{ctx_js})">{t["order_instagram"]}</a>'
+
 # ---------------------------------------------------------------- i18n ----
 T = {
     "en": {
@@ -53,6 +68,7 @@ T = {
         "cta_shop": "Shop the collection", "cta_instagram": "See more on Instagram",
         "shop_title": "Shop", "shop_lead": "Every piece below is made to order by hand. Message us on WhatsApp or Instagram for the price.",
         "price_cta": "Ask for the price on WhatsApp",
+        "price_cta_ig": "Ask for the price on Instagram",
         "badge_handmade": "Handmade in Lebanon", "badge_handmade_d": "Every piece is crocheted by hand, start to finish.",
         "badge_order": "Made to order", "badge_order_d": "We start your piece once you order — no stock sitting on a shelf.",
         "badge_ship": "Ships worldwide", "badge_ship_d": "Lebanon, the Gulf, and internationally.",
@@ -116,6 +132,7 @@ T = {
         "cta_shop": "تصفّح المجموعة", "cta_instagram": "المزيد على إنستغرام",
         "shop_title": "المتجر", "shop_lead": "كل قطعة أدناه تُصنع يدويًا عند الطلب. راسلينا على واتساب أو إنستغرام لمعرفة السعر.",
         "price_cta": "اسألينا عن السعر على واتساب",
+        "price_cta_ig": "اسألينا عن السعر على إنستغرام",
         "badge_handmade": "مصنوع يدويًا في لبنان", "badge_handmade_d": "كل قطعة مكروشية بالكامل باليد.",
         "badge_order": "تُصنع عند الطلب", "badge_order_d": "نبدأ قطعتك بعد الطلب — لا مخزون جاهز على الرف.",
         "badge_ship": "شحن عالمي", "badge_ship_d": "لبنان، دول الخليج، وحول العالم.",
@@ -170,6 +187,27 @@ T = {
         "meta_shop_desc": "تصفحي حيوانات وعرائس وزهور وهدايا كروشيه يدوية، تُصنع عند الطلب وتُشحن من لبنان حول العالم.",
     },
 }
+
+if not HAS_WHATSAPP:
+    # Copy must not claim a WhatsApp ordering channel that doesn't exist yet
+    # (R8, reviewer 2026-10-08). Revert this once WHATSAPP_NUMBER is set.
+    import re as _re
+    _CHANNEL_RULES = [
+        (r"WhatsApp or Instagram", "Instagram"),
+        (r"Instagram or WhatsApp", "Instagram"),
+        (r"واتساب أو إنستغرام", "إنستغرام"),
+        (r"إنستغرام أو واتساب", "إنستغرام"),
+    ]
+    def _ig_only(s):
+        for pat, rep in _CHANNEL_RULES:
+            s = _re.sub(pat, rep, s)
+        return s
+    for _lang in T:
+        for _k, _v in list(T[_lang].items()):
+            if isinstance(_v, str):
+                T[_lang][_k] = _ig_only(_v)
+            elif _k == "faq":
+                T[_lang][_k] = [(_ig_only(q), _ig_only(a)) for q, a in _v]
 
 def nav_html(t, active):
     items = [
@@ -289,7 +327,7 @@ def product_card(p, t):
   <img src="/{p['image']['thumb']}" alt="{title}" loading="lazy" width="400" height="400">
   <div class="body">
     <h3>{title}</h3>
-    <div class="price">{t['price_cta']}</div>
+    <div class="price">{t['price_cta'] if HAS_WHATSAPP else t['price_cta_ig']}</div>
   </div>
 </a>'''
 
@@ -399,7 +437,7 @@ def build_product(p, t, outdir):
       <img src="/{p['image']['main']}" alt="{title}" width="800" height="800">
       <div>
         <h1>{title}</h1>
-        <div class="price-block"><a href="{wa_href}" onclick="gtag('event','whatsapp_click',{{product:'{p['slug']}'}})">{t['price_cta']}</a></div>
+        <div class="price-block">{price_link(t, wa_href, f"{{product:'{p['slug']}'}}")}</div>
         <div class="meta-row">
           <span class="pill">{t['size_label']}: {p['size_approx']}</span>
           <span class="pill">{t['colors_label']}: {colors}</span>
@@ -410,8 +448,7 @@ def build_product(p, t, outdir):
         <h2 style="font-size:1.1rem;margin-top:1.4em">{t['order_lebanon_title']}</h2>
         <p>{t['order_lebanon_body']}</p>
         <div class="order-actions">
-          <a class="btn btn-primary" href="{wa_href}" onclick="gtag('event','whatsapp_click',{{product:'{p['slug']}'}})">{t['order_whatsapp']}</a>
-          <a class="btn btn-outline" href="{INSTAGRAM}" onclick="gtag('event','instagram_click',{{product:'{p['slug']}'}})">{t['order_instagram']}</a>
+          {order_buttons(t, wa_href, f"{{product:'{p['slug']}'}}")}
         </div>
 
         <h2 style="font-size:1.1rem;margin-top:1.4em">{t['order_intl_title']}</h2>
@@ -448,8 +485,7 @@ def build_custom(t, outdir):
       <li>{t['custom_how_3']}</li>
     </ol>
     <div class="cta-row" style="justify-content:flex-start">
-      <a class="btn btn-primary" href="{wa_href}" onclick="gtag('event','whatsapp_click',{{page:'custom-orders'}})">{t['custom_cta']}</a>
-      <a class="btn btn-outline" href="{INSTAGRAM}" onclick="gtag('event','instagram_click',{{page:'custom-orders'}})">{t['order_instagram']}</a>
+      {f'<a class="btn btn-primary" href="{wa_href}" onclick="gtag(\'event\',\'whatsapp_click\',{{page:\'custom-orders\'}})">{t["custom_cta"]}</a>\n      <a class="btn btn-outline" href="{INSTAGRAM}" onclick="gtag(\'event\',\'instagram_click\',{{page:\'custom-orders\'}})">{t["order_instagram"]}</a>' if HAS_WHATSAPP else f'<a class="btn btn-primary" href="{INSTAGRAM}" onclick="gtag(\'event\',\'instagram_click\',{{page:\'custom-orders\'}})">{t["custom_cta"]}</a>'}
     </div>
   </div>
 </section>
