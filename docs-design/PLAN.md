@@ -130,3 +130,8 @@ At ≥ 52.5em the full nav is inline. Language switch and menu ≥ 44 px.
   The sushi photo (a scene, not a cut-out) is cropped to its own photo and fills the tile.
 - Kitten in a Bee Costume (p207) stays in the shop and keeps its page, but is not used on home or in
   "More pieces like this": a sliver of a hand sits between its paws and can't be cropped out cleanly.
+
+## Round 3
+- The product-page loupe is live: it follows the pointer (or a tap/drag, or arrow keys) over the full
+  1200 px photo at 1 photo px per CSS px, loading that file only on first use. Static crop = no-JS view.
+- p207 is shown cropped to the head and front paws (hand sliver removed by framing only).

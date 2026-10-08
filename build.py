@@ -57,6 +57,7 @@ GROUP_LABEL = {"more": {"en": "Gifts & more", "ar": "هدايا وأكثر"}}
 GROUP_OF = {c: g for g, cs in SHOP_GROUPS for c in cs}
 # Kept out of home and "more pieces" picks: its photo has a sliver of a hand in it.
 NOT_FEATURED = {"p207"}
+CROPPED = {"p207"}   # photo cropped to the head and front paws (make_images.py CROP)
 
 
 def group_label(g, lang):
@@ -95,6 +96,10 @@ T = {
         "hero_lead": "Plushies, dolls, flowers and baby pieces, crocheted by hand once you order. For birthdays, new arrivals, or anyone who likes a soft thing to hold.",
         "cta_shop": "Browse the pieces", "how_link": "How ordering works",
         "loupe_alt": "Close-up of the stitches, cropped from the same photo",
+        "loupe_role": "magnifier",
+        "loupe_hint": "Move over the photo: the ring shows the stitches up close.",
+        "crop_note": " Photo cropped to the head and front paws.",
+        "loupe_label": "Close-up of the stitches, from the same photo. Use the arrow keys to move it over the photo, Escape to put it back.",
         "featured_h": "Some of the pieces", "featured_more": "See every piece in the shop",
         "how_h": "How ordering works",
         "how_lead": "There’s no cart and no checkout. You order in a conversation with the person who makes it.",
@@ -110,7 +115,7 @@ T = {
         "follow_b": "Follow the latest pieces and works in progress on Instagram.",
         "follow_cta": "Follow @loopaholic.crochet",
         "shop_title": "Shop",
-        "shop_lead": "Every piece is crocheted by hand when you order it. Prices are confirmed by message.",
+        "shop_lead": "Every piece is made by hand when you order it.",
         "chips_label": "Categories",
         "cant_find_h": "Can’t find it?", "cant_find_b": "Ask for a different color, a name, or a piece that doesn’t exist yet.",
         "cant_find_link": "Custom orders",
@@ -176,7 +181,6 @@ T = {
         "faq_lead_time_unconfirmed": "We confirm the making time when you message us. Custom orders usually take a bit longer.",
         "footer_tagline": "Handmade crochet from Lebanon, made to order.",
         "footer_shop": "Shop", "footer_info": "Help", "footer_follow": "Follow",
-        "footer_lang": "Language",
         "meta_home_desc": "Handmade amigurumi plushies, dolls, flowers and baby gifts, crocheted to order in Lebanon and shipped to the Gulf and worldwide.",
         "meta_shop_desc": "Browse handmade crochet plushies, dolls, flowers and gifts, made to order and shipped from Lebanon worldwide.",
         "nf_title": "Page not found",
@@ -194,6 +198,10 @@ T = {
         "hero_lead": "حيوانات محشوة وعرائس وزهور وقطع للأطفال، نحيكها باليد بعد طلبكم. لأعياد الميلاد، للمولود الجديد، أو لكل من يحب شيئًا ناعمًا يحضنه.",
         "cta_shop": "تصفّحوا القطع", "how_link": "كيف يتم الطلب",
         "loupe_alt": "صورة مقرّبة للغرز، مقتطعة من الصورة نفسها",
+        "loupe_role": "عدسة مكبّرة",
+        "loupe_hint": "مرّروا المؤشر فوق الصورة: الحلقة تُظهر الغرز عن قرب.",
+        "crop_note": " الصورة مقتطعة لتُظهر الرأس والقدمين الأماميتين.",
+        "loupe_label": "صورة مقرّبة للغرز من الصورة نفسها. استخدموا مفاتيح الأسهم لتحريكها فوق الصورة، وEscape لإعادتها.",
         "featured_h": "بعض القطع", "featured_more": "كل القطع في المتجر",
         "how_h": "كيف يتم الطلب",
         "how_lead": "لا سلة شراء ولا دفع إلكتروني. تطلبون بمحادثة مباشرة مع من تصنع القطعة.",
@@ -209,9 +217,9 @@ T = {
         "follow_b": "تابعوا أحدث القطع والأعمال الجارية على إنستغرام.",
         "follow_cta": "تابعوا @loopaholic.crochet",
         "shop_title": "المتجر",
-        "shop_lead": "كل قطعة نحيكها باليد عند طلبها. نؤكد السعر عبر الرسائل.",
+        "shop_lead": "كل قطعة نحيكها باليد عند طلبها.",
         "chips_label": "الفئات",
-        "cant_find_h": "لم تجدوا ما تريدين؟", "cant_find_b": "اطلبوا لونًا مختلفًا، أو اسمًا، أو قطعة غير موجودة بعد.",
+        "cant_find_h": "لم تجدوا ما تريدونه؟", "cant_find_b": "اطلبوا لونًا مختلفًا، أو اسمًا، أو قطعة غير موجودة بعد.",
         "cant_find_link": "الطلبات الخاصة",
         "breadcrumb_label": "مسار التصفح", "breadcrumb_home": "الرئيسية", "breadcrumb_shop": "المتجر",
         "size_label": "القياس", "colors_label": "الألوان في الصورة", "lead_label": "مدة التصنيع", "days": "يومًا",
@@ -253,7 +261,7 @@ T = {
         "shipping_returns_h": "الاسترجاع",
         "shipping_note_h": "جيد أن تعرفوا",
         "shipping_note_b_confirmed": "كل قطعة تُصنع عند الطلب، فتبدأ مدة الشحن بعد مدة التصنيع المذكورة في صفحة المنتج، لا من يوم الطلب. رسوم الجمارك خارج لبنان على مسؤولية المشتري.",
-        "shipping_note_b_unconfirmed": "كل قطعة تُصنع عند الطلب، فيبدأ الشحن بعد انتهاء صنع قطعتك، لا من يوم الطلب. نؤكد مدة التصنيع عندما تراسلونا. رسوم الجمارك خارج لبنان على مسؤولية المشتري.",
+        "shipping_note_b_unconfirmed": "كل قطعة تُصنع عند الطلب، فيبدأ الشحن بعد انتهاء صنع قطعتكم، لا من يوم الطلب. نؤكد مدة التصنيع عندما تراسلونا. رسوم الجمارك خارج لبنان على مسؤولية المشتري.",
         "about_title": "عن الحرفة",
         "about_lead": "كل قطعة نحيكها باليد في لبنان، غرزة بعد غرزة.",
         "about_body_1": "تصنع لوباهوليك قطع الأميغورومي — شخصيات كروشيه محشوة — وزهور الكروشيه بالكامل باليد، غرزة بعد غرزة. لا شيء مصنوع بالآلة أو بكميات كبيرة: كل حيوان محشو وعروسة وزهرة في هذا المتجر مصنوع يدويًا في لبنان وعند الطلب.",
@@ -275,11 +283,10 @@ T = {
         "faq_lead_time_unconfirmed": "نؤكد مدة التصنيع عندما تراسلونا. الطلبات الخاصة تستغرق غالبًا أطول.",
         "footer_tagline": "كروشيه يدوي من لبنان، يُصنع عند الطلب.",
         "footer_shop": "المتجر", "footer_info": "مساعدة", "footer_follow": "تابعونا",
-        "footer_lang": "اللغة",
         "meta_home_desc": "حيوانات محشوة وعرائس وزهور وهدايا أطفال مصنوعة يدويًا بالكروشيه عند الطلب في لبنان، تُشحن إلى الخليج وحول العالم.",
         "meta_shop_desc": "تصفحوا حيوانات وعرائس وزهور وهدايا كروشيه يدوية، تُصنع عند الطلب وتُشحن من لبنان حول العالم.",
         "nf_title": "الصفحة غير موجودة",
-        "nf_body": "هذه الصفحة غير موجودة هنا. ربما تغيّر عنوانها عندما أعدنا بناء المتجر.",
+        "nf_body": "انحلّت غرزة: هذه الصفحة غير موجودة هنا. ربما تغيّر عنوانها عندما أعدنا بناء المتجر.",
         "nf_contact": "تبحثون عن قطعة معيّنة؟ راسلونا على إنستغرام.",
     },
 }
@@ -456,9 +463,11 @@ def picture(pid, alt, sizes, *, eager=False, cls=""):
             f'<img src="{b}/w800.jpg" width="800" height="800" alt="{esc(alt)}" {load}></picture>')
 
 
-def loupe(pid, t):
+def loupe(pid, t, interactive=False):
     b = img_base(pid)
-    return (f'<figure class="loupe"><picture>'
+    live = (f' data-full="{b}/w1200" data-role="{esc(t["loupe_role"])}" data-label="{esc(t["loupe_label"])}"'
+            if interactive else "")
+    return (f'<figure class="loupe"{live}><picture>'
             f'<source type="image/avif" srcset="{b}/stitch.avif"><source type="image/webp" srcset="{b}/stitch.webp">'
             f'<img src="{b}/stitch.jpg" width="400" height="400" alt="{esc(t["loupe_alt"])}" loading="lazy" decoding="async"></picture></figure>')
 
@@ -540,14 +549,15 @@ def font_faces(arabic):
 def ga_snippet():
     # gtag() is a stub that queues into dataLayer from the first byte; gtag.js loads on
     # the first interaction (so a DM click right after landing still gets sent) or when
-    # the browser is idle after `load`, whichever comes first.
+    # the browser is idle after DOMContentLoaded (1 s cap), whichever comes first. GA4 sends
+    # with sendBeacon, so a hit queued just before navigating to Instagram still goes out.
     return f"""<script>
 window.dataLayer=window.dataLayer||[];function gtag(){{dataLayer.push(arguments);}}
 if(!(navigator.webdriver||/bot|crawl|spider|headless|lighthouse/i.test(navigator.userAgent)||(screen.width===800&&screen.height===600))){{
-gtag('js',new Date());gtag('config','{GA}',{{anonymize_ip:true}});
+gtag('js',new Date());gtag('config','{GA}',{{anonymize_ip:true,transport_type:'beacon'}});
 var gl=function(){{if(gl.d)return;gl.d=1;var s=document.createElement('script');s.async=true;s.src='https://www.googletagmanager.com/gtag/js?id={GA}';document.head.appendChild(s);}};
 ['pointerdown','touchstart','keydown','scroll'].forEach(function(e){{addEventListener(e,gl,{{once:true,passive:true}});}});
-addEventListener('load',function(){{(window.requestIdleCallback||function(f){{setTimeout(f,1500)}})(gl,{{timeout:3000}});}});
+addEventListener('DOMContentLoaded',function(){{(window.requestIdleCallback||function(f){{setTimeout(f,1000)}})(gl,{{timeout:1000}});}});
 }}
 </script>"""
 
@@ -634,7 +644,7 @@ def footer(t, alt_path):
       <nav aria-labelledby="f-follow"><h2 id="f-follow">{t['footer_follow']}</h2><ul role="list">
         <li><a href="{INSTAGRAM}">{handle(t)}</a></li></ul></nav>
     </div>
-    <div class="foot-base"><span>© <span dir="ltr">{YEAR}</span> Loopaholic</span><a class="foot-lang" href="{alt_path}" hreflang="{t['alt_lang']}">{t['footer_lang']}: <bdi lang="{t['alt_lang']}">{t['alt_label']}</bdi></a></div>
+    <div class="foot-base"><span>© <span dir="ltr">{YEAR}</span> Loopaholic</span><a class="foot-lang" href="{alt_path}" hreflang="{t['alt_lang']}" lang="{t['alt_lang']}">{t['alt_label']}</a></div>
   </div>
 </footer>"""
 
@@ -801,14 +811,15 @@ def build_product(p, t, outdir):
     body = f'''<div class="wrap">
   <nav aria-label="{t['breadcrumb_label']}"><ol class="crumbs" role="list">
     <li><a href="{L(t, '/shop/')}">{t['breadcrumb_shop']}</a></li>
-    <li><a href="{L(t, '/shop/')}#cat-{GROUP_OF[p['category']]}">{cat}</a></li>
+    <li><a href="{L(t, '/shop/')}#cat-{GROUP_OF[p['category']]}">{group_label(GROUP_OF[p['category']], t['lang'])}</a></li>
   </ol></nav>
   <div class="pdp">
     <div>
       <div class="gallery">
-        <div class="tile">{picture(p['id'], desc, '(min-width: 52.5em) 55vw, 100vw', eager=True)}</div>
-        {loupe(p['id'], t)}
+        <div class="tile">{picture(p['id'], desc + t['crop_note'] if p['id'] in CROPPED else desc, '(min-width: 52.5em) 55vw, 100vw', eager=True)}</div>
+        {loupe(p['id'], t, interactive=True)}
       </div>
+      <p class="loupe-hint" aria-hidden="true">{t['loupe_hint']}</p>
     </div>
     <div class="pdp-info">
       <h1>{esc(title)}</h1>
@@ -918,8 +929,7 @@ def build_about(t, outdir):
     trio = "".join(f'<li class="tile">{picture(pid, "", "(min-width: 40em) 13rem, 30vw")}</li>' for pid in ("p066", "p150", "p013"))
     inner = (f'<ul class="trio" role="list">{trio}</ul>\n'
              f"<p>{t['about_body_1']}</p>\n<p>{t['about_body_2']}</p>\n"
-             f"<p>{t['about_body_3']} <a href=\"{INSTAGRAM}\">{handle(t)}</a></p>\n"
-             f'<p class="cta-block"><a class="btn btn-primary" href="{L(t, "/shop/")}">{t["cta_shop"]}</a></p>')
+             f"<p>{t['about_body_3']} <a href=\"{INSTAGRAM}\">{handle(t)}</a></p>")
     prose_page(t, outdir, rel="about", title_text=f"{t['about_title']} | {t['site_name']}", head_title=t["about_title"],
                lead=t["about_lead"], inner=inner, description=t["about_body_1"][:150], active="about", aside=how_aside(t))
 

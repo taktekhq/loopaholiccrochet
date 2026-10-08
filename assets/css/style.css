@@ -254,6 +254,13 @@ bdi, [dir="ltr"] { unicode-bidi: isolate; }
   background: var(--color-surface-2);
 }
 .loupe img { inline-size: 100%; block-size: 100%; object-fit: cover; }
+/* interactive loupe (product page, JS): the lens shows the full photo at 1 photo px per CSS px */
+.loupe[tabindex] { cursor: grab; z-index: 2; }
+.loupe[tabindex]:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 4px; border-radius: 50%; }
+.loupe-lens { position: absolute; inset: 0; border-radius: 50%; background-repeat: no-repeat; background-color: var(--color-surface-2); opacity: 0; pointer-events: none; }
+.loupe.is-live { touch-action: none; cursor: grabbing; }
+.loupe.is-live .loupe-lens { opacity: 1; }
+@media (hover: hover) { .pdp .tile { cursor: zoom-in; } }
 @media (min-width: 52.5em) { .loupe { inset-inline-end: calc(-1 * var(--space-m)); inset-block-end: calc(-1 * var(--space-l)); } }
 
 /* ==== piece (grid item: photo + name, no card chrome) ==== */
@@ -329,7 +336,7 @@ bdi, [dir="ltr"] { unicode-bidi: isolate; }
 }
 :lang(ar) .chip { font-size: var(--text-0); }
 @media (hover: hover) { .chip:hover { background: var(--color-accent-subtle); color: var(--color-text); } }
-.chip[aria-current="true"] { background: var(--color-text); color: var(--color-surface); }
+.chip[aria-current="true"] { background: var(--color-accent-subtle); color: var(--color-text); text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 0.4em; }
 .shop-body { padding-block-start: var(--space-l); }
 .cat { scroll-margin-block-start: 5rem; }
 .cat + .cat { margin-block-start: var(--space-2xl); }
@@ -400,6 +407,10 @@ bdi, [dir="ltr"] { unicode-bidi: isolate; }
 .head-cta { margin-block-start: var(--space-l); }
 .head-cta + p { margin-block-start: var(--space-xs); }
 .custom-layout { display: grid; grid-template-areas: "head" "body" "ex" "how"; padding-block-end: var(--space-2xl); }
+@media (min-width: 52.5em) {  /* the closing CTA can share a viewport with the head one: secondary here */
+  .c-how .cta-block .btn-primary { background: transparent; color: var(--color-text); border-color: var(--color-border-strong); }
+}
+@media (min-width: 52.5em) and (hover: hover) { .c-how .cta-block .btn-primary:hover { background: transparent; color: var(--color-accent); border-color: var(--color-accent); } }
 .c-head { grid-area: head; } .c-body { grid-area: body; } .c-ex { grid-area: ex; } .c-how { grid-area: how; margin-block-start: var(--space-xl); }
 @media (min-width: 52.5em) {
   .custom-layout { grid-template-columns: minmax(0, 1fr) 22rem; grid-template-areas: "head ex" "body ex" "how ex"; column-gap: var(--space-3xl); align-items: start; }
@@ -417,7 +428,7 @@ bdi, [dir="ltr"] { unicode-bidi: isolate; }
 /* ==== 404 ==== */
 .lost { padding-block: var(--space-2xl) var(--space-3xl); }
 /* the loupe ring with nothing in it: the one brand moment on the error page */
-.lost-ring { inline-size: 7.5rem; aspect-ratio: 1; border-radius: 50%; border: var(--ring) solid var(--color-accent);
+.lost-ring { margin-inline: auto; inline-size: 7.5rem; aspect-ratio: 1; border-radius: 50%; border: var(--ring) solid var(--color-accent);
   background: var(--color-surface-2); box-shadow: 0 0 0 3px var(--color-surface), var(--shadow-2); margin-block-end: var(--space-xl); }
 .lost-grid { display: grid; gap: var(--space-2xl); }
 @media (min-width: 52.5em) { .lost-grid { grid-template-columns: 1fr 1fr; } }
@@ -436,14 +447,19 @@ bdi, [dir="ltr"] { unicode-bidi: isolate; }
 :lang(ar) .foot-grid h2 { font-size: var(--text-0); }
 .foot-grid ul a { display: inline-flex; align-items: center; min-block-size: var(--tap); text-decoration: none; }
 @media (hover: hover) { .site-footer ul a:hover { text-decoration: underline; color: var(--color-band-text); } }
-.foot-lang { display: inline-flex; align-items: center; gap: 0.35em; min-block-size: var(--tap); color: var(--color-band-text) !important; }
+.foot-lang { display: inline-flex; align-items: center; min-block-size: var(--tap); color: var(--color-band-text) !important; text-decoration: none; }
+@media (hover: hover) { .foot-lang:hover { text-decoration: underline; } }
 .foot-base { margin-block-start: var(--space-xl); padding-block-start: var(--space-m); border-block-start: 1px solid rgb(241 235 246 / .2); font-size: var(--text--1); color: var(--color-band-muted); display: flex; flex-wrap: wrap; gap: var(--space-2xs) var(--space-l); justify-content: space-between; align-items: center; }
 @media (min-width: 52.5em) {
   .foot-grid { grid-template-columns: 2fr 1fr 1fr 1fr; }
   .foot-brand { grid-column: auto; }
 }
-body.has-sticky .site-footer { padding-block-end: calc(var(--space-xl) + 5rem); }
+body.has-sticky .site-footer { padding-block-end: calc(var(--space-xl) + 4.5rem); }
 @media (min-width: 52.5em) { body.has-sticky .site-footer { padding-block-end: var(--space-xl); } }
 .prose > :first-child h2 { margin-block-start: 0; }
 .measure { max-inline-size: var(--measure); }
 .section.flush { padding-block-start: 0; }
+.loupe-hint { display: none; }
+@media (hover: hover) and (min-width: 52.5em) {
+  .loupe-hint { display: block; margin-block-start: var(--space-xl); padding-inline-end: 34%; font-size: var(--text--1); color: var(--color-text-muted); }
+}

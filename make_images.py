@@ -90,6 +90,10 @@ STITCH_AT = {"p043": (390, 710), "p012": (490, 230), "p005": (430, 200), "p445":
 # Photos that are a scene (their own backdrop), not a cut-out: crop to the photo itself
 # and let it fill the tile, instead of a photo-in-a-box on the lilac ground.
 SCENE = {"p445"}
+# Presentation crops (box in the 1200 px photo), applied after re-grounding. p207: the
+# original frame has a sliver of a hand between the lower paws; cropping to the head and
+# front paws removes it without touching the piece. A reshoot is requested from Rana.
+CROP = {"p207": (235, 100, 985, 850)}
 
 
 def scene_crop(src):
@@ -168,6 +172,10 @@ def one(job):
         d = os.path.join(OUT, pid)
         os.makedirs(d, exist_ok=True)
         img, bg = scene_crop(os.path.join(ROOT, src)) if pid in SCENE else reground(os.path.join(ROOT, src))
+        if pid in CROP:
+            box = CROP[pid]
+            img = img.crop(box).resize((1200, 1200), Image.LANCZOS)
+            bg = np.asarray(Image.fromarray(bg[box[1]:box[3], box[0]:box[2]]).resize((1200, 1200), Image.NEAREST))
         save_set(img, d + "/")
         st = stitch_crop(img, bg, pid=pid)
         st.save(f"{d}/stitch.avif", quality=62, speed=4)
