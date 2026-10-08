@@ -713,36 +713,6 @@
       "stripe_payment_link": ""
     },
     {
-      "id": "p128",
-      "slug": "striped-crochet-pouch",
-      "category": "accessory",
-      "colors": [
-        "olive",
-        "yellow",
-        "orange",
-        "red"
-      ],
-      "size_approx": "~18 cm long",
-      "lead_time_days": [
-        10,
-        18
-      ],
-      "made_to_order": true,
-      "title": {
-        "en": "Striped Crochet Pouch",
-        "ar": "محفظة كروشيه مخططة"
-      },
-      "description": {
-        "en": "A zippered crochet pouch in bold olive, yellow, orange and red stripes — big enough for cards or small essentials.",
-        "ar": "محفظة كروشيه بسحاب بخطوط جريئة بألوان زيتي وأصفر وبرتقالي وأحمر، بحجم كافٍ للبطاقات أو الأساسيات الصغيرة."
-      },
-      "image": {
-        "main": "assets/img/products/p128/main.jpg",
-        "thumb": "assets/img/products/p128/thumb.jpg"
-      },
-      "stripe_payment_link": ""
-    },
-    {
       "id": "p150",
       "slug": "teddy-bear-plush",
       "category": "animal",
