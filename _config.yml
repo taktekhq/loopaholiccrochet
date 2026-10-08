@@ -1,0 +1,10 @@
+# GitHub Pages (Jekyll) settings: serve the generated site as-is and keep
+# build sources and design notes out of the published site.
+exclude:
+  - docs-design
+  - README.md
+  - build.py
+  - make_images.py
+  - make_brand_images.py
+  - catalog.json
+  - __pycache__

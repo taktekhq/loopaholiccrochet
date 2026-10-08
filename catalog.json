@@ -578,7 +578,7 @@
         "blue-grey",
         "white"
       ],
-      "size_approx": "~22 cm, comes with wooden stand",
+      "size_approx": "~22 cm, comes with a display stand",
       "lead_time_days": [
         10,
         21
@@ -589,8 +589,8 @@
         "ar": "قرش كروشيه محشو مع قاعدة"
       },
       "description": {
-        "en": "A blue-grey amigurumi shark with a white belly, posed upright on a small wooden display stand.",
-        "ar": "قرش كروشيه بلون أزرق رمادي وبطن أبيض، موضوع بشكل مستقيم على قاعدة عرض خشبية صغيرة."
+        "en": "A blue-grey amigurumi shark with a white belly, posed upright on a small display stand.",
+        "ar": "قرش كروشيه بلون أزرق رمادي وبطن أبيض، موضوع بشكل مستقيم على قاعدة عرض صغيرة."
       },
       "image": {
         "main": "assets/img/products/p092/main.jpg",
@@ -777,7 +777,7 @@
       "colors": [
         "yellow",
         "orange",
-        "natural wood"
+        "lavender"
       ],
       "size_approx": "~11 cm ring",
       "lead_time_days": [
@@ -786,12 +786,12 @@
       ],
       "made_to_order": true,
       "title": {
-        "en": "Duck Wooden Teether Ring",
-        "ar": "حلقة تسنين خشبية بشكل بطة"
+        "en": "Duck Teether Ring",
+        "ar": "حلقة تسنين بشكل بطة"
       },
       "description": {
-        "en": "A crocheted duck head on a natural wooden teething ring — a rattle and teether in one.",
-        "ar": "رأس بطة كروشيه مثبت على حلقة تسنين خشبية طبيعية — خشخيشة وحلقة تسنين معًا."
+        "en": "A crocheted duck head with an orange beak and feet, set on a pale lavender teether ring.",
+        "ar": "رأس بطة كروشيه بمنقار وقدمين برتقالية، مثبت على حلقة تسنين بلون ليلكي فاتح."
       },
       "image": {
         "main": "assets/img/products/p154/main.jpg",
@@ -806,7 +806,7 @@
       "colors": [
         "white",
         "tan",
-        "natural wood"
+        "beige"
       ],
       "size_approx": "~11 cm ring",
       "lead_time_days": [
@@ -815,12 +815,12 @@
       ],
       "made_to_order": true,
       "title": {
-        "en": "Lamb Wooden Teether Ring",
-        "ar": "حلقة تسنين خشبية بشكل خروف"
+        "en": "Lamb Teether Ring",
+        "ar": "حلقة تسنين بشكل خروف"
       },
       "description": {
-        "en": "A crocheted lamb head with a fluffy white head on a natural wooden teething ring.",
-        "ar": "رأس خروف كروشيه برأس أبيض مزغب مثبت على حلقة تسنين خشبية طبيعية."
+        "en": "A crocheted lamb head with a fluffy white top, set on a beige teether ring.",
+        "ar": "رأس خروف كروشيه بقمة بيضاء مزغبة، مثبت على حلقة تسنين بلون بيج."
       },
       "image": {
         "main": "assets/img/products/p160/main.jpg",
@@ -949,7 +949,7 @@
       "colors": [
         "blue-grey",
         "yellow",
-        "natural wood"
+        "beige"
       ],
       "size_approx": "~12 cm ring",
       "lead_time_days": [
@@ -958,12 +958,12 @@
       ],
       "made_to_order": true,
       "title": {
-        "en": "Elephant Wooden Teether Ring",
-        "ar": "حلقة تسنين خشبية بشكل فيل"
+        "en": "Elephant Teether Ring",
+        "ar": "حلقة تسنين بشكل فيل"
       },
       "description": {
-        "en": "A crocheted elephant head with big ears on a natural wooden teething ring.",
-        "ar": "رأس فيل كروشيه بأذنين كبيرتين مثبت على حلقة تسنين خشبية طبيعية."
+        "en": "A crocheted elephant head with big yellow-lined ears, set on a beige teether ring.",
+        "ar": "رأس فيل كروشيه بأذنين كبيرتين مبطنتين بالأصفر، مثبت على حلقة تسنين بلون بيج."
       },
       "image": {
         "main": "assets/img/products/p318/main.jpg",

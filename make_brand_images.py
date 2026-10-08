@@ -1,51 +1,34 @@
 #!/usr/bin/env python3
-"""Generates og.jpg and favicon/touch icons from brand colors (no external assets)."""
+"""Copies the Loopaholic brand-kit icons, logo and link preview into assets/img.
+
+Source of truth is the kit (brand/products/loopaholic in the brand repo); this
+site only mirrors it. Re-run after the kit changes.
+"""
 import os
-from PIL import Image, ImageDraw, ImageFont
+import shutil
+
+from PIL import Image
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(ROOT, "assets", "img")
-BG = (251, 244, 236)
-INK = (58, 46, 39)
-ACCENT = (193, 97, 63)
-FONT = "/System/Library/Fonts/Supplemental/Georgia.ttf"
+KIT = os.environ.get("LOOPAHOLIC_KIT", os.path.expanduser("~/taktekhq/brand/products/loopaholic"))
 
-def wordmark(size, draw_dot=True):
-    im = Image.new("RGB", size, BG)
-    d = ImageDraw.Draw(im)
-    text = "Loopaholic"
-    fsize = int(size[1] * 0.22)
-    font = ImageFont.truetype(FONT, fsize)
-    bbox = d.textbbox((0, 0), text, font=font)
-    tw, th = bbox[2] - bbox[0], bbox[3] - bbox[1]
-    dot_r = int(fsize * 0.12)
-    gap = int(fsize * 0.25)
-    total_w = tw + (dot_r * 2 + gap if draw_dot else 0)
-    x = (size[0] - total_w) // 2
-    y = (size[1] - th) // 2 - bbox[1]
-    if draw_dot:
-        cy = size[1] // 2
-        d.ellipse([x, cy - dot_r, x + dot_r * 2, cy + dot_r], fill=ACCENT)
-        x += dot_r * 2 + gap
-    d.text((x, y), text, font=font, fill=INK)
-    return im
-
-def icon(size):
-    im = Image.new("RGB", (size, size), BG)
-    d = ImageDraw.Draw(im)
-    r = int(size * 0.3)
-    cx = cy = size // 2
-    d.ellipse([cx - r, cy - r, cx + r, cy + r], fill=ACCENT)
-    inner = int(r * 0.45)
-    d.ellipse([cx - inner, cy - inner, cx + inner, cy + inner], fill=BG)
-    return im
 
 def main():
     os.makedirs(OUT, exist_ok=True)
-    wordmark((1200, 630)).save(os.path.join(OUT, "og.jpg"), quality=88)
-    for size, name in [(512, "icon-512.png"), (180, "icon-180.png"), (32, "icon-32.png")]:
-        icon(size).save(os.path.join(OUT, name))
-    print("brand images written")
+    copies = {
+        "icons/favicon.svg": "icon.svg",
+        "icons/favicon-32.png": "icon-32.png",
+        "icons/apple-touch-icon.png": "icon-180.png",
+        "icons/icon-192.png": "icon-192.png",
+        "icons/icon-512.png": "icon-512.png",
+    }
+    for src, dst in copies.items():
+        shutil.copy(os.path.join(KIT, src), os.path.join(OUT, dst))
+    Image.open(os.path.join(KIT, "social/og-1200x630.png")).convert("RGB").save(
+        os.path.join(OUT, "og.jpg"), quality=86, optimize=True)
+    print("brand images copied from", KIT)
+
 
 if __name__ == "__main__":
     main()

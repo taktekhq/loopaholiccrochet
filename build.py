@@ -1,27 +1,40 @@
 #!/usr/bin/env python3
 """Generates the static Loopaholic shop site from catalog.json.
 
-Run `python3 build.py` after any catalog.json edit, then commit the
-generated HTML/sitemap/robots files alongside it.
+Run `python3 build.py` after any catalog.json or copy edit, then commit the
+generated HTML/sitemap/robots files alongside it. Photos: `make_images.py`.
+Design notes (not served): docs-design/PLAN.md.
 """
+import hashlib
+import html
 import json
 import os
-import shutil
+import re
+import sys
+from urllib.parse import quote
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 DOMAIN = "loopaholiccrochet.com"
 BASE_URL = f"https://{DOMAIN}"
 GA = "G-EQ20EYFSY3"
-INSTAGRAM = "https://instagram.com/loopaholic.crochet"
+INSTAGRAM = "https://instagram.com/loopaholic.crochet"      # profile ("follow us")
+INSTAGRAM_DM = "https://ig.me/m/loopaholic.crochet"          # opens a direct message (ordering)
 INSTAGRAM_HANDLE = "@loopaholic.crochet"
 # No business WhatsApp number is confirmed yet (ask in workstream log).
-# Set this once Rana/Nizar give one; WhatsApp buttons fall back to the
-# Instagram DM link until then.
+# Set this once Rana/Nizar give one: the primary order button, its event
+# (whatsapp_click) and the "WhatsApp or Instagram" copy all come back on rebuild.
 WHATSAPP_NUMBER = None  # e.g. "+9613XXXXXX"
 HAS_WHATSAPP = bool(WHATSAPP_NUMBER)
+# Sizes and making times in catalog.json (and the FAQ's day ranges) were never
+# confirmed by Rana. Flip to True once she confirms them: sizes and making
+# times reappear on product pages and in JSON-LD, and the FAQ/shipping copy
+# switches back to the ranges.
+SHOW_UNCONFIRMED_DETAILS = False
+YEAR = 2026
 
 CATALOG = json.load(open(os.path.join(ROOT, "catalog.json"), encoding="utf-8"))
 PRODUCTS = CATALOG["products"]
+BY_ID = {p["id"]: p for p in PRODUCTS}
 
 CATEGORY_LABEL = {
     "animal": {"en": "Plushies", "ar": "حيوانات محشوة"},
@@ -35,535 +48,872 @@ CATEGORY_LABEL = {
 }
 CATEGORY_ORDER = ["animal", "doll", "flower", "giftset", "seasonal", "accessory", "baby", "fun"]
 
-def whatsapp_link(text):
-    if not WHATSAPP_NUMBER:
-        return INSTAGRAM
-    num = WHATSAPP_NUMBER.replace("+", "").replace(" ", "")
-    from urllib.parse import quote
-    return f"https://wa.me/{num}?text={quote(text)}"
+# Colour names as they appear in catalog.json → Arabic (the colours visible in each photo).
+COLOR_AR = {
+    "beige": "بيج", "black": "أسود", "black hair": "شعر أسود", "blue": "أزرق", "blue-grey": "أزرق رمادي",
+    "brown": "بني", "brown hair": "شعر بني", "cream": "كريمي", "green": "أخضر", "grey": "رمادي",
+    "lavender": "ليلكي فاتح", "lilac": "ليلكي", "navy": "كحلي", "olive": "زيتي", "orange": "برتقالي",
+    "pink": "وردي", "pink tail": "ذيل وردي", "purple": "بنفسجي", "purple tail": "ذيل بنفسجي", "red": "أحمر",
+    "tan": "بني فاتح", "teal": "تركوازي", "teal/blue": "تركوازي وأزرق", "white": "أبيض", "yellow": "أصفر",
+}
+# Words used in catalog size_approx → Arabic (only rendered when SHOW_UNCONFIRMED_DETAILS).
+SIZE_AR = [
+    ("comes with a display stand", "مع قاعدة عرض"), ("set of 2", "مجموعة من قطعتين"), ("long ears", "بأذنين طويلتين"),
+    ("on stand", "على قاعدة"), ("in pot", "في أصيص"), ("sitting", "جالسًا"), ("standing", "واقفًا"),
+    ("stem", "مع الساق"), ("across", "عرضًا"), ("each", "لكل قطعة"), ("ring", "للحلقة"), ("boxed", "في علبة"),
+    ("coiled", "ملفوفًا"), ("long", "طولًا"), ("cm", "سم"), (",", "،"),
+]
 
-def price_link(t, wa_href, ctx_js):
-    """Single price/order CTA: WhatsApp once a number exists, Instagram until then."""
-    if HAS_WHATSAPP:
-        return f'<a href="{wa_href}" onclick="gtag(\'event\',\'whatsapp_click\',{ctx_js})">{t["price_cta"]}</a>'
-    return f'<a href="{INSTAGRAM}" onclick="gtag(\'event\',\'instagram_click\',{ctx_js})">{t["price_cta_ig"]}</a>'
-
-def order_buttons(t, wa_href, ctx_js):
-    """Order CTAs: WhatsApp + Instagram once a number exists, Instagram only until then
-    (both buttons point at the same Instagram DM otherwise, which is a duplicate, not a choice)."""
-    if HAS_WHATSAPP:
-        return (f'<a class="btn btn-primary" href="{wa_href}" onclick="gtag(\'event\',\'whatsapp_click\',{ctx_js})">{t["order_whatsapp"]}</a>\n'
-                f'          <a class="btn btn-outline" href="{INSTAGRAM}" onclick="gtag(\'event\',\'instagram_click\',{ctx_js})">{t["order_instagram"]}</a>')
-    return f'<a class="btn btn-primary" href="{INSTAGRAM}" onclick="gtag(\'event\',\'instagram_click\',{ctx_js})">{t["order_instagram"]}</a>'
+HOME_HERO_ID = "p005"        # panda: clean cut-out edges, stitches read clearly inside the loupe
+FEATURED_IDS = ["p003", "p008", "p154", "p065", "p016", "p043", "p021", "p369"]
+CUSTOM_EXAMPLES = [("custom-letter-d", "letter_d"), ("custom-daisy-keychain", "daisy")]
 
 # ---------------------------------------------------------------- i18n ----
 T = {
     "en": {
-        "lang": "en", "dir": "ltr", "alt_lang": "ar", "alt_label": "العربية", "alt_path": "/ar",
+        "lang": "en", "dir": "ltr", "alt_lang": "ar", "alt_label": "العربية", "og_locale": "en_US", "og_alt": "ar_AR",
         "site_name": "Loopaholic",
-        "tagline": "Handmade crochet, made to order",
-        "nav_home": "Home", "nav_shop": "Shop", "nav_custom": "Custom Orders",
+        "skip": "Skip to content", "menu": "Menu", "nav_label": "Main", "menu_label": "All pages",
+        "home_label": "Loopaholic, home",
+        "nav_home": "Home", "nav_shop": "Shop", "nav_custom": "Custom orders",
         "nav_shipping": "Shipping", "nav_about": "About", "nav_faq": "FAQ",
-        "hero_lead": "Every piece is crocheted by hand, one stitch at a time — amigurumi plushies, dolls, flowers and baby gifts, made to order and shipped worldwide.",
-        "cta_shop": "Shop the collection", "cta_instagram": "See more on Instagram",
-        "shop_title": "Shop", "shop_lead": "Every piece below is made to order by hand. Message us on WhatsApp or Instagram for the price.",
-        "price_cta": "Ask for the price on WhatsApp",
-        "price_cta_ig": "Ask for the price on Instagram",
-        "badge_handmade": "Handmade in Lebanon", "badge_handmade_d": "Every piece is crocheted by hand, start to finish.",
-        "badge_order": "Made to order", "badge_order_d": "We start your piece once you order — no stock sitting on a shelf.",
-        "badge_ship": "Ships worldwide", "badge_ship_d": "Lebanon, the Gulf, and internationally.",
-        "view_product": "View",
-        "breadcrumb_home": "Home", "breadcrumb_shop": "Shop",
-        "size_label": "Size", "colors_label": "Colors", "lead_label": "Made-to-order time",
-        "days": "days",
-        "order_lebanon_title": "Order in Lebanon",
-        "order_lebanon_body": "Message us on WhatsApp or Instagram to confirm color, size and price, then pay by Whish or cash on delivery.",
-        "order_whatsapp": "Order on WhatsApp", "order_instagram": "Message on Instagram",
-        "order_intl_title": "Order internationally",
-        "order_intl_body_pending": "International checkout is almost ready — message us on Instagram for now and we’ll quote shipping and take your order by hand.",
-        "order_intl_body_live": "Pay securely online — shipping is calculated at checkout.",
+        "hero_h1": "Handmade crochet gifts, made to order in Lebanon",
+        "hero_lead": "Plushies, dolls, flowers and baby pieces, crocheted by hand once you order. For birthdays, new arrivals, or anyone who likes a soft thing to hold.",
+        "cta_shop": "Browse the pieces", "how_link": "How ordering works",
+        "loupe_alt": "Close-up of the stitches",
+        "loupe_note": "In the ring: a close-up from the same photo, so you can see the stitches.",
+        "featured_h": "Some of the pieces", "featured_more": "See every piece in the shop",
+        "how_h": "How ordering works",
+        "how_lead": "There’s no cart and no checkout. You order in a conversation with the person who makes it.",
+        "how": [
+            ("Pick a piece", "Browse the shop, or bring an idea for a custom order."),
+            ("Message us", "On Instagram. We confirm the price, colours and making time with you there."),
+            ("We make it by hand", "In Lebanon, pay by Whish or cash on delivery. Outside Lebanon, we quote shipping in the chat."),
+        ],
+        "made_h": "Made by hand in Lebanon",
+        "made_b": "Every plushie, doll and flower is crocheted by hand, one stitch at a time, after you order it. Small differences in a stitch or a shade of yarn are part of what makes each one yours.",
+        "made_link": "About the craft",
+        "follow_h": "New pieces show up on Instagram first",
+        "follow_b": "Follow along for finished pieces and works in progress.",
+        "follow_cta": "Follow @loopaholic.crochet",
+        "shop_title": "Shop",
+        "shop_lead": "Every piece is crocheted by hand when you order it. Prices are confirmed by message.",
+        "chips_label": "Categories",
+        "cant_find_h": "Can’t find it?", "cant_find_b": "Ask for a different colour, a name, or a piece that doesn’t exist yet.",
+        "cant_find_link": "Custom orders",
+        "breadcrumb_label": "Breadcrumb", "breadcrumb_home": "Home", "breadcrumb_shop": "Shop",
+        "size_label": "Size", "colors_label": "Colours in the photo", "lead_label": "Making time", "days": "days",
+        "made_to_order": "Made to order",
+        "price_note": "Made to order. Price confirmed in the chat.",
+        "order_whatsapp": "Order on WhatsApp", "order_instagram": "Order on Instagram",
+        "message_instagram": "Message on Instagram",
+        "order_note_ig": "Opens a direct message to @loopaholic.crochet. We reply with the price, colours and making time.",
+        "order_note_short": "Opens a direct message to @loopaholic.crochet.",
+        "order_note_wa": "Opens WhatsApp with a message about this piece. We reply with the price, colours and making time.",
+        "order_intl_title": "Ordering from outside Lebanon",
+        "order_intl_body_live": "Pay online by card; shipping is calculated at checkout.",
         "buy_now": "Buy now",
-        "related_title": "You might also like",
-        "custom_title": "Custom Orders",
-        "custom_lead": "Want a color swap, a name, or a piece that doesn’t exist yet? We take commissions.",
-        "custom_body_1": "Most of our plushies and dolls can be made in different colors or sizes on request. We also make fully custom pieces — a name in crochet letters, a character, or a gift built around an idea you bring us.",
-        "custom_body_2": "Two examples below: crochet letters for a nursery, and a small flower keychain made as a party favor.",
+        "delivery_h": "Delivery and returns",
+        "delivery_b1": "Lebanon: pay by Whish or cash on delivery. Gulf and worldwide: we quote shipping in the chat once we know your city.",
+        "delivery_b2": "Each piece is made for you, so we can’t take change-of-mind returns. If it arrives damaged or wrong, message us within 48 hours and we’ll make it right.",
+        "delivery_link": "Shipping details",
+        "related_title": "More pieces like this",
+        "custom_title": "Custom orders",
+        "custom_lead": "Want a colour swap, a name, or a piece that doesn’t exist yet? We take commissions.",
+        "custom_body_1": "Most of our plushies and dolls can be made in different colours or sizes on request. We also make fully custom pieces: a name in crochet letters, a character, or a gift built around an idea you bring us.",
+        "custom_body_2": "Two examples: a crochet letter for a nursery, and a small flower keychain made as a party favour.",
+        "letter_d": "Crochet letter D", "daisy": "Daisy keychain",
         "custom_how_title": "How it works",
-        "custom_how_1": "Message us on Instagram or WhatsApp with what you have in mind (a photo or description helps).",
-        "custom_how_2": "We confirm the design, price and a made-to-order time — custom pieces usually take longer than the shop catalog.",
-        "custom_how_3": "You pay a deposit to start, we crochet it by hand, and send photos before it ships.",
+        "custom_how": [
+            ("Tell us the idea", "Message us on Instagram with what you have in mind. A photo or a description helps."),
+            ("We agree the details", "We confirm the design, price and making time. Custom pieces usually take longer than the shop pieces."),
+            ("We make it by hand", "You pay a deposit to start, we crochet it, and send photos before it ships."),
+        ],
         "custom_cta": "Start a custom order",
         "shipping_title": "Shipping",
+        "shipping_lead": "Every piece is made to order, then shipped from Lebanon.",
         "shipping_lebanon_h": "Lebanon",
         "shipping_lebanon_b": "Order on WhatsApp or Instagram. Pay by Whish transfer or cash on delivery. Delivery time depends on your area and how long the piece takes to make — we’ll confirm both when you order.",
         "shipping_gulf_h": "Gulf countries",
-        "shipping_gulf_b": "We ship to the UAE, Saudi Arabia, Kuwait, Qatar, Bahrain and Oman. Shipping cost is quoted on WhatsApp or Instagram once we know your city and the pieces you want — we haven’t fixed flat rates yet.",
+        "shipping_gulf_b": "We ship to the UAE, Saudi Arabia, Kuwait, Qatar, Bahrain and Oman. Shipping cost is quoted on WhatsApp or Instagram once we know your city and the pieces you want. We haven’t fixed flat rates yet.",
         "shipping_intl_h": "Everywhere else",
         "shipping_intl_b": "We ship internationally. Shipping cost is quoted on WhatsApp or Instagram until our checkout can calculate it automatically.",
+        "shipping_returns_h": "Returns",
         "shipping_note_h": "Good to know",
-        "shipping_note_b": "Every piece is made to order, so shipping starts after the made-to-order time on the product page, not the day you order. Customs fees outside Lebanon are the buyer’s responsibility.",
+        "shipping_note_b_confirmed": "Every piece is made to order, so shipping starts after the made-to-order time on the product page, not the day you order. Customs fees outside Lebanon are the buyer’s responsibility.",
+        "shipping_note_b_unconfirmed": "Every piece is made to order, so shipping starts once your piece is finished, not the day you order. We confirm the making time when you message us. Customs fees outside Lebanon are the buyer’s responsibility.",
         "about_title": "About the craft",
         "about_body_1": "Loopaholic makes amigurumi — crocheted, stuffed figures — and crochet flowers entirely by hand, one stitch at a time. Nothing is machine-made or mass-produced: every plushie, doll and flower on this site is handmade in Lebanon and made to order.",
-        "about_body_2": "Because each piece is made by hand after you order it, small variations — a slightly different stitch, a shade of yarn — are part of what makes it one of a kind, not a flaw.",
-        "about_body_3": "Follow the latest pieces and works in progress on Instagram.",
+        "about_body_2": "Because each piece is made by hand after you order it, small variations, like a slightly different stitch or a shade of yarn, are part of what makes it one of a kind, not a flaw.",
+        "about_body_3": "Follow the latest pieces and works in progress on Instagram:",
         "faq_title": "FAQ",
+        "faq_lead": "The questions people ask before ordering.",
         "faq": [
-            ("How long does an order take to make?", "Most plushies and dolls take 10–28 days to crochet, and flowers take 5–12 days — the exact range is on each product page. Custom orders usually take a bit longer. We’ll confirm a date when you order."),
-            ("Do you ship outside Lebanon?", "Yes — to the Gulf and internationally. Shipping cost is quoted by hand on WhatsApp or Instagram for now, based on your location and what you’re ordering."),
-            ("How do I pay?", "In Lebanon: Whish transfer or cash on delivery. Internationally: online card payment (coming soon) — for now, message us and we’ll arrange it."),
-            ("How much does a piece cost?", "We don’t list prices on the site — message us on WhatsApp or Instagram with the piece you want and we’ll confirm a price before you order."),
-            ("Can I change the colors?", "Usually yes. Message us with the colors you’d like and we’ll confirm if it works for that piece."),
-            ("What are the pieces made from?", "Message us on WhatsApp or Instagram — we’ll confirm the materials for the specific piece you’re asking about."),
+            ("How long does an order take to make?", "@LEAD@"),
+            ("Do you ship outside Lebanon?", "Yes, to the Gulf and internationally. Shipping cost is quoted by hand on WhatsApp or Instagram for now, based on your location and what you’re ordering."),
+            ("How do I pay?", "In Lebanon: Whish transfer or cash on delivery. Internationally: online card payment is coming; for now, message us and we’ll arrange it."),
+            ("How much does a piece cost?", "We don’t list prices on the site. Message us on WhatsApp or Instagram with the piece you want and we’ll confirm a price before you order."),
+            ("Can I change the colours?", "Usually yes. Message us with the colours you’d like and we’ll confirm if it works for that piece."),
+            ("What are the pieces made from?", "Message us on WhatsApp or Instagram and we’ll confirm the materials for the specific piece you’re asking about."),
             ("Can I return or exchange a piece?", "Because every piece is made to order just for you, we can’t accept returns for a change of mind. If a piece arrives damaged or wrong, message us within 48 hours and we’ll make it right."),
-            ("Is this safe for babies and small children?", "We haven’t completed safety testing for baby items, so we don’t make any safety or age claim. Message us if you have questions before ordering for an infant, and always supervise young children with any small handmade item."),
+            ("Are the pieces suitable for babies and small children?", "Our baby pieces haven’t been through any testing, so we make no claim about which ages they suit. Message us before ordering for an infant, and always supervise young children with any small handmade item."),
         ],
-        "footer_tagline": "Handmade crochet from Lebanon, shipped worldwide.",
-        "footer_shop": "Shop", "footer_info": "Info", "footer_follow": "Follow",
+        "faq_lead_time_confirmed": "Most plushies and dolls take 10–28 days to crochet, and flowers take 5–12 days. The exact range is on each product page. Custom orders usually take a bit longer. We’ll confirm a date when you order.",
+        "faq_lead_time_unconfirmed": "It depends on the piece and on how many orders are in progress. We confirm the making time when you message us, before you commit to anything. Custom orders usually take a bit longer.",
+        "footer_tagline": "Handmade crochet from Lebanon, made to order.",
+        "footer_shop": "Shop", "footer_info": "Help", "footer_follow": "Follow",
+        "footer_lang": "Language",
         "meta_home_desc": "Handmade amigurumi plushies, dolls, flowers and baby gifts, crocheted to order in Lebanon and shipped to the Gulf and worldwide.",
         "meta_shop_desc": "Browse handmade crochet plushies, dolls, flowers and gifts, made to order and shipped from Lebanon worldwide.",
+        "img_alt_suffix": "handmade crochet",
+        "nf_title": "Page not found",
+        "nf_body": "This page isn’t here. It may have moved when the shop was rebuilt.",
+        "nf_contact": "Looking for a specific piece? Message us on Instagram.",
     },
     "ar": {
-        "lang": "ar", "dir": "rtl", "alt_lang": "en", "alt_label": "English", "alt_path": "",
+        "lang": "ar", "dir": "rtl", "alt_lang": "en", "alt_label": "English", "og_locale": "ar_AR", "og_alt": "en_US",
         "site_name": "لوباهوليك",
-        "tagline": "كروشيه يدوي، يُصنع عند الطلب",
+        "skip": "انتقلي إلى المحتوى", "menu": "القائمة", "nav_label": "الرئيسية", "menu_label": "كل الصفحات",
+        "home_label": "لوباهوليك، الصفحة الرئيسية",
         "nav_home": "الرئيسية", "nav_shop": "المتجر", "nav_custom": "طلب خاص",
         "nav_shipping": "الشحن", "nav_about": "عن الحرفة", "nav_faq": "الأسئلة الشائعة",
-        "hero_lead": "كل قطعة مكروشية يدويًا، غرزة بعد غرزة — حيوانات محشوة وعرائس وزهور وهدايا أطفال، تُصنع عند الطلب وتُشحن حول العالم.",
-        "cta_shop": "تصفّح المجموعة", "cta_instagram": "المزيد على إنستغرام",
-        "shop_title": "المتجر", "shop_lead": "كل قطعة أدناه تُصنع يدويًا عند الطلب. راسلينا على واتساب أو إنستغرام لمعرفة السعر.",
-        "price_cta": "اسألينا عن السعر على واتساب",
-        "price_cta_ig": "اسألينا عن السعر على إنستغرام",
-        "badge_handmade": "مصنوع يدويًا في لبنان", "badge_handmade_d": "كل قطعة مكروشية بالكامل باليد.",
-        "badge_order": "تُصنع عند الطلب", "badge_order_d": "نبدأ قطعتك بعد الطلب — لا مخزون جاهز على الرف.",
-        "badge_ship": "شحن عالمي", "badge_ship_d": "لبنان، دول الخليج، وحول العالم.",
-        "view_product": "عرض",
-        "breadcrumb_home": "الرئيسية", "breadcrumb_shop": "المتجر",
-        "size_label": "القياس", "colors_label": "الألوان", "lead_label": "مدة التصنيع",
-        "days": "أيام",
-        "order_lebanon_title": "الطلب داخل لبنان",
-        "order_lebanon_body": "راسلينا على واتساب أو إنستغرام لتأكيد اللون والقياس والسعر، ثم الدفع عبر Whish أو الدفع عند التسليم.",
-        "order_whatsapp": "الطلب عبر واتساب", "order_instagram": "راسلينا على إنستغرام",
+        "hero_h1": "هدايا كروشيه يدوية، تُصنع عند الطلب في لبنان",
+        "hero_lead": "حيوانات محشوة وعرائس وزهور وقطع للأطفال، نحيكها باليد بعد طلبك. لأعياد الميلاد، للمولود الجديد، أو لكل من يحب شيئًا ناعمًا يحضنه.",
+        "cta_shop": "تصفّحي القطع", "how_link": "كيف يتم الطلب",
+        "loupe_alt": "صورة مقرّبة للغرز",
+        "loupe_note": "داخل الحلقة: صورة مقرّبة من الصورة نفسها لتري الغرز.",
+        "featured_h": "بعض القطع", "featured_more": "كل القطع في المتجر",
+        "how_h": "كيف يتم الطلب",
+        "how_lead": "لا سلة شراء ولا دفع إلكتروني. تطلبين بمحادثة مباشرة مع من تصنع القطعة.",
+        "how": [
+            ("اختاري قطعة", "تصفّحي المتجر، أو أخبرينا بفكرة لطلب خاص."),
+            ("راسلينا", "على إنستغرام. نتفق معك هناك على السعر والألوان ومدة التصنيع."),
+            ("نصنعها باليد", "داخل لبنان، الدفع عبر Whish أو عند التسليم. خارج لبنان، نحدد تكلفة الشحن في المحادثة."),
+        ],
+        "made_h": "مصنوعة يدويًا في لبنان",
+        "made_b": "كل حيوان محشو وعروسة وزهرة نحيكها باليد، غرزة بعد غرزة، بعد أن تطلبيها. الاختلافات الصغيرة في غرزة أو درجة لون هي ما يجعل كل قطعة خاصة بك.",
+        "made_link": "عن الحرفة",
+        "follow_h": "القطع الجديدة تظهر أولًا على إنستغرام",
+        "follow_b": "تابعينا لتري القطع الجاهزة والأعمال الجارية.",
+        "follow_cta": "تابعي @loopaholic.crochet",
+        "shop_title": "المتجر",
+        "shop_lead": "كل قطعة نحيكها باليد عند طلبها. نؤكد السعر عبر الرسائل.",
+        "chips_label": "الفئات",
+        "cant_find_h": "لم تجدي ما تريدين؟", "cant_find_b": "اطلبي لونًا مختلفًا، أو اسمًا، أو قطعة غير موجودة بعد.",
+        "cant_find_link": "الطلبات الخاصة",
+        "breadcrumb_label": "مسار التصفح", "breadcrumb_home": "الرئيسية", "breadcrumb_shop": "المتجر",
+        "size_label": "القياس", "colors_label": "الألوان في الصورة", "lead_label": "مدة التصنيع", "days": "يومًا",
+        "made_to_order": "تُصنع عند الطلب",
+        "price_note": "تُصنع عند الطلب، ونؤكد السعر في المحادثة.",
+        "order_whatsapp": "اطلبي على واتساب", "order_instagram": "اطلبي على إنستغرام",
+        "message_instagram": "راسلينا على إنستغرام",
+        "order_note_ig": "يفتح رسالة مباشرة إلى @loopaholic.crochet. نرد عليك بالسعر والألوان ومدة التصنيع.",
+        "order_note_short": "يفتح رسالة مباشرة إلى @loopaholic.crochet.",
+        "order_note_wa": "يفتح واتساب برسالة عن هذه القطعة. نرد عليك بالسعر والألوان ومدة التصنيع.",
         "order_intl_title": "الطلب من خارج لبنان",
-        "order_intl_body_pending": "الدفع الإلكتروني الدولي أصبح جاهزًا تقريبًا — راسلينا الآن على إنستغرام وسنحدد تكلفة الشحن ونأخذ طلبك يدويًا.",
-        "order_intl_body_live": "الدفع الإلكتروني الآمن متاح — تُحسب تكلفة الشحن عند الدفع.",
-        "buy_now": "اشترِ الآن",
-        "related_title": "قد يعجبك أيضًا",
+        "order_intl_body_live": "ادفعي إلكترونيًا بالبطاقة، وتُحسب تكلفة الشحن عند الدفع.",
+        "buy_now": "اشتري الآن",
+        "delivery_h": "التوصيل والاسترجاع",
+        "delivery_b1": "داخل لبنان: الدفع عبر Whish أو عند التسليم. الخليج وباقي العالم: نحدد تكلفة الشحن في المحادثة بعد معرفة مدينتك.",
+        "delivery_b2": "كل قطعة تُصنع لك خصيصًا، لذلك لا نقبل الاسترجاع لمجرد تغيير الرأي. إذا وصلت تالفة أو خاطئة، راسلينا خلال 48 ساعة وسنصلح الأمر.",
+        "delivery_link": "تفاصيل الشحن",
+        "related_title": "قطع مشابهة",
         "custom_title": "طلب خاص",
         "custom_lead": "تريدين تغيير لون، إضافة اسم، أو قطعة غير موجودة بعد؟ نستقبل الطلبات الخاصة.",
-        "custom_body_1": "معظم القطع والعرائس يمكن تصنيعها بألوان أو قياسات مختلفة عند الطلب. كما نصنع قطعًا خاصة بالكامل — اسم بحروف كروشيه، شخصية، أو هدية مبنية على فكرتك.",
-        "custom_body_2": "مثالان أدناه: حروف كروشيه لغرفة طفل، وسلسلة مفاتيح على شكل زهرة صُنعت كهدية حفلة.",
+        "custom_body_1": "معظم الحيوانات المحشوة والعرائس يمكن صنعها بألوان أو قياسات مختلفة عند الطلب. كما نصنع قطعًا خاصة بالكامل: اسم بحروف كروشيه، شخصية، أو هدية مبنية على فكرتك.",
+        "custom_body_2": "مثالان: حرف كروشيه لغرفة طفل، وسلسلة مفاتيح على شكل زهرة صُنعت كتذكار لحفلة.",
+        "letter_d": "حرف D بالكروشيه", "daisy": "سلسلة مفاتيح بزهرة أقحوان",
         "custom_how_title": "كيف تطلبين",
-        "custom_how_1": "راسلينا على إنستغرام أو واتساب بما تريدينه (صورة أو وصف يساعد).",
-        "custom_how_2": "نؤكد التصميم والسعر ومدة التصنيع — الطلبات الخاصة تستغرق غالبًا أطول من قطع المتجر.",
-        "custom_how_3": "تدفعين دفعة أولى للبدء، نصنع القطعة يدويًا، ونرسل صورًا قبل الشحن.",
+        "custom_how": [
+            ("أخبرينا بالفكرة", "راسلينا على إنستغرام بما تريدينه. صورة أو وصف يساعدنا."),
+            ("نتفق على التفاصيل", "نؤكد التصميم والسعر ومدة التصنيع. الطلبات الخاصة تستغرق غالبًا أطول من قطع المتجر."),
+            ("نصنعها باليد", "تدفعين دفعة أولى للبدء، نحيك القطعة، ونرسل لك صورًا قبل الشحن."),
+        ],
         "custom_cta": "ابدئي طلبًا خاصًا",
         "shipping_title": "الشحن",
+        "shipping_lead": "كل قطعة تُصنع عند الطلب، ثم تُشحن من لبنان.",
         "shipping_lebanon_h": "لبنان",
         "shipping_lebanon_b": "الطلب عبر واتساب أو إنستغرام. الدفع عبر تحويل Whish أو الدفع عند التسليم. مدة التوصيل تعتمد على منطقتك ومدة تصنيع القطعة — نؤكد الاثنين عند الطلب.",
         "shipping_gulf_h": "دول الخليج",
-        "shipping_gulf_b": "نشحن إلى الإمارات والسعودية والكويت وقطر والبحرين وعُمان. تكلفة الشحن تُحدد عبر واتساب أو إنستغرام بعد معرفة مدينتك والقطع المطلوبة — لم نحدد أسعارًا ثابتة بعد.",
+        "shipping_gulf_b": "نشحن إلى الإمارات والسعودية والكويت وقطر والبحرين وعُمان. تكلفة الشحن تُحدد عبر واتساب أو إنستغرام بعد معرفة مدينتك والقطع المطلوبة، فلم نحدد أسعارًا ثابتة بعد.",
         "shipping_intl_h": "باقي دول العالم",
         "shipping_intl_b": "نشحن دوليًا. تكلفة الشحن تُحدد عبر واتساب أو إنستغرام حتى يصبح الدفع الإلكتروني قادرًا على حسابها تلقائيًا.",
+        "shipping_returns_h": "الاسترجاع",
         "shipping_note_h": "جيد أن تعرفي",
-        "shipping_note_b": "كل قطعة تُصنع عند الطلب، فتبدأ مدة الشحن بعد مدة التصنيع المذكورة في صفحة المنتج، لا من يوم الطلب. رسوم الجمارك خارج لبنان على مسؤولية المشتري.",
+        "shipping_note_b_confirmed": "كل قطعة تُصنع عند الطلب، فتبدأ مدة الشحن بعد مدة التصنيع المذكورة في صفحة المنتج، لا من يوم الطلب. رسوم الجمارك خارج لبنان على مسؤولية المشتري.",
+        "shipping_note_b_unconfirmed": "كل قطعة تُصنع عند الطلب، فيبدأ الشحن بعد انتهاء صنع قطعتك، لا من يوم الطلب. نؤكد مدة التصنيع عندما تراسلينا. رسوم الجمارك خارج لبنان على مسؤولية المشتري.",
         "about_title": "عن الحرفة",
         "about_body_1": "تصنع لوباهوليك قطع الأميغورومي — شخصيات كروشيه محشوة — وزهور الكروشيه بالكامل باليد، غرزة بعد غرزة. لا شيء مصنوع بالآلة أو بكميات كبيرة: كل حيوان محشو وعروسة وزهرة في هذا المتجر مصنوع يدويًا في لبنان وعند الطلب.",
-        "about_body_2": "لأن كل قطعة تُصنع يدويًا بعد الطلب، الاختلافات الصغيرة — غرزة مختلفة قليلًا، درجة لون — هي ما يجعلها فريدة، لا عيبًا.",
-        "about_body_3": "تابعي أحدث القطع والأعمال الجارية على إنستغرام.",
+        "about_body_2": "لأن كل قطعة تُصنع يدويًا بعد الطلب، فالاختلافات الصغيرة، كغرزة مختلفة قليلًا أو درجة لون، هي ما يجعلها فريدة، لا عيبًا.",
+        "about_body_3": "تابعي أحدث القطع والأعمال الجارية على إنستغرام:",
         "faq_title": "الأسئلة الشائعة",
+        "faq_lead": "الأسئلة التي تصلنا قبل الطلب.",
         "faq": [
-            ("كم تستغرق مدة تصنيع الطلب؟", "معظم القطع المحشوة والعرائس تستغرق 10–28 يومًا للكروشيه، والزهور 5–12 يومًا — المدة الدقيقة مذكورة في صفحة كل منتج. الطلبات الخاصة تستغرق غالبًا أطول. نؤكد تاريخًا عند الطلب."),
-            ("هل تشحنون خارج لبنان؟", "نعم — إلى دول الخليج وحول العالم. تكلفة الشحن تُحدد يدويًا عبر واتساب أو إنستغرام حاليًا، حسب موقعك وما تطلبينه."),
-            ("كيف أدفع؟", "داخل لبنان: تحويل Whish أو الدفع عند التسليم. دوليًا: الدفع الإلكتروني بالبطاقة (قريبًا) — حاليًا راسلينا وسنرتب الدفع."),
-            ("كم تكلفة القطعة؟", "لا نضع الأسعار على الموقع — راسلينا على واتساب أو إنستغرام بالقطعة التي تريدينها وسنؤكد السعر قبل الطلب."),
-            ("هل يمكنني تغيير الألوان؟", "غالبًا نعم. راسلينا بالألوان التي تريدينها وسنؤكد إن كانت متاحة لتلك القطعة."),
-            ("من ماذا تُصنع القطع؟", "راسلينا على واتساب أو إنستغرام — سنؤكد لك المواد الخاصة بالقطعة التي تسألين عنها."),
+            ("كم تستغرق مدة تصنيع الطلب؟", "@LEAD@"),
+            ("هل تشحنون خارج لبنان؟", "نعم، إلى دول الخليج وحول العالم. تكلفة الشحن تُحدد يدويًا عبر واتساب أو إنستغرام حاليًا، حسب موقعك وما تطلبينه."),
+            ("كيف أدفع؟", "داخل لبنان: تحويل Whish أو الدفع عند التسليم. دوليًا: الدفع الإلكتروني بالبطاقة قريبًا، وحاليًا راسلينا وسنرتب الدفع."),
+            ("كم تكلفة القطعة؟", "لا نضع الأسعار على الموقع. راسلينا على واتساب أو إنستغرام بالقطعة التي تريدينها وسنؤكد السعر قبل الطلب."),
+            ("هل يمكنني تغيير الألوان؟", "غالبًا نعم. راسلينا بالألوان التي تريدينها وسنؤكد إن كانت تناسب تلك القطعة."),
+            ("من ماذا تُصنع القطع؟", "راسلينا على واتساب أو إنستغرام وسنؤكد لك المواد الخاصة بالقطعة التي تسألين عنها."),
             ("هل يمكنني استرجاع أو استبدال قطعة؟", "لأن كل قطعة تُصنع خصيصًا عند الطلب، لا يمكننا قبول الاسترجاع لمجرد تغيير الرأي. إذا وصلت القطعة تالفة أو خاطئة، راسلينا خلال 48 ساعة وسنصلح الأمر."),
-            ("هل هذا مناسب وآمن للأطفال الصغار؟", "لم نكمل بعد اختبارات السلامة لقطع الأطفال، ولذلك لا نقدّم أي تأكيد على السلامة أو الفئة العمرية. راسلينا إذا كان لديك سؤال قبل الطلب لطفل رضيع، وراقبي الأطفال الصغار دائمًا عند استخدام أي قطعة يدوية صغيرة."),
+            ("هل القطع مناسبة للرضّع والأطفال الصغار؟", "قطع الأطفال لم تخضع لأي اختبارات، لذلك لا نقدّم أي ادعاء بشأن الأعمار التي تناسبها. راسلينا قبل الطلب لطفل رضيع، وراقبي الأطفال الصغار دائمًا عند استخدام أي قطعة يدوية صغيرة."),
         ],
-        "footer_tagline": "كروشيه يدوي من لبنان، يُشحن حول العالم.",
-        "footer_shop": "المتجر", "footer_info": "معلومات", "footer_follow": "تابعونا",
+        "faq_lead_time_confirmed": "معظم الحيوانات المحشوة والعرائس تستغرق 10–28 يومًا للكروشيه، والزهور 5–12 يومًا. المدة الدقيقة مذكورة في صفحة كل منتج. الطلبات الخاصة تستغرق غالبًا أطول. نؤكد تاريخًا عند الطلب.",
+        "faq_lead_time_unconfirmed": "تختلف حسب القطعة وعدد الطلبات قيد التنفيذ. نؤكد مدة التصنيع عندما تراسلينا، قبل أن تلتزمي بأي شيء. الطلبات الخاصة تستغرق غالبًا أطول.",
+        "footer_tagline": "كروشيه يدوي من لبنان، يُصنع عند الطلب.",
+        "footer_shop": "المتجر", "footer_info": "مساعدة", "footer_follow": "تابعينا",
+        "footer_lang": "اللغة",
         "meta_home_desc": "حيوانات محشوة وعرائس وزهور وهدايا أطفال مصنوعة يدويًا بالكروشيه عند الطلب في لبنان، تُشحن إلى الخليج وحول العالم.",
         "meta_shop_desc": "تصفحي حيوانات وعرائس وزهور وهدايا كروشيه يدوية، تُصنع عند الطلب وتُشحن من لبنان حول العالم.",
+        "img_alt_suffix": "كروشيه يدوي",
+        "nf_title": "الصفحة غير موجودة",
+        "nf_body": "هذه الصفحة غير موجودة هنا. ربما تغيّر عنوانها عندما أعدنا بناء المتجر.",
+        "nf_contact": "تبحثين عن قطعة معيّنة؟ راسلينا على إنستغرام.",
     },
 }
 
+for _lang, _t in T.items():
+    _lt = _t["faq_lead_time_confirmed" if SHOW_UNCONFIRMED_DETAILS else "faq_lead_time_unconfirmed"]
+    _t["faq"] = [(q, _lt if a == "@LEAD@" else a) for q, a in _t["faq"]]
+    _t["shipping_note_b"] = _t["shipping_note_b_confirmed" if SHOW_UNCONFIRMED_DETAILS else "shipping_note_b_unconfirmed"]
+
 if not HAS_WHATSAPP:
     # Copy must not claim a WhatsApp ordering channel that doesn't exist yet
-    # (R8, reviewer 2026-10-08). Revert this once WHATSAPP_NUMBER is set.
-    import re as _re
+    # (R8, reviewer 2026-10-08). Reverts itself once WHATSAPP_NUMBER is set.
     _CHANNEL_RULES = [
         (r"WhatsApp or Instagram", "Instagram"),
         (r"Instagram or WhatsApp", "Instagram"),
         (r"واتساب أو إنستغرام", "إنستغرام"),
         (r"إنستغرام أو واتساب", "إنستغرام"),
     ]
+
     def _ig_only(s):
         for pat, rep in _CHANNEL_RULES:
-            s = _re.sub(pat, rep, s)
+            s = re.sub(pat, rep, s)
         return s
     for _lang in T:
         for _k, _v in list(T[_lang].items()):
             if isinstance(_v, str):
                 T[_lang][_k] = _ig_only(_v)
-            elif _k == "faq":
-                T[_lang][_k] = [(_ig_only(q), _ig_only(a)) for q, a in _v]
+            elif isinstance(_v, list):
+                T[_lang][_k] = [tuple(_ig_only(x) for x in pair) for pair in _v]
+else:
+    for _lang in T:  # "Message us … On Instagram." becomes channel-neutral
+        T[_lang]["how"][1] = (T[_lang]["how"][1][0], T[_lang]["how"][1][1].replace("On Instagram.", "On WhatsApp or Instagram.").replace("على إنستغرام.", "على واتساب أو إنستغرام."))
 
-def nav_html(t, active):
-    items = [
-        ("nav_home", "/" if t["lang"] == "en" else "/ar/", "home"),
-        ("nav_shop", "/shop/" if t["lang"] == "en" else "/ar/shop/", "shop"),
-        ("nav_custom", "/custom-orders/" if t["lang"] == "en" else "/ar/custom-orders/", "custom"),
-        ("nav_shipping", "/shipping/" if t["lang"] == "en" else "/ar/shipping/", "shipping"),
-        ("nav_about", "/about/" if t["lang"] == "en" else "/ar/about/", "about"),
-        ("nav_faq", "/faq/" if t["lang"] == "en" else "/ar/faq/", "faq"),
-    ]
+# ------------------------------------------------------- claims guard (R2b) ----
+FORBIDDEN = [
+    (r"\bsafe", "safe/safety"), (r"آمن", "آمن"), (r"(?i)\bcertif", "certified"), (r"(?i)non-?toxic", "non-toxic"),
+    (r"(?i)\borganic\b", "organic"), (r"(?i)hypoallergenic", "hypoallergenic"), (r"(?i)\bwood", "wood/wooden"),
+    (r"خشب", "خشب"), (r"\bCE\b", "CE"), (r"100\s?%", "100%"), (r"\$\s?\d", "$ price"),
+    (r"(?i)\bUSD\s?\d|\d\s?USD\b", "USD price"),
+]
+
+
+def find_claims(text):
+    return [label for pat, label in FORBIDDEN if re.search(pat, text, flags=re.I if label == "safe/safety" else 0)]
+
+
+def check_claims():
+    """Fail the build if catalog or site copy makes a material, safety or price claim."""
+    problems = []
+
+    def walk(obj, where):
+        if isinstance(obj, dict):
+            for k, v in obj.items():
+                if k in ("currency", "image", "slug", "id", "stripe_payment_link"):
+                    continue
+                walk(v, f"{where}.{k}")
+        elif isinstance(obj, (list, tuple)):
+            for i, v in enumerate(obj):
+                walk(v, f"{where}[{i}]")
+        elif isinstance(obj, str):
+            for label in find_claims(obj):
+                problems.append(f"{where}: '{label}' in {obj[:90]!r}")
+    walk(CATALOG, "catalog")
+    walk(T, "copy")
+    return problems
+
+
+def check_rendered(relpath, content):
+    """Same guard on the visible text of every rendered page (template strings included)."""
+    text = re.sub(r"<script(?![^>]*ld\+json)[^>]*>.*?</script>|<style.*?</style>", " ", content, flags=re.S)
+    text = re.sub(r"<[^>]+>", " ", text)
+    text = html.unescape(text)
+    return [f"{relpath}: '{label}'" for label in find_claims(text)]
+
+
+RENDER_PROBLEMS = []
+
+# ------------------------------------------------------------- assets ----
+
+
+def asset_hash(rel):
+    with open(os.path.join(ROOT, rel), "rb") as f:
+        return hashlib.sha256(f.read()).hexdigest()[:10]
+
+
+def v(rel):
+    return f"/{rel}?v={asset_hash(rel)}"
+
+
+CSS = "assets/css/style.css"
+JS = "assets/js/site.js"
+FONT_LATIN = "assets/fonts/nunito-latin.woff2"
+FONT_AR = "assets/fonts/baloo-bhaijaan2-arabic.woff2"
+LATIN_RANGE = "U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD"
+ARABIC_RANGE = "U+0600-06FF, U+0750-077F, U+0870-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC"
+
+ICONS = {
+    "instagram": '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.3" cy="6.7" r=".6" fill="currentColor"/></svg>',
+    "whatsapp": '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 20.5l1.3-4.2A8.5 8.5 0 1 1 8 19.4z"/><path d="M9 8.6c.2 2.9 2.9 5.9 6.3 6.4l1-1.3-1.9-1-1 .9c-1-.4-2.2-1.6-2.6-2.6l.9-1-1-1.9z"/></svg>',
+    "menu": '<svg class="icon icon-open" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>',
+    "close": '<svg class="icon icon-close" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>',
+}
+
+# ------------------------------------------------------------- helpers ----
+
+
+def esc(s):
+    return html.escape(s, quote=True)
+
+
+def L(t, path):
+    """Localised path: '/shop/' → '/ar/shop/' on Arabic pages."""
+    return path if t["lang"] == "en" else "/ar" + path
+
+
+def whatsapp_link(text):
+    num = WHATSAPP_NUMBER.replace("+", "").replace(" ", "")
+    return f"https://wa.me/{num}?text={quote(text)}"
+
+
+def ga(event, params):
+    return f'onclick="gtag(\'event\',\'{event}\',{params})"'
+
+
+def order_cta(t, ctx_js, wa_text, label_key=None, block=True, cta_id=None, secondary=True):
+    """The one order action. Instagram DM until a WhatsApp number exists; then WhatsApp
+    is primary and the Instagram DM becomes the outline secondary."""
+    idattr = f' id="{cta_id}"' if cta_id else ""
+    blk = " btn-block" if block else ""
+    if HAS_WHATSAPP:
+        label = t[label_key] if label_key else t["order_whatsapp"]
+        out = (f'<a class="btn btn-primary{blk}"{idattr} href="{esc(whatsapp_link(wa_text))}" {ga("whatsapp_click", ctx_js)}>'
+               f'{ICONS["whatsapp"]}<span>{label}</span></a>')
+        if secondary:
+            out += (f'\n<a class="btn btn-secondary" href="{INSTAGRAM_DM}" {ga("instagram_click", ctx_js)}>'
+                    f'{ICONS["instagram"]}<span>{t["message_instagram"]}</span></a>')
+        return out
+    label = t[label_key] if label_key else t["order_instagram"]
+    return (f'<a class="btn btn-primary{blk}"{idattr} href="{INSTAGRAM_DM}" {ga("instagram_click", ctx_js)}>'
+            f'{ICONS["instagram"]}<span>{label}</span></a>')
+
+
+def handle(t):
+    return f'<bdi dir="ltr">{INSTAGRAM_HANDLE}</bdi>'
+
+
+def with_handle(t, s):
+    return esc(s).replace(INSTAGRAM_HANDLE, handle(t))
+
+
+def img_base(pid):
+    return f"/assets/img/p/{pid}"
+
+
+def picture(pid, alt, sizes, *, eager=False, cls=""):
+    b = img_base(pid)
+    load = 'fetchpriority="high" decoding="async"' if eager else 'loading="lazy" decoding="async"'
+    return (f'<picture{f" class={chr(34)}{cls}{chr(34)}" if cls else ""}>'
+            f'<source type="image/avif" srcset="{b}/w400.avif 400w, {b}/w800.avif 800w, {b}/w1200.avif 1200w" sizes="{sizes}">'
+            f'<source type="image/webp" srcset="{b}/w400.webp 400w, {b}/w800.webp 800w" sizes="{sizes}">'
+            f'<img src="{b}/w800.jpg" width="800" height="800" alt="{esc(alt)}" {load}></picture>')
+
+
+def loupe(pid, t):
+    b = img_base(pid)
+    return (f'<figure class="loupe"><picture>'
+            f'<source type="image/avif" srcset="{b}/stitch.avif"><source type="image/webp" srcset="{b}/stitch.webp">'
+            f'<img src="{b}/stitch.jpg" width="300" height="300" alt="{esc(t["loupe_alt"])}" loading="lazy" decoding="async"></picture></figure>')
+
+
+def colors_text(p, t):
+    if t["lang"] == "ar":
+        return "، ".join(COLOR_AR.get(c, c) for c in p["colors"])
+    return ", ".join(p["colors"])
+
+
+def size_text(p, t):
+    s = p["size_approx"]
+    if t["lang"] == "ar":
+        for en, ar in SIZE_AR:
+            s = s.replace(en, ar)
+        s = s.replace("~", "حوالي ")
+    return s
+
+
+GRID_SIZES = "(min-width: 75em) 17rem, (min-width: 40em) 30vw, 46vw"
+
+
+def piece(p, t, eager=False, meta=True):
+    title = p["title"][t["lang"]]
+    meta = f'<span class="piece-meta">{CATEGORY_LABEL[p["category"]][t["lang"]]}</span>' if meta else ""
+    return (f'<li><a class="piece" href="{L(t, "/shop/" + p["slug"] + "/")}">'
+            f'<div class="tile">{picture(p["id"], "", GRID_SIZES, eager=eager)}</div>'
+            f'<span class="piece-name">{esc(title)}</span>{meta}</a></li>')
+
+
+def grid(items, t, eager_first=0, meta=True):
+    return '<ul class="grid" role="list">' + "".join(piece(p, t, eager=i < eager_first, meta=meta) for i, p in enumerate(items)) + "</ul>"
+
+
+def steps(items, compact=False, row=False, level="h3"):
+    cls = "steps" + (" steps-compact" if compact else "") + (" steps-row" if row else "")
+    lis = "".join(f"<li><{level}>{esc(h)}</{level}><p>{esc(b)}</p></li>" for h, b in items)
+    return f'<ol class="{cls}" role="list">{lis}</ol>'
+
+# --------------------------------------------------------------- shell ----
+
+
+NAV = [("nav_home", "/", "home"), ("nav_shop", "/shop/", "shop"), ("nav_custom", "/custom-orders/", "custom"),
+       ("nav_shipping", "/shipping/", "shipping"), ("nav_about", "/about/", "about"), ("nav_faq", "/faq/", "faq")]
+
+
+def nav_links(t, active, key_only_shop=False):
     out = []
-    for key, href, name in items:
-        out.append(f'<a href="{href}"{" aria-current=\"page\"" if name == active else ""}>{t[key]}</a>')
-    return "\n".join(out)
+    for key, href, name in NAV:
+        if key_only_shop and name == "home":
+            continue
+        cur = ' aria-current="page"' if name == active else ""
+        cls = ' class="key"' if (key_only_shop and name == "shop") else ""
+        out.append(f'<li{cls}><a href="{L(t, href)}"{cur}>{t[key]}</a></li>')
+    return "".join(out)
 
-def lang_switch_html(t, path_en, path_ar):
-    target = path_en if t["lang"] == "ar" else path_ar
-    return f'<a href="{target}" hreflang="{t["alt_lang"]}">{t["alt_label"]}</a>'
 
-def page_shell(t, *, title, description, canonical_path, body, extra_head="", active="", path_en="/", path_ar="/ar/"):
-    og_image = f"{BASE_URL}/assets/img/og.jpg"
-    html_lang = t["lang"]
-    alt_href_en = f"{BASE_URL}{path_en}"
-    alt_href_ar = f"{BASE_URL}{path_ar}"
+def font_faces(arabic):
+    css = (f'@font-face{{font-family:"Nunito";font-style:normal;font-weight:200 1000;font-display:swap;'
+           f'src:url("{v(FONT_LATIN)}") format("woff2");unicode-range:{LATIN_RANGE}}}')
+    if arabic:
+        css += (f'@font-face{{font-family:"Baloo Bhaijaan 2";font-style:normal;font-weight:400 800;font-display:swap;'
+                f'src:url("{v(FONT_AR)}") format("woff2");unicode-range:{ARABIC_RANGE}}}')
+    return f"<style>{css}</style>"
+
+
+def ga_snippet():
+    # gtag() is a stub that queues into dataLayer from the first byte, so click events
+    # are never lost; gtag.js itself loads after `load`, when the browser is idle.
+    return f"""<script>
+window.dataLayer=window.dataLayer||[];function gtag(){{dataLayer.push(arguments);}}
+if(!(navigator.webdriver||/bot|crawl|spider|headless|lighthouse/i.test(navigator.userAgent)||(screen.width===800&&screen.height===600))){{
+gtag('js',new Date());gtag('config','{GA}',{{anonymize_ip:true}});
+addEventListener('load',function(){{(window.requestIdleCallback||function(f){{setTimeout(f,1500)}})(function(){{var s=document.createElement('script');s.async=true;s.src='https://www.googletagmanager.com/gtag/js?id={GA}';document.head.appendChild(s);}},{{timeout:3000}});}});
+}}
+</script>"""
+
+
+def page_shell(t, *, title, description, canonical_path, body, extra_head="", active="",
+               path_en="/", path_ar="/ar/", og_image=None, sticky=""):
+    og_image = og_image or f"{BASE_URL}/assets/img/og.jpg"
+    ar = t["lang"] == "ar"
+    alt_path = path_en if ar else path_ar
+    preload = FONT_AR if ar else FONT_LATIN
     return f"""<!doctype html>
-<html lang="{html_lang}" dir="{t['dir']}">
+<html lang="{t['lang']}" dir="{t['dir']}">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{title}</title>
-<meta name="description" content="{description}">
+<title>{esc(title)}</title>
+<meta name="description" content="{esc(description)}">
 <link rel="canonical" href="{BASE_URL}{canonical_path}">
-<link rel="alternate" hreflang="en" href="{alt_href_en}">
-<link rel="alternate" hreflang="ar" href="{alt_href_ar}">
-<link rel="alternate" hreflang="x-default" href="{alt_href_en}">
-<meta name="theme-color" content="#c1613f">
+<link rel="alternate" hreflang="en" href="{BASE_URL}{path_en}">
+<link rel="alternate" hreflang="ar" href="{BASE_URL}{path_ar}">
+<link rel="alternate" hreflang="x-default" href="{BASE_URL}{path_en}">
+<meta name="theme-color" content="#FAF7FC">
+<meta name="color-scheme" content="light">
+<link rel="icon" href="/assets/img/icon.svg" type="image/svg+xml">
 <link rel="icon" type="image/png" sizes="32x32" href="/assets/img/icon-32.png">
 <link rel="apple-touch-icon" href="/assets/img/icon-180.png">
+<link rel="manifest" href="/site.webmanifest">
 <meta property="og:type" content="website">
+<meta property="og:site_name" content="Loopaholic">
 <meta property="og:url" content="{BASE_URL}{canonical_path}">
-<meta property="og:title" content="{title}">
-<meta property="og:description" content="{description}">
+<meta property="og:title" content="{esc(title)}">
+<meta property="og:description" content="{esc(description)}">
 <meta property="og:image" content="{og_image}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="{t['og_locale']}">
+<meta property="og:locale:alternate" content="{t['og_alt']}">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="stylesheet" href="/assets/css/style.css">
-<script async src="https://www.googletagmanager.com/gtag/js?id={GA}"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){{dataLayer.push(arguments);}}
-  if (!(navigator.webdriver || /bot|crawl|spider|headless|lighthouse/i.test(navigator.userAgent) || (screen.width === 800 && screen.height === 600))) {{
-    gtag('js', new Date());
-    gtag('config', '{GA}', {{ anonymize_ip: true }});
-  }}
-</script>
+<link rel="preload" href="{v(preload)}" as="font" type="font/woff2" crossorigin>
+{font_faces(ar)}
+<link rel="stylesheet" href="{v(CSS)}">
+{ga_snippet()}
 {extra_head}
 </head>
 <body>
-<header class="site">
-  <div class="bar">
-    <a class="brand" href="{'/' if t['lang']=='en' else '/ar/'}"><span class="dot"></span>{t['site_name']}</a>
-    <nav class="main">{nav_html(t, active)}</nav>
-    <div class="lang-switch">{lang_switch_html(t, path_en, path_ar)}</div>
+<a class="skip" href="#main">{t['skip']}</a>
+<header class="site-header">
+  <div class="wrap bar">
+    <a class="logo" href="{L(t, '/')}" aria-label="{t['home_label']}"><img src="{v('assets/img/lockup.svg')}" width="636" height="106" alt=""></a>
+    <nav class="nav" aria-label="{t['nav_label']}"><ul role="list">{nav_links(t, active, key_only_shop=True)}</ul></nav>
+    <a class="lang" href="{alt_path}" hreflang="{t['alt_lang']}" lang="{t['alt_lang']}">{t['alt_label']}</a>
+    <details class="menu">
+      <summary aria-label="{t['menu']}" aria-expanded="false">{ICONS['menu']}{ICONS['close']}</summary>
+      <nav class="menu-sheet" aria-label="{t['menu_label']}"><ul role="list">{nav_links(t, active)}</ul></nav>
+    </details>
   </div>
 </header>
+<main id="main" tabindex="-1">
 {body}
-<footer class="site">
-  <div class="wrap cols">
-    <div>
-      <div class="brand" style="margin-bottom:8px"><span class="dot"></span>{t['site_name']}</div>
-      <p>{t['footer_tagline']}</p>
-    </div>
-    <nav>
-      <strong>{t['footer_shop']}</strong>
-      <a href="{'/shop/' if t['lang']=='en' else '/ar/shop/'}">{t['nav_shop']}</a>
-      <a href="{'/custom-orders/' if t['lang']=='en' else '/ar/custom-orders/'}">{t['nav_custom']}</a>
-    </nav>
-    <nav>
-      <strong>{t['footer_info']}</strong>
-      <a href="{'/shipping/' if t['lang']=='en' else '/ar/shipping/'}">{t['nav_shipping']}</a>
-      <a href="{'/about/' if t['lang']=='en' else '/ar/about/'}">{t['nav_about']}</a>
-      <a href="{'/faq/' if t['lang']=='en' else '/ar/faq/'}">{t['nav_faq']}</a>
-    </nav>
-    <nav>
-      <strong>{t['footer_follow']}</strong>
-      <a href="{INSTAGRAM}">{INSTAGRAM_HANDLE}</a>
-    </nav>
-  </div>
-</footer>
+</main>
+{footer(t, alt_path)}
+{sticky}
+<script src="{v(JS)}" defer></script>
 </body>
 </html>
 """
 
+
+def footer(t, alt_path):
+    return f"""<footer class="site-footer">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <img src="{v('assets/img/lockup-white.svg')}" width="636" height="106" alt="Loopaholic">
+        <p>{t['footer_tagline']}</p>
+      </div>
+      <nav aria-labelledby="f-shop"><h2 id="f-shop">{t['footer_shop']}</h2><ul role="list">
+        <li><a href="{L(t, '/shop/')}">{t['nav_shop']}</a></li>
+        <li><a href="{L(t, '/custom-orders/')}">{t['nav_custom']}</a></li></ul></nav>
+      <nav aria-labelledby="f-help"><h2 id="f-help">{t['footer_info']}</h2><ul role="list">
+        <li><a href="{L(t, '/shipping/')}">{t['nav_shipping']}</a></li>
+        <li><a href="{L(t, '/faq/')}">{t['nav_faq']}</a></li>
+        <li><a href="{L(t, '/about/')}">{t['nav_about']}</a></li></ul></nav>
+      <nav aria-labelledby="f-follow"><h2 id="f-follow">{t['footer_follow']}</h2><ul role="list">
+        <li><a href="{INSTAGRAM}">{handle(t)}</a></li>
+        <li><a href="{alt_path}" hreflang="{t['alt_lang']}" lang="{t['alt_lang']}">{t['alt_label']}</a></li></ul></nav>
+    </div>
+    <div class="foot-base"><span>© <span dir="ltr">{YEAR}</span> Loopaholic</span></div>
+  </div>
+</footer>"""
+
+# -------------------------------------------------------------- JSON-LD ----
+
+
+def ld(data):
+    return f'<script type="application/ld+json">{json.dumps(data, ensure_ascii=False)}</script>'
+
+
+def breadcrumb_ld(t, items):
+    return ld({"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [
+        {"@type": "ListItem", "position": i + 1, "name": name, "item": f"{BASE_URL}{path}"} for i, (name, path) in enumerate(items)]})
+
+
 def product_jsonld(p, t):
-    offer = {
-        "@type": "Offer",
-        "url": f"{BASE_URL}/shop/{p['slug']}/",
-        "availability": "https://schema.org/MadeToOrder" if p.get("made_to_order") else "https://schema.org/InStock",
-        "itemCondition": "https://schema.org/NewCondition",
-    }
-    if p.get("stripe_payment_link"):
-        offer["url"] = p["stripe_payment_link"]
+    path = L(t, f"/shop/{p['slug']}/")
     data = {
         "@context": "https://schema.org",
         "@type": "Product",
         "name": p["title"][t["lang"]],
         "description": p["description"][t["lang"]],
-        "image": f"{BASE_URL}/{p['image']['main']}",
+        "image": f"{BASE_URL}{img_base(p['id'])}/w1200.jpg",
+        "url": f"{BASE_URL}{path}",
+        "sku": p["id"],
+        "brand": {"@type": "Brand", "name": "Loopaholic"},
         "category": CATEGORY_LABEL[p["category"]]["en"],
-        "offers": offer,
+        "color": ", ".join(p["colors"]),
     }
-    return f'<script type="application/ld+json">{json.dumps(data, ensure_ascii=False)}</script>'
-
-def product_card(p, t):
-    path = f"/shop/{p['slug']}/" if t["lang"] == "en" else f"/ar/shop/{p['slug']}/"
-    title = p["title"][t["lang"]]
-    return f'''<a class="card" href="{path}">
-  <img src="/{p['image']['thumb']}" alt="{title}" loading="lazy" width="400" height="400">
-  <div class="body">
-    <h3>{title}</h3>
-    <div class="price">{t['price_cta'] if HAS_WHATSAPP else t['price_cta_ig']}</div>
-  </div>
-</a>'''
+    if SHOW_UNCONFIRMED_DETAILS:
+        lo, hi = p["lead_time_days"]
+        data["additionalProperty"] = [
+            {"@type": "PropertyValue", "name": "Size", "value": p["size_approx"]},
+            {"@type": "PropertyValue", "name": "Made-to-order time", "value": f"{lo}–{hi} days"},
+        ]
+    # An Offer is only emitted with a real checkout link. "Price on request" offers
+    # without price/priceCurrency are invalid in Google's Rich Results test.
+    if p.get("stripe_payment_link"):
+        data["offers"] = {
+            "@type": "Offer", "url": p["stripe_payment_link"],
+            "availability": "https://schema.org/MadeToOrder" if p.get("made_to_order") else "https://schema.org/InStock",
+            "itemCondition": "https://schema.org/NewCondition",
+        }
+    return ld(data)
 
 # --------------------------------------------------------------- pages ----
+
+
 def build_home(t, outdir):
     path_en, path_ar = "/", "/ar/"
-    featured = PRODUCTS[:8]
-    showcase = "\n".join(
-        f'<a href="{"/shop/"+p["slug"]+"/" if t["lang"]=="en" else "/ar/shop/"+p["slug"]+"/"}"><img src="/{p["image"]["thumb"]}" alt="{p["title"][t["lang"]]}" loading="lazy" width="300" height="300"></a>'
-        for p in featured
-    )
-    shop_path = "/shop/" if t["lang"] == "en" else "/ar/shop/"
-    body = f'''<main>
-<section class="hero">
-  <div class="wrap">
-    <h1>{t['site_name']}</h1>
-    <p class="lead">{t['hero_lead']}</p>
-    <div class="cta-row">
-      <a class="btn btn-primary" href="{shop_path}">{t['cta_shop']}</a>
-      <a class="btn btn-ig" href="{INSTAGRAM}">{t['cta_instagram']}</a>
+    hero = BY_ID[HOME_HERO_ID]
+    featured = [BY_ID[i] for i in FEATURED_IDS]
+    body = f'''<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <h1>{t['hero_h1']}</h1>
+      <p class="lead">{t['hero_lead']}</p>
+      <div class="actions">
+        <a class="btn btn-primary" href="{L(t, '/shop/')}">{t['cta_shop']}</a>
+        <a class="text-link" href="#how">{t['how_link']}</a>
+      </div>
     </div>
-  </div>
-</section>
-<div class="wrap">
-  <div class="showcase">{showcase}</div>
-</div>
-<section class="alt">
-  <div class="wrap badge-row">
-    <div><span class="ic">\U0001f9f6</span><strong>{t['badge_handmade']}</strong><br>{t['badge_handmade_d']}</div>
-    <div><span class="ic">\U0001f9f5</span><strong>{t['badge_order']}</strong><br>{t['badge_order_d']}</div>
-    <div><span class="ic">\U0001f4e6</span><strong>{t['badge_ship']}</strong><br>{t['badge_ship_d']}</div>
-  </div>
-</section>
-</main>'''
-    org_jsonld = json.dumps({
-        "@context": "https://schema.org",
-        "@type": "Organization",
-        "@id": f"{BASE_URL}/#org",
-        "name": "Loopaholic",
-        "url": BASE_URL,
-        "logo": f"{BASE_URL}/assets/img/icon-512.png",
-        "sameAs": [INSTAGRAM],
-        "areaServed": [{"@type": "Country", "name": "Lebanon"}, {"@type": "Place", "name": "Gulf countries"}, {"@type": "Place", "name": "Worldwide"}],
-    }, ensure_ascii=False)
-    extra_head = f'<script type="application/ld+json">{org_jsonld}</script>'
-    html = page_shell(t, title=f"{t['site_name']} | Handmade Crochet, Made to Order" if t["lang"]=="en" else f"{t['site_name']} | كروشيه يدوي عند الطلب",
-                       description=t["meta_home_desc"], canonical_path=path_en if t["lang"]=="en" else path_ar,
-                       body=body, extra_head=extra_head, active="home", path_en=path_en, path_ar=path_ar)
-    write(outdir, "index.html", html)
-
-def build_shop(t, outdir):
-    path_en, path_ar = "/shop/", "/ar/shop/"
-    chips = "\n".join(
-        f'<a href="#cat-{c}">{CATEGORY_LABEL[c][t["lang"]]}</a>' for c in CATEGORY_ORDER if any(p["category"] == c for p in PRODUCTS)
-    )
-    sections = []
-    for c in CATEGORY_ORDER:
-        items = [p for p in PRODUCTS if p["category"] == c]
-        if not items:
-            continue
-        cards = "\n".join(product_card(p, t) for p in items)
-        sections.append(f'<section id="cat-{c}"><div class="wrap"><div class="section-head"><h2>{CATEGORY_LABEL[c][t["lang"]]}</h2></div><div class="grid">{cards}</div></div></section>')
-    body = f'''<main>
-<section>
-  <div class="wrap">
-    <div class="section-head">
-      <h1>{t['shop_title']}</h1>
-      <p>{t['shop_lead']}</p>
-    </div>
-    <div class="chips">{chips}</div>
-  </div>
-</section>
-{''.join(sections)}
-</main>'''
-    html = page_shell(t, title=f"Shop | {t['site_name']}" if t["lang"]=="en" else f"المتجر | {t['site_name']}",
-                       description=t["meta_shop_desc"], canonical_path=path_en if t["lang"]=="en" else path_ar,
-                       body=body, active="shop", path_en=path_en, path_ar=path_ar)
-    write(outdir, "shop/index.html", html)
-
-def build_product(p, t, outdir):
-    path_en, path_ar = f"/shop/{p['slug']}/", f"/ar/shop/{p['slug']}/"
-    shop_path = "/shop/" if t["lang"] == "en" else "/ar/shop/"
-    title = p["title"][t["lang"]]
-    desc = p["description"][t["lang"]]
-    colors = ", ".join(p["colors"])
-    lead_lo, lead_hi = p["lead_time_days"]
-
-    wa_text = f"Hi! I'd like to order: {p['title']['en']}" if t["lang"] == "en" else f"مرحبا، أريد طلب: {p['title']['ar']}"
-    wa_href = whatsapp_link(wa_text)
-    intl_block = (
-        f'<div class="stripe-slot active"><a class="btn btn-primary" href="{p["stripe_payment_link"]}">{t["buy_now"]}</a></div>'
-        if p.get("stripe_payment_link") else
-        f'<p>{t["order_intl_body_pending"]}</p><a class="btn btn-outline" href="{INSTAGRAM}">{t["order_instagram"]}</a>'
-    )
-
-    others = [x for x in PRODUCTS if x["category"] == p["category"] and x["id"] != p["id"]][:4]
-    related_html = ""
-    if others:
-        cards = "\n".join(product_card(x, t) for x in others)
-        related_html = f'<section class="alt"><div class="wrap"><div class="section-head"><h2>{t["related_title"]}</h2></div><div class="grid">{cards}</div></div></section>'
-
-    body = f'''<main>
-<section>
-  <div class="wrap">
-    <p class="breadcrumb"><a href="{'/' if t['lang']=='en' else '/ar/'}">{t['breadcrumb_home']}</a> / <a href="{shop_path}">{t['breadcrumb_shop']}</a> / {title}</p>
-    <div class="product-layout">
-      <img src="/{p['image']['main']}" alt="{title}" width="800" height="800">
-      <div>
-        <h1>{title}</h1>
-        <div class="price-block">{price_link(t, wa_href, f"{{product:'{p['slug']}'}}")}</div>
-        <div class="meta-row">
-          <span class="pill">{t['size_label']}: {p['size_approx']}</span>
-          <span class="pill">{t['colors_label']}: {colors}</span>
-          <span class="pill">{t['lead_label']}: {lead_lo}–{lead_hi} {t['days']}</span>
-        </div>
-        <p>{desc}</p>
-
-        <h2 style="font-size:1.1rem;margin-top:1.4em">{t['order_lebanon_title']}</h2>
-        <p>{t['order_lebanon_body']}</p>
-        <div class="order-actions">
-          {order_buttons(t, wa_href, f"{{product:'{p['slug']}'}}")}
-        </div>
-
-        <h2 style="font-size:1.1rem;margin-top:1.4em">{t['order_intl_title']}</h2>
-        {intl_block.replace('class="btn btn-primary"', f'class="btn btn-primary" onclick="gtag(\'event\',\'buy_click\',{{product:\'{p["slug"]}\'}})"')}
+    <div>
+      <div class="gallery">
+        <a class="tile" href="{L(t, '/shop/' + hero['slug'] + '/')}" aria-label="{esc(hero['title'][t['lang']])}">{picture(hero['id'], '', '(min-width: 52.5em) 34rem, 92vw', eager=True)}</a>
+        {loupe(hero['id'], t)}
       </div>
     </div>
   </div>
 </section>
-{related_html}
-</main>'''
-    extra_head = product_jsonld(p, t)
-    html = page_shell(t, title=f"{title} | {t['site_name']}", description=desc,
-                       canonical_path=path_en if t["lang"]=="en" else path_ar,
-                       body=body, extra_head=extra_head, active="shop", path_en=path_en, path_ar=path_ar)
-    write(outdir, f"shop/{p['slug']}/index.html", html)
+<section class="section" aria-labelledby="featured-h">
+  <div class="wrap">
+    <div class="head"><h2 id="featured-h">{t['featured_h']}</h2></div>
+    {grid(featured, t)}
+    <p class="more"><a class="btn btn-secondary" href="{L(t, '/shop/')}">{t['featured_more']}</a></p>
+  </div>
+</section>
+<section class="section band" id="how" aria-labelledby="how-h">
+  <div class="wrap">
+    <div class="head"><h2 id="how-h">{t['how_h']}</h2><p class="muted" style="max-inline-size:var(--measure)">{t['how_lead']}</p></div>
+    {steps(t['how'], row=True)}
+  </div>
+</section>
+<section class="section" aria-labelledby="made-h">
+  <div class="wrap split">
+    <div class="stack">
+      <h2 id="made-h">{t['made_h']}</h2>
+      <p>{t['made_b']}</p>
+      <p><a class="text-link" href="{L(t, '/about/')}">{t['made_link']}</a></p>
+    </div>
+    <div class="stack">
+      <h2>{t['follow_h']}</h2>
+      <p class="muted">{t['follow_b']}</p>
+      <p><a class="btn btn-secondary" href="{INSTAGRAM}">{ICONS['instagram']}<span>{with_handle(t, t['follow_cta'])}</span></a></p>
+    </div>
+  </div>
+</section>'''
+    org = {
+        "@context": "https://schema.org", "@type": "Organization", "@id": f"{BASE_URL}/#org",
+        "name": "Loopaholic", "url": BASE_URL, "logo": f"{BASE_URL}/assets/img/icon-512.png",
+        "sameAs": [INSTAGRAM],
+        "areaServed": [{"@type": "Country", "name": "Lebanon"}, {"@type": "Place", "name": "Gulf countries"}, {"@type": "Place", "name": "Worldwide"}],
+    }
+    html_ = page_shell(t, title=f"{t['site_name']} | Handmade Crochet, Made to Order" if t["lang"] == "en" else f"{t['site_name']} | كروشيه يدوي عند الطلب",
+                       description=t["meta_home_desc"], canonical_path=path_en if t["lang"] == "en" else path_ar,
+                       body=body, extra_head=ld(org), active="home", path_en=path_en, path_ar=path_ar)
+    write(outdir, "index.html", html_)
+
+
+def build_shop(t, outdir):
+    path_en, path_ar = "/shop/", "/ar/shop/"
+    cats = [c for c in CATEGORY_ORDER if any(p["category"] == c for p in PRODUCTS)]
+    chips = "".join(f'<li><a class="chip" href="#cat-{c}">{CATEGORY_LABEL[c][t["lang"]]}</a></li>' for c in cats)
+    sections = []
+    for n, c in enumerate(cats):
+        items = [p for p in PRODUCTS if p["category"] == c]
+        sections.append(f'<section class="cat" id="cat-{c}" aria-labelledby="h-{c}"><h2 id="h-{c}">{CATEGORY_LABEL[c][t["lang"]]}</h2>{grid(items, t, eager_first=2 if n == 0 else 0, meta=False)}</section>')
+    body = f'''<div class="wrap page-head">
+  <h1>{t['shop_title']}</h1>
+  <p class="lead">{t['shop_lead']}</p>
+</div>
+<nav class="chips-bar" aria-label="{t['chips_label']}"><div class="wrap"><ul class="chips" role="list">{chips}</ul></div></nav>
+<div class="wrap section shop-body">
+  {''.join(sections)}
+  <div class="cant-find">
+    <h2>{t['cant_find_h']}</h2>
+    <p>{t['cant_find_b']} <a href="{L(t, '/custom-orders/')}">{t['cant_find_link']}</a></p>
+  </div>
+</div>'''
+    crumbs = breadcrumb_ld(t, [(t["breadcrumb_home"], L(t, "/")), (t["breadcrumb_shop"], L(t, "/shop/"))])
+    html_ = page_shell(t, title=f"Shop | {t['site_name']}" if t["lang"] == "en" else f"المتجر | {t['site_name']}",
+                       description=t["meta_shop_desc"], canonical_path=path_en if t["lang"] == "en" else path_ar,
+                       body=body, extra_head=crumbs, active="shop", path_en=path_en, path_ar=path_ar)
+    write(outdir, "shop/index.html", html_)
+
+
+def build_product(p, t, outdir):
+    path_en, path_ar = f"/shop/{p['slug']}/", f"/ar/shop/{p['slug']}/"
+    title = p["title"][t["lang"]]
+    desc = p["description"][t["lang"]]
+    cat = CATEGORY_LABEL[p["category"]][t["lang"]]
+    ctx = f"{{product:'{p['slug']}'}}"
+    wa_text = (f"Hi! I'd like to order: {p['title']['en']} ({BASE_URL}{path_en}). My area: "
+               if t["lang"] == "en" else f"مرحبا! بدي اطلب: {p['title']['ar']} ({BASE_URL}{path_ar}). منطقتي: ")
+
+    facts = [(t["colors_label"], colors_text(p, t))]
+    if SHOW_UNCONFIRMED_DETAILS:
+        lo, hi = p["lead_time_days"]
+        facts = [(t["size_label"], size_text(p, t))] + facts + [(t["lead_label"], f"{lo}–{hi} {t['days']}")]
+    facts_html = "".join(f"<div><dt>{k}</dt><dd>{esc(val)}</dd></div>" for k, val in facts)
+
+    intl = ""
+    if p.get("stripe_payment_link"):
+        intl = (f'<div class="aside"><h2>{t["order_intl_title"]}</h2><p>{t["order_intl_body_live"]}</p>'
+                f'<p><a class="btn btn-secondary" href="{esc(p["stripe_payment_link"])}" {ga("buy_click", ctx)}>{t["buy_now"]}</a></p></div>')
+
+    others = [x for x in PRODUCTS if x["category"] == p["category"] and x["id"] != p["id"]][:4]
+    if len(others) < 4:
+        others += [x for x in PRODUCTS if x["id"] != p["id"] and x not in others][: 4 - len(others)]
+    note = t["order_note_wa"] if HAS_WHATSAPP else t["order_note_ig"]
+
+    body = f'''<div class="wrap">
+  <nav aria-label="{t['breadcrumb_label']}"><ol class="crumbs" role="list">
+    <li><a href="{L(t, '/shop/')}">{t['breadcrumb_shop']}</a></li>
+    <li><a href="{L(t, '/shop/')}#cat-{p['category']}">{cat}</a></li>
+  </ol></nav>
+  <div class="pdp">
+    <div>
+      <div class="gallery">
+        <div class="tile">{picture(p['id'], f"{title}, {t['img_alt_suffix']}", '(min-width: 52.5em) 55vw, 100vw', eager=True)}</div>
+        {loupe(p['id'], t)}
+      </div>
+      <p class="loupe-note">{t['loupe_note']}</p>
+    </div>
+    <div class="pdp-info">
+      <h1>{esc(title)}</h1>
+      <p>{esc(desc)}</p>
+      <dl class="facts">{facts_html}</dl>
+      <div class="order">
+        <p class="price-note">{t['price_note']}</p>
+        <div class="actions">{order_cta(t, ctx, wa_text, cta_id="order-cta")}</div>
+        <p class="note">{with_handle(t, note)}</p>
+      </div>
+      <div class="aside" id="how">
+        <h2>{t['how_h']}</h2>
+        {steps(t['how'], compact=True, level="h3")}
+      </div>
+      <div class="aside">
+        <h2>{t['delivery_h']}</h2>
+        <p>{t['delivery_b1']}</p>
+        <p>{t['delivery_b2']} <a href="{L(t, '/shipping/')}">{t['delivery_link']}</a></p>
+      </div>
+      {intl}
+    </div>
+  </div>
+</div>
+<section class="section related" aria-labelledby="rel-h">
+  <div class="wrap">
+    <h2 id="rel-h">{t['related_title']}</h2>
+    {grid(others, t)}
+  </div>
+</section>'''
+    sticky = (f'<div class="sticky-cta" aria-hidden="true"><span class="name">{esc(title)}</span>'
+              f'{order_cta(t, ctx, wa_text, block=False, secondary=False).replace("<a ", "<a tabindex=" + chr(34) + "-1" + chr(34) + " ", 1)}</div>')
+    head = product_jsonld(p, t) + "\n" + breadcrumb_ld(t, [(t["breadcrumb_home"], L(t, "/")), (t["breadcrumb_shop"], L(t, "/shop/")), (title, L(t, f"/shop/{p['slug']}/"))])
+    html_ = page_shell(t, title=f"{title} | {t['site_name']}", description=desc,
+                       canonical_path=path_en if t["lang"] == "en" else path_ar,
+                       body=body, extra_head=head, active="shop", path_en=path_en, path_ar=path_ar,
+                       og_image=f"{BASE_URL}{img_base(p['id'])}/og.jpg", sticky=sticky)
+    write(outdir, f"shop/{p['slug']}/index.html", html_)
+
 
 def build_custom(t, outdir):
     path_en, path_ar = "/custom-orders/", "/ar/custom-orders/"
-    wa_href = whatsapp_link("Hi! I'd like to ask about a custom order." if t["lang"] == "en" else "مرحبا، أريد الاستفسار عن طلب خاص.")
-    body = f'''<main>
-<section>
-  <div class="wrap prose">
-    <div class="section-head"><h1>{t['custom_title']}</h1><p>{t['custom_lead']}</p></div>
+    wa_text = "Hi! I'd like to ask about a custom order." if t["lang"] == "en" else "مرحبا، أريد الاستفسار عن طلب خاص."
+    examples = "".join(
+        f'<figure><div class="tile">{picture(pid, t[key], "(min-width: 40em) 17rem, 46vw")}</div><figcaption>{t[key]}</figcaption></figure>'
+        for pid, key in CUSTOM_EXAMPLES)
+    body = f'''<div class="wrap page-head">
+  <h1>{t['custom_title']}</h1>
+  <p class="lead">{t['custom_lead']}</p>
+</div>
+<div class="wrap section" style="padding-block-start:0">
+  <div class="prose">
     <p>{t['custom_body_1']}</p>
     <p>{t['custom_body_2']}</p>
-    <div class="showcase" style="grid-template-columns:repeat(2,1fr);max-width:500px;margin:0 auto 20px">
-      <img src="/assets/img/custom/letter-d.jpg" alt="Crochet letter D" loading="lazy">
-      <img src="/assets/img/custom/daisy-keychain.jpg" alt="Crochet daisy keychain" loading="lazy">
-    </div>
-    <h2>{t['custom_how_title']}</h2>
-    <ol>
-      <li>{t['custom_how_1']}</li>
-      <li>{t['custom_how_2']}</li>
-      <li>{t['custom_how_3']}</li>
-    </ol>
-    <div class="cta-row" style="justify-content:flex-start">
-      {f'<a class="btn btn-primary" href="{wa_href}" onclick="gtag(\'event\',\'whatsapp_click\',{{page:\'custom-orders\'}})">{t["custom_cta"]}</a>\n      <a class="btn btn-outline" href="{INSTAGRAM}" onclick="gtag(\'event\',\'instagram_click\',{{page:\'custom-orders\'}})">{t["order_instagram"]}</a>' if HAS_WHATSAPP else f'<a class="btn btn-primary" href="{INSTAGRAM}" onclick="gtag(\'event\',\'instagram_click\',{{page:\'custom-orders\'}})">{t["custom_cta"]}</a>'}
-    </div>
   </div>
-</section>
-</main>'''
-    html = page_shell(t, title=f"{t['custom_title']} | {t['site_name']}", description=t['custom_lead'],
-                       canonical_path=path_en if t["lang"]=="en" else path_ar,
+  <div class="examples">{examples}</div>
+  <div class="prose">
+    <h2>{t['custom_how_title']}</h2>
+    {steps(t['custom_how'])}
+    <div class="actions cta-block">{order_cta(t, "{page:'custom-orders'}", wa_text, label_key="custom_cta")}</div>
+    <p class="muted small">{with_handle(t, t['order_note_wa'] if HAS_WHATSAPP else t['order_note_short'])}</p>
+  </div>
+</div>'''
+    html_ = page_shell(t, title=f"{t['custom_title'] if t['lang'] == 'ar' else 'Custom Orders'} | {t['site_name']}", description=t['custom_lead'],
+                       canonical_path=path_en if t["lang"] == "en" else path_ar,
                        body=body, active="custom", path_en=path_en, path_ar=path_ar)
-    write(outdir, "custom-orders/index.html", html)
+    write(outdir, "custom-orders/index.html", html_)
+
+
+def how_aside(t):
+    return (f'<aside class="side" aria-labelledby="side-h"><h2 id="side-h">{t["how_h"]}</h2>'
+            f'{steps(t["how"], compact=True)}'
+            f'<p><a class="btn btn-primary" href="{L(t, "/shop/")}">{t["cta_shop"]}</a></p></aside>')
+
+
+def prose_page(t, outdir, *, rel, title_text, head_title, lead, inner, description, active, extra_head="", aside=""):
+    path_en, path_ar = f"/{rel}/", f"/ar/{rel}/"
+    body = f'''<div class="wrap page-head">
+  <h1>{head_title}</h1>
+  {f'<p class="lead">{lead}</p>' if lead else ''}
+</div>
+<div class="wrap section prose-layout" style="padding-block-start:0">
+  <div class="prose">
+{inner}
+  </div>
+  {aside}
+</div>'''
+    html_ = page_shell(t, title=title_text, description=description,
+                       canonical_path=path_en if t["lang"] == "en" else path_ar,
+                       body=body, extra_head=extra_head, active=active, path_en=path_en, path_ar=path_ar)
+    write(outdir, f"{rel}/index.html", html_)
+
 
 def build_shipping(t, outdir):
-    path_en, path_ar = "/shipping/", "/ar/shipping/"
-    body = f'''<main>
-<section>
-  <div class="wrap prose">
-    <div class="section-head"><h1>{t['shipping_title']}</h1></div>
-    <h2>{t['shipping_lebanon_h']}</h2>
-    <p>{t['shipping_lebanon_b']}</p>
-    <h2>{t['shipping_gulf_h']}</h2>
-    <p>{t['shipping_gulf_b']}</p>
-    <h2>{t['shipping_intl_h']}</h2>
-    <p>{t['shipping_intl_b']}</p>
-    <h2>{t['shipping_note_h']}</h2>
-    <p>{t['shipping_note_b']}</p>
-  </div>
-</section>
-</main>'''
-    html = page_shell(t, title=f"{t['shipping_title']} | {t['site_name']}", description=t['shipping_lebanon_b'],
-                       canonical_path=path_en if t["lang"]=="en" else path_ar,
-                       body=body, active="shipping", path_en=path_en, path_ar=path_ar)
-    write(outdir, "shipping/index.html", html)
+    inner = "\n".join(f"<h2>{t[h]}</h2>\n<p>{t[b]}</p>" for h, b in [
+        ("shipping_lebanon_h", "shipping_lebanon_b"), ("shipping_gulf_h", "shipping_gulf_b"),
+        ("shipping_intl_h", "shipping_intl_b"), ("shipping_returns_h", "delivery_b2"), ("shipping_note_h", "shipping_note_b")])
+    prose_page(t, outdir, rel="shipping", title_text=f"{t['shipping_title']} | {t['site_name']}", head_title=t["shipping_title"],
+               lead=t["shipping_lead"], inner=inner, description=t["shipping_lebanon_b"], active="shipping", aside=how_aside(t))
+
 
 def build_about(t, outdir):
-    path_en, path_ar = "/about/", "/ar/about/"
-    body = f'''<main>
-<section>
-  <div class="wrap prose">
-    <div class="section-head"><h1>{t['about_title']}</h1></div>
-    <p>{t['about_body_1']}</p>
-    <p>{t['about_body_2']}</p>
-    <p>{t['about_body_3']} <a href="{INSTAGRAM}">{INSTAGRAM_HANDLE}</a></p>
-  </div>
-</section>
-</main>'''
-    html = page_shell(t, title=f"{t['about_title']} | {t['site_name']}", description=t['about_body_1'][:150],
-                       canonical_path=path_en if t["lang"]=="en" else path_ar,
-                       body=body, active="about", path_en=path_en, path_ar=path_ar)
-    write(outdir, "about/index.html", html)
+    trio = "".join(f'<li class="tile">{picture(pid, "", "(min-width: 40em) 13rem, 30vw")}</li>' for pid in ("p066", "p150", "p013"))
+    inner = (f'<ul class="trio" role="list">{trio}</ul>\n'
+             f"<p>{t['about_body_1']}</p>\n<p>{t['about_body_2']}</p>\n"
+             f"<p>{t['about_body_3']} <a href=\"{INSTAGRAM}\">{handle(t)}</a></p>\n"
+             f'<p class="cta-block"><a class="btn btn-primary" href="{L(t, "/shop/")}">{t["cta_shop"]}</a></p>')
+    prose_page(t, outdir, rel="about", title_text=f"{t['about_title']} | {t['site_name']}", head_title=t["about_title"],
+               lead="", inner=inner, description=t["about_body_1"][:150], active="about")
+
 
 def build_faq(t, outdir):
-    path_en, path_ar = "/faq/", "/ar/faq/"
-    items = "\n".join(f'<div class="faq-item"><h3>{q}</h3><p>{a}</p></div>' for q, a in t["faq"])
-    body = f'''<main>
-<section>
-  <div class="wrap prose">
-    <div class="section-head"><h1>{t['faq_title']}</h1></div>
-    {items}
-  </div>
-</section>
-</main>'''
-    faq_jsonld = json.dumps({
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
-        "mainEntity": [
-            {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}}
-            for q, a in t["faq"]
-        ],
-    }, ensure_ascii=False)
-    extra_head = f'<script type="application/ld+json">{faq_jsonld}</script>'
-    html = page_shell(t, title=f"{t['faq_title']} | {t['site_name']}", description=t["faq"][0][1][:150],
-                       canonical_path=path_en if t["lang"]=="en" else path_ar,
-                       body=body, extra_head=extra_head, active="faq", path_en=path_en, path_ar=path_ar)
-    write(outdir, "faq/index.html", html)
+    inner = "\n".join(f'<div class="qa"><h2>{esc(q)}</h2><p>{esc(a)}</p></div>' for q, a in t["faq"])
+    faq_ld = ld({"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
+        {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in t["faq"]]})
+    prose_page(t, outdir, rel="faq", title_text=f"{t['faq_title']} | {t['site_name']}", head_title=t["faq_title"],
+               lead=t["faq_lead"], inner=inner, description=t["faq"][0][1][:150], active="faq", extra_head=faq_ld, aside=how_aside(t))
+
+
+def build_404(outdir):
+    """Bilingual 404 (GitHub Pages serves /404.html with status 404). English shell,
+    Arabic block marked lang="ar" dir="rtl"; noindex."""
+    en, ar = T["en"], T["ar"]
+
+    def block(t, tag):
+        links = "".join(f'<li><a class="text-link" href="{L(t, href)}">{t[key]}</a></li>' for key, href in
+                        [("nav_shop", "/shop/"), ("nav_home", "/"), ("nav_faq", "/faq/")])
+        return (f'<div lang="{t["lang"]}" dir="{t["dir"]}" class="stack"><{tag}>{t["nf_title"]}</{tag}><p class="muted">{t["nf_body"]}</p>'
+                f'<ul role="list">{links}</ul><p>{esc(t["nf_contact"])} <a href="{INSTAGRAM_DM}">{handle(t)}</a></p></div>')
+    body = f'''<div class="wrap lost"><div class="lost-grid">{block(en, "h1")}{block(ar, "h2")}</div></div>'''
+    html_ = page_shell(en, title="Page not found | Loopaholic", description="This page isn’t here.", canonical_path="/404.html",
+                       body=body, extra_head='<meta name="robots" content="noindex">')
+    # no canonical/hreflang on the 404 page
+    html_ = re.sub(r'<link rel="(canonical|alternate)"[^>]*>\n', "", html_)
+    html_ = html_.replace(font_faces(False), font_faces(True))
+    write(outdir, "404.html", html_)
+
 
 def write(outdir, relpath, content):
     full = os.path.join(outdir, relpath)
     os.makedirs(os.path.dirname(full), exist_ok=True)
+    if relpath.endswith(".html"):
+        RENDER_PROBLEMS.extend(check_rendered(os.path.relpath(full, ROOT), content))
     with open(full, "w", encoding="utf-8") as f:
         f.write(content)
+
 
 def build_sitemap(outdir):
     urls = ["/", "/shop/", "/custom-orders/", "/shipping/", "/about/", "/faq/"]
@@ -575,16 +925,32 @@ def build_sitemap(outdir):
     xml = f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n{entries}\n</urlset>\n'
     write(outdir, "sitemap.xml", xml)
 
+
 INDEXNOW_KEY = "ea77b6da080977a1becb866c3314f534"  # same key used on every other Taktek domain
+
 
 def build_robots(outdir):
     write(outdir, "robots.txt", f"User-agent: *\nAllow: /\n\nSitemap: {BASE_URL}/sitemap.xml\n")
     write(outdir, f"{INDEXNOW_KEY}.txt", INDEXNOW_KEY + "\n")
 
+
 def build_cname(outdir):
     write(outdir, "CNAME", DOMAIN + "\n")
 
+
+def build_manifest(outdir):
+    write(outdir, "site.webmanifest", json.dumps({
+        "name": "Loopaholic", "short_name": "Loopaholic", "start_url": "/", "display": "browser",
+        "background_color": "#FAF7FC", "theme_color": "#FAF7FC",
+        "icons": [{"src": "/assets/img/icon-192.png", "sizes": "192x192", "type": "image/png"},
+                  {"src": "/assets/img/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable"}],
+    }, indent=2) + "\n")
+
+
 def main():
+    problems = check_claims()
+    if problems:
+        sys.exit("Build stopped: forbidden claim(s) in catalog/copy (owner rule R2b):\n  " + "\n  ".join(problems))
     outdir = ROOT
     for lang in ("en", "ar"):
         t = T[lang]
@@ -597,10 +963,15 @@ def main():
         build_shipping(t, sub)
         build_about(t, sub)
         build_faq(t, sub)
+    build_404(outdir)
     build_sitemap(outdir)
     build_robots(outdir)
     build_cname(outdir)
-    print(f"Built {len(PRODUCTS)} products × 2 languages.")
+    build_manifest(outdir)
+    if RENDER_PROBLEMS:
+        sys.exit("Build stopped: forbidden claim(s) in rendered pages (owner rule R2b):\n  " + "\n  ".join(RENDER_PROBLEMS))
+    print(f"Built {len(PRODUCTS)} products × 2 languages (+404). SHOW_UNCONFIRMED_DETAILS={SHOW_UNCONFIRMED_DETAILS}, HAS_WHATSAPP={HAS_WHATSAPP}")
+
 
 if __name__ == "__main__":
     main()
