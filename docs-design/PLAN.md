@@ -135,3 +135,16 @@ At ≥ 52.5em the full nav is inline. Language switch and menu ≥ 44 px.
 - The product-page loupe is live: it follows the pointer (or a tap/drag, or arrow keys) over the full
   1200 px photo at 1 photo px per CSS px, loading that file only on first use. Static crop = no-JS view.
 - p207 is shown cropped to the head and front paws (hand sliver removed by framing only).
+
+## Round 4
+- **Checklist exception (overseer ruling B1):** English pages load one Arabic font file, a 6 KB subset
+  of Baloo Bhaijaan 2 containing only the glyphs of «العربية» (the language switch in the header and
+  footer). The checklist's "no Arabic font on EN pages" exists to keep the 38 KB Arabic body face off
+  English pages; without the subset the switch would render in a system Arabic fallback.
+- Accent budget: the hero's "How ordering works" link is ink with an underline (accent on hover), so
+  every first screen has at most 3 accent elements (logo ring, loupe ring, primary button).
+- Touch devices get a one-line hint under the product photo ("Tap the photo to look closer.").
+- AR pages: Latin names in running text (Whish, Loopaholic, the handle) are wrapped in
+  `<bdi dir="ltr">` at build time; AR non-product pages use `og-ar.jpg` (Arabic line in Baloo).
+- Favicon set: `/favicon.ico` (16+32), `icon.svg` with a dark-scheme variant, a separate maskable icon
+  with the ring inside the 40 % safe circle.

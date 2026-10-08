@@ -71,7 +71,11 @@
     }, { rootMargin: '-30% 0px -60% 0px' });
     cats.forEach(function (s) { cio.observe(s); });
     addEventListener('scroll', function () {
-      if (innerHeight + scrollY >= document.documentElement.scrollHeight - 2) {
+      if (cats[0].getBoundingClientRect().top > innerHeight * 0.3) {
+        chips.forEach(function (c) { c.removeAttribute('aria-current'); });
+        var row1 = chips[0].closest('.chips');
+        if (row1.scrollLeft !== 0) row1.scrollLeft = 0;
+      } else if (innerHeight + scrollY >= document.documentElement.scrollHeight - 2) {
         chips.forEach(function (c) { c.removeAttribute('aria-current'); });
         var last = byId[cats[cats.length - 1].id];
         if (last) last.setAttribute('aria-current', 'true');
@@ -115,6 +119,7 @@
       base = { left: l.left - t.left, top: l.top - t.top, size: l.width, w: t.width, h: t.height };
     };
     var render = function () {
+      clamp();
       var cx = pos.x * base.w, cy = pos.y * base.h;
       lp.style.transform = 'translate(' + (cx - base.size / 2 - base.left) + 'px,' + (cy - base.size / 2 - base.top) + 'px)';
       var inner = lp.clientWidth;
@@ -128,32 +133,34 @@
     var stop = function () {
       live = false; dragging = false; lp.classList.remove('is-live'); lp.style.transform = '';
     };
+    // keep the whole ring over the photo: its centre stays one radius inside the tile
+    var clamp = function () {
+      var rx = base.size / 2 / base.w, ry = base.size / 2 / base.h;
+      pos.x = Math.min(1 - rx, Math.max(rx, pos.x));
+      pos.y = Math.min(1 - ry, Math.max(ry, pos.y));
+    };
     var at = function (e) {
       var t = tile.getBoundingClientRect();
-      pos.x = Math.min(1, Math.max(0, (e.clientX - t.left) / t.width));
-      pos.y = Math.min(1, Math.max(0, (e.clientY - t.top) / t.height));
+      pos.x = (e.clientX - t.left) / t.width;
+      pos.y = (e.clientY - t.top) / t.height;
     };
+    var crop = { x: parseFloat(lp.dataset.cx) || 0.5, y: parseFloat(lp.dataset.cy) || 0.5 };
 
     gal.addEventListener('pointermove', function (e) {
       if (e.pointerType === 'mouse' || dragging) { start(); at(e); render(); }
     });
     gal.addEventListener('pointerleave', function (e) { if (e.pointerType === 'mouse') stop(); });
     tile.addEventListener('click', function (e) { start(); at(e); render(); });
-    var fromRing = function () {  // go live where the ring already sits
-      var l = lp.getBoundingClientRect(), t = tile.getBoundingClientRect();
-      start();
-      pos.x = Math.min(1, Math.max(0, (l.left + l.width / 2 - t.left) / t.width));
-      pos.y = Math.min(1, Math.max(0, (l.top + l.height / 2 - t.top) / t.height));
-      render();
+    var fromCrop = function () {  // go live on the same stitches the static close-up shows
+      start(); pos.x = crop.x; pos.y = crop.y; render();
     };
     lp.addEventListener('pointerdown', function (e) {
       if (e.pointerType === 'mouse') return;
-      if (!live) fromRing();
+      if (!live) fromCrop();
       dragging = true; lp.setPointerCapture(e.pointerId); e.preventDefault();
     });
     lp.addEventListener('pointerup', function () { dragging = false; });
     lp.addEventListener('pointercancel', function () { dragging = false; });
-    lp.addEventListener('focus', function () { if (!live) fromRing(); });
     lp.addEventListener('blur', function () { if (!dragging) stop(); });
     document.addEventListener('pointerdown', function (e) { if (live && !gal.contains(e.target)) stop(); });
     lp.addEventListener('keydown', function (e) {
@@ -162,7 +169,7 @@
       if (e.key === 'Escape') { stop(); return; }
       if (!k) return;
       e.preventDefault();
-      if (!live) start();
+      if (!live) fromCrop();
       pos.x = Math.min(1, Math.max(0, pos.x + k[0]));
       pos.y = Math.min(1, Math.max(0, pos.y + k[1]));
       render();

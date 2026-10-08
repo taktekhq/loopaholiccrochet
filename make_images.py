@@ -9,6 +9,7 @@ For every photo in catalog.json (+ the two custom-order examples) it writes
 assets/img/p/<id>/
   w400|w800|w1200 .avif/.webp   the re-grounded square photo
   w800.jpg, w1200.jpg           JPEG fallback / JSON-LD / OG source
+  stitch-centres.json            (in assets/img/p/) where each close-up sits in its photo
   stitch.avif/.webp/.jpg        400 px crop of the piece at full resolution (1:1 pixels),
                                 shown in the ring "loupe" (a crop, not a new shot)
   og.jpg                        1200x630 link preview
@@ -112,7 +113,7 @@ def stitch_crop(img, bg, size=400, pid=None):
     """The most textured size x size window that lies wholly on the piece."""
     if pid in STITCH_AT:
         x, y, s = (STITCH_AT[pid] + (size,))[:3]
-        return img.crop((x, y, x + s, y + s)).resize((size, size), Image.LANCZOS)
+        return img.crop((x, y, x + s, y + s)).resize((size, size), Image.LANCZOS), (x + s / 2, y + s / 2)
     g = np.asarray(img.convert("L")).astype(np.float32)
     lap = np.abs(ndimage.laplace(ndimage.gaussian_filter(g, 1.0)))
     off = ndimage.binary_dilation(bg, iterations=6).astype(np.float32)
@@ -128,17 +129,16 @@ def stitch_crop(img, bg, size=400, pid=None):
         # don't hug the frame edge, and prefer the middle of the piece
         y, x = np.unravel_index(np.argmax(e), e.shape)
         if e[y, x] > 0:
-            return img.crop((x, y, x + s, y + s)).resize((size, size), Image.LANCZOS)
+            return img.crop((x, y, x + s, y + s)).resize((size, size), Image.LANCZOS), (x + s / 2, y + s / 2)
     c = g.shape[0] // 2
-    return img.crop((c - size // 2, c - size // 2, c + size // 2, c + size // 2))
+    return img.crop((c - size // 2, c - size // 2, c + size // 2, c + size // 2)), (c, c)
 
 
 def save_set(img, base, widths=(400, 800, 1200), jpeg=(800, 1200)):
     for wd in widths:
         im = img if img.width == wd else img.resize((wd, wd), Image.LANCZOS)
         im.save(f"{base}w{wd}.avif", quality=62, speed=4)
-        if wd < 1200:  # AVIF covers ~95%; WebP is the fallback for older Safari at 400/800
-            im.save(f"{base}w{wd}.webp", quality=80, method=6)
+        im.save(f"{base}w{wd}.webp", quality=80, method=6)
         if wd in jpeg:
             im.save(f"{base}w{wd}.jpg", quality=82, optimize=True, progressive=True)
 
@@ -162,8 +162,15 @@ def main():
     only = set(sys.argv[1:])
     jobs = [j for j in jobs if not only or j[0] in only]
     with ProcessPoolExecutor() as ex:
-        for line in ex.map(one, jobs):
-            print(line)
+        centres = {}
+        for pid, cx, cy, note in ex.map(one, jobs):
+            centres[pid] = [cx, cy]
+            print(pid, note)
+    # where each stitch crop sits in its photo (0-1): the live loupe starts there
+    path = os.path.join(OUT, "stitch-centres.json")
+    old = json.load(open(path)) if os.path.exists(path) else {}
+    old.update(centres)
+    json.dump(old, open(path, "w"), indent=1, sort_keys=True)
 
 
 def one(job):
@@ -177,13 +184,13 @@ def one(job):
             img = img.crop(box).resize((1200, 1200), Image.LANCZOS)
             bg = np.asarray(Image.fromarray(bg[box[1]:box[3], box[0]:box[2]]).resize((1200, 1200), Image.NEAREST))
         save_set(img, d + "/")
-        st = stitch_crop(img, bg, pid=pid)
+        st, (cx, cy) = stitch_crop(img, bg, pid=pid)
         st.save(f"{d}/stitch.avif", quality=62, speed=4)
         st.save(f"{d}/stitch.webp", quality=80, method=6)
         st.save(f"{d}/stitch.jpg", quality=82, optimize=True)
         if not pid.startswith("custom-"):
             og(img, f"{d}/og.jpg")
-        return f"{pid} ground {bg.mean():.0%}"
+        return pid, round(cx / 1200, 4), round(cy / 1200, 4), f"ground {bg.mean():.0%}"
 
 
 if __name__ == "__main__":
