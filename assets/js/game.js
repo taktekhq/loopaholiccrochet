@@ -1,0 +1,381 @@
+/* Loopaholic: the Stitch Book game layer (docs-design/GAME.md).
+   Every piece is a character you meet; meeting closes the kit's open loop around it.
+   Progress lives in localStorage only. The shop works the same without this file. */
+(function () {
+  var I = {};
+  try { I = JSON.parse(document.getElementById('game-i18n').textContent); } catch (e) { return; }
+  var KEY = 'loopaholic.met.v1';
+  var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var rtl = document.dir === 'rtl';
+
+  // ---- state ----
+  var met = [];
+  try { met = JSON.parse(localStorage.getItem(KEY) || '[]') || []; } catch (e) { met = []; }
+  var has = function (id) { return met.indexOf(id) !== -1; };
+  var save = function () { try { localStorage.setItem(KEY, JSON.stringify(met)); } catch (e) {} };
+  var add = function (id) { if (!has(id)) { met.push(id); save(); } refreshCount(true); };
+  var fmt = function (s, o) { return String(s).replace(/\{(\w+)\}/g, function (m, k) { return k in o ? o[k] : m; }); };
+  var track = function (ev, params) { if (window.gtag) gtag('event', ev, params || {}); };
+  var buzz = function (p) { if (!reduce && navigator.vibrate) { try { navigator.vibrate(p); } catch (e) {} } };
+
+  document.documentElement.classList.add('game-on');
+  document.querySelectorAll('[data-game-only]').forEach(function (el) { el.hidden = false; });
+  document.querySelectorAll('[data-nojs]').forEach(function (el) { el.hidden = true; });
+
+  // ---- header: "4/36" next to the ring ----
+  function refreshCount(bump) {
+    document.querySelectorAll('[data-book-count]').forEach(function (el) {
+      el.textContent = met.length + '/' + I.total;
+      var a = el.closest('a');
+      if (a) a.setAttribute('aria-label', I.nav_book + ' ' + met.length + '/' + I.total);
+      if (bump && !reduce) { a.classList.remove('bump'); void a.offsetWidth; a.classList.add('bump'); }
+    });
+  }
+  refreshCount(false);
+
+  var toastEl = document.querySelector('[data-toast]'), toastT;
+  function toast(msg) {
+    if (!toastEl) return;
+    toastEl.textContent = msg;
+    toastEl.classList.add('on');
+    clearTimeout(toastT);
+    toastT = setTimeout(function () { toastEl.classList.remove('on'); }, 3200);
+  }
+
+  // ---- the catch: close the ring, colour in, squash, a few sparks ----
+  function sparks(host) {
+    if (reduce) return;
+    var box = document.createElement('span');
+    box.className = 'sparks';
+    box.setAttribute('aria-hidden', 'true');
+    for (var i = 0; i < 8; i++) {
+      var s = document.createElement('i');
+      var a = (i / 8) * Math.PI * 2 + 0.3;
+      s.style.setProperty('--dx', Math.round(Math.cos(a) * 64) + 'px');
+      s.style.setProperty('--dy', Math.round(Math.sin(a) * 64) + 'px');
+      box.appendChild(s);
+    }
+    host.appendChild(box);
+    setTimeout(function () { box.remove(); }, 700);
+  }
+  function closeRing(host, done) {
+    host.classList.add('is-closing');
+    setTimeout(function () {
+      host.classList.remove('is-closing');
+      host.classList.add('is-met');
+      if (!reduce) { host.classList.add('squash'); setTimeout(function () { host.classList.remove('squash'); }, 420); }
+      sparks(host);
+      buzz([12, 40, 18]);
+      if (done) done();
+    }, reduce ? 150 : 620);
+  }
+
+  function photo(id, alt) {
+    var b = '/assets/img/p/' + id + '/';
+    var p = document.createElement('picture');
+    p.innerHTML = '<source type="image/avif" srcset="' + b + 'w400.avif 400w, ' + b + 'w800.avif 800w" sizes="(min-width: 52.5em) 34rem, 92vw">' +
+      '<source type="image/webp" srcset="' + b + 'w400.webp 400w, ' + b + 'w800.webp 800w" sizes="(min-width: 52.5em) 34rem, 92vw">' +
+      '<img src="' + b + 'w800.jpg" width="800" height="800" alt="" decoding="async">';
+    p.querySelector('img').alt = alt || '';
+    return p;
+  }
+  var RING = '<svg class="ring" viewBox="0 0 100 100" aria-hidden="true" focusable="false"><circle class="ring-track" cx="50" cy="50" r="44" pathLength="100"/><circle class="ring-stitch" cx="50" cy="50" r="44" pathLength="100"/></svg>';
+
+  // ---- home: whose stitches are these? The clue is a close-up of the hidden piece's own
+  // stitches (the same crop as the product page loupe); meeting closes the ring and shows the piece.
+  var enc = document.querySelector('[data-encounter]');
+  if (enc) {
+    var all = [];
+    try { all = JSON.parse(document.getElementById('creatures').textContent); } catch (e) {}
+    var live = enc.querySelector('.enc');
+    var clue = function (id) {
+      var b = '/assets/img/p/' + id + '/';
+      return '<picture class="clue"><source type="image/avif" srcset="' + b + 'stitch.avif"><source type="image/webp" srcset="' + b + 'stitch.webp">' +
+        '<img src="' + b + 'stitch.jpg" width="400" height="400" alt="" decoding="async"></picture>';
+    };
+    var bind = function (c, focus) {
+      var btn = live.querySelector('.enc-btn');
+      track('encounter', { creature: c.id });
+      if (focus) btn.focus();
+      btn.addEventListener('click', function (e) {
+        e.preventDefault();
+        if (btn.getAttribute('aria-disabled')) return;
+        btn.setAttribute('aria-disabled', 'true');
+        var stage = live.querySelector('.enc-stage'), tile = live.querySelector('.enc-tile');
+        var pic = photo(c.id, c.title);
+        pic.className = 'reveal';
+        tile.appendChild(pic);
+        closeRing(stage, function () {
+          btn.remove();
+          add(c.id);
+          track('catch', { creature: c.id, source: 'home' });
+          var panel = live.querySelector('.enc-panel');
+          panel.innerHTML = '<p class="enc-title" tabindex="-1"></p><p class="cr-type"><span class="type-stamp"></span></p><p class="enc-line"></p>' +
+            '<p class="enc-progress"></p><div class="actions"><a class="btn btn-primary"></a><button class="text-link" type="button"></button></div>';
+          panel.querySelector('.enc-title').textContent = fmt(I.enc_met, { name: c.name });
+          panel.querySelector('.type-stamp').textContent = c.type;
+          panel.querySelector('.enc-line').textContent = c.line;
+          panel.querySelector('.enc-progress').textContent = fmt(I.progress, { n: met.length, total: I.total });
+          var a = panel.querySelector('a');
+          a.href = c.url + '#creature';
+          a.textContent = fmt(I.enc_card, { name: c.name });
+          var again = panel.querySelector('button');
+          again.textContent = I.enc_again;
+          again.addEventListener('click', function () { showNext(true); });
+          panel.querySelector('.enc-title').focus({ preventScroll: true });
+        });
+      });
+    };
+    var showNext = function (focus, first) {
+      var left = all.filter(function (c) { return !has(c.id); });
+      if (!left.length) {
+        live.innerHTML = '<div class="enc-stage is-met"><span class="tile enc-tile"></span>' + RING + '</div>' +
+          '<div class="enc-panel"><p class="enc-title"></p><p><a class="btn btn-primary" href="' + I.book + '"></a></p></div>';
+        live.querySelector('.enc-tile').appendChild(photo(all[Math.floor(Math.random() * all.length)].id, ''));
+        live.querySelector('.enc-title').textContent = fmt(I.enc_full, { total: I.total });
+        live.querySelector('.btn').textContent = I.enc_full_link;
+        return;
+      }
+      // the first visit always meets the piece already in the HTML (no image swap, stable LCP)
+      var staticId = live.dataset.id;
+      var c = first && !has(staticId) ? all.filter(function (x) { return x.id === staticId; })[0] : left[Math.floor(Math.random() * left.length)];
+      if (!(first && c.id === staticId)) {
+        live.innerHTML = '<div class="enc-stage"><span class="tile enc-tile">' + clue(c.id) + '</span>' + RING +
+          '<a class="btn btn-primary enc-btn" role="button"></a></div><div class="enc-panel"><p class="enc-peek"></p></div>';
+        live.querySelector('.enc-btn').textContent = I.enc_btn;
+        live.querySelector('.enc-btn').href = c.url + '#creature';
+        live.querySelector('.enc-peek').textContent = I.enc_peek;
+      }
+      bind(c, focus);
+    };
+    if (all.length) showNext(false, true);
+  }
+
+  // ---- Stitch Book ----
+  var slots = document.querySelectorAll('.slot');
+  if (slots.length) {
+    track('view_book', { met: met.length });
+    var paintBook = function () {
+      var bar = document.querySelector('[data-book-bar]'), prog = document.querySelector('[data-book-progress]');
+      if (prog) prog.textContent = fmt(I.progress, { n: met.length, total: I.total });
+      if (bar) bar.style.inlineSize = (100 * met.length / I.total) + '%';
+      document.querySelectorAll('[data-set]').forEach(function (set) {
+        var ids = Array.prototype.map.call(set.querySelectorAll('.slot'), function (s) { return s.dataset.id; });
+        var n = ids.filter(has).length;
+        var tally = set.querySelector('[data-set-tally]');
+        tally.textContent = n + '/' + ids.length;
+        set.classList.toggle('is-done', n === ids.length);
+        var chip = document.querySelector('[data-set-count="' + set.dataset.set + '"]');
+        if (chip) chip.textContent = n + '/' + ids.length;
+      });
+    };
+    slots.forEach(function (s) {
+      var id = s.dataset.id, sil = s.querySelector('.sil'), name = s.dataset.name;
+      if (has(id)) { s.classList.add('is-met'); return; }
+      s.classList.add('is-unmet');
+      sil.hidden = false;
+      s.setAttribute('aria-label', I.book_unmet);
+      s.addEventListener('click', function (e) {
+        if (!s.classList.contains('is-unmet')) return;
+        e.preventDefault();
+        s.classList.remove('is-unmet');
+        s.removeAttribute('aria-label');
+        var art = s.querySelector('.slot-art');
+        closeRing(art, function () {
+          sil.hidden = true;
+          s.classList.add('is-met');
+          add(id);
+          paintBook();
+          track('catch', { creature: id, source: 'book' });
+          toast(fmt(I.joined, { name: name, n: met.length, total: I.total }) + ' ' + (s.dataset.line || ''));
+        });
+      });
+    });
+    paintBook();
+    var reset = document.querySelector('[data-book-reset]');
+    if (reset) reset.addEventListener('click', function () {
+      if (!confirm(I.book_reset_confirm)) return;
+      met = []; save(); location.reload();
+    });
+  }
+
+  // ---- product page: the creature card ----
+  var card = document.querySelector('[data-creature]');
+  if (card) {
+    var cid = card.dataset.creature, cname = card.dataset.name;
+    track('product_view', { product: cid });
+    var badge = card.querySelector('.cr-badge');
+    if (has(cid)) badge.classList.add('is-met');
+    if ('IntersectionObserver' in window) {
+      var seen = false;
+      var cio = new IntersectionObserver(function (es) {
+        if (seen || !es[0].isIntersecting) return;
+        seen = true; cio.disconnect();
+        track('view_creature', { creature: cid });
+        if (!has(cid)) closeRing(badge, function () {
+          add(cid);
+          track('catch', { creature: cid, source: 'product' });
+          toast(fmt(I.joined, { name: cname, n: met.length, total: I.total }));
+        });
+      }, { threshold: 0.6 });
+      cio.observe(card);
+    }
+    document.querySelectorAll('[data-order-cta], .sticky-cta a').forEach(function (a) {
+      a.addEventListener('click', function () { track('bring_home_click', { creature: cid, met: has(cid) }); });
+    });
+    var copyBtn = document.querySelector('[data-copy]');
+    if (copyBtn) copyBtn.addEventListener('click', function () {
+      var txt = copyBtn.dataset.copy;
+      var ok = function () { toast(fmt(I.copied, { title: txt })); track('copy_name', { creature: cid }); };
+      if (navigator.clipboard) navigator.clipboard.writeText(txt).then(ok, function () {}); else ok();
+    });
+    var turnBtn = card.querySelector('[data-turn]');
+    if (turnBtn) turnBtn.addEventListener('click', function () { openTurn(turnBtn); });
+    var shareBtn = card.querySelector('[data-share]');
+    if (shareBtn) shareBtn.addEventListener('click', function () { shareCard(card, shareBtn); });
+  }
+
+  // ---- turn the 3D sketch: an 18-frame strip, scrubbed by finger, mouse or arrow keys ----
+  function openTurn(btn) {
+    var gal = document.querySelector('.pdp .gallery');
+    if (!gal || gal.querySelector('.turn')) return;
+    var n = +btn.dataset.frames, f = Math.floor(n / 2);
+    var wrap = document.createElement('div');
+    wrap.className = 'turn';
+    wrap.innerHTML = '<div class="turn-stage" role="slider" tabindex="0" aria-valuemin="1" aria-valuemax="' + n + '"></div>' +
+      '<div class="turn-bar"><button class="turn-step" type="button" data-d="-1"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>' +
+      '<button class="text-link turn-back" type="button"></button>' +
+      '<button class="turn-step" type="button" data-d="1"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></button></div>';
+    var stage = wrap.querySelector('.turn-stage');
+    stage.setAttribute('aria-label', fmt(I.turn_label, { name: card.dataset.name }));
+    stage.style.backgroundImage = 'url(' + btn.dataset.turn + ')';
+    stage.style.backgroundSize = (n * 100) + '% 100%';
+    var steps = wrap.querySelectorAll('.turn-step');
+    steps[0].setAttribute('aria-label', I.turn_left);
+    steps[1].setAttribute('aria-label', I.turn_right);
+    var back = wrap.querySelector('.turn-back');
+    back.textContent = I.turn_back;
+    var note = document.createElement('p');
+    note.className = 'turn-note';
+    note.textContent = I.turn_note;
+    var set = function (k) {
+      f = Math.max(0, Math.min(n - 1, k));
+      stage.style.backgroundPosition = (f / (n - 1) * 100) + '% 0';
+      stage.setAttribute('aria-valuenow', f + 1);
+      stage.setAttribute('aria-valuetext', Math.round(-50 + 100 * f / (n - 1)) + '°');
+    };
+    set(f);
+    steps.forEach(function (b) { b.addEventListener('click', function () { set(f + (+b.dataset.d)); }); });
+    stage.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowLeft') { set(f - 1); e.preventDefault(); }
+      if (e.key === 'ArrowRight') { set(f + 1); e.preventDefault(); }
+      if (e.key === 'Home') { set(0); e.preventDefault(); }
+      if (e.key === 'End') { set(n - 1); e.preventDefault(); }
+      if (e.key === 'Escape') close();
+    });
+    var x0 = null, f0 = 0;
+    stage.addEventListener('pointerdown', function (e) { x0 = e.clientX; f0 = f; stage.setPointerCapture(e.pointerId); });
+    stage.addEventListener('pointermove', function (e) { if (x0 !== null) set(f0 + Math.round((e.clientX - x0) / 14)); });
+    stage.addEventListener('pointerup', function () { x0 = null; });
+    stage.addEventListener('pointercancel', function () { x0 = null; });
+    var close = function () { wrap.remove(); gal.classList.remove('is-turning'); btn.focus(); };
+    back.addEventListener('click', close);
+    gal.classList.add('is-turning');
+    gal.appendChild(wrap);
+    wrap.insertBefore(note, wrap.querySelector('.turn-bar'));
+    stage.focus({ preventScroll: true });
+    var pre = new Image();
+    pre.onload = function () {
+      stage.classList.add('ready');
+      if (reduce) return;
+      var k = 0, from = f - 4;   // one sweep into place so it reads as "this turns"
+      var tick = function () { set(from + k); if (++k <= 4) setTimeout(tick, 60); };
+      tick();
+    };
+    pre.src = btn.dataset.turn;
+    gal.scrollIntoView({ block: 'nearest', behavior: reduce ? 'auto' : 'smooth' });
+    track('turn_3d', { creature: card.dataset.creature });
+  }
+
+  // ---- share card: a story-sized "friend card" with a Hint stamp ----
+  function shareCard(card, btn) {
+    btn.disabled = true;
+    var W = 1080, H = 1920;
+    var cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+    var x = cv.getContext('2d');
+    var ar = I.lang === 'ar';
+    var fam = ar ? '"Baloo Bhaijaan 2", "Nunito", sans-serif' : '"Nunito", sans-serif';
+    var fonts = [document.fonts.load('800 80px ' + fam), document.fonts.load('400 40px ' + fam), document.fonts.load('700 40px "Nunito"')];
+    var img = new Image();
+    var loaded = new Promise(function (res) { img.onload = res; img.onerror = res; img.src = card.dataset.img; });
+    Promise.all(fonts.concat([loaded])).then(function () {
+      var PAPER = '#FAF7FC', TILE = '#F2ECF7', INK = '#2B2233', INK2 = '#6D6177', ACC = '#7B4FA6';
+      x.fillStyle = TILE; x.fillRect(0, 0, W, H);
+      var rr = function (X, Y, w, h, r) { x.beginPath(); x.moveTo(X + r, Y); x.arcTo(X + w, Y, X + w, Y + h, r); x.arcTo(X + w, Y + h, X, Y + h, r); x.arcTo(X, Y + h, X, Y, r); x.arcTo(X, Y, X + w, Y, r); x.closePath(); };
+      x.save(); x.shadowColor = 'rgba(43,34,51,.12)'; x.shadowBlur = 48; x.shadowOffsetY = 16;
+      rr(80, 150, W - 160, H - 330, 48); x.fillStyle = PAPER; x.fill(); x.restore();
+      x.direction = ar ? 'rtl' : 'ltr';
+      x.textAlign = 'center';
+      x.fillStyle = INK2; x.font = '700 40px ' + fam;
+      x.fillText(I.id_title, W / 2, 250);
+      // the photo inside the closed loop
+      var cx = W / 2, cy = 610, R = 290;
+      x.save(); x.beginPath(); x.arc(cx, cy, R, 0, Math.PI * 2); x.fillStyle = TILE; x.fill(); x.clip();
+      if (img.naturalWidth) x.drawImage(img, cx - R, cy - R, R * 2, R * 2);
+      x.restore();
+      x.beginPath(); x.arc(cx, cy, R + 14, 0, Math.PI * 2); x.lineWidth = 28; x.strokeStyle = ACC; x.stroke();
+      x.fillStyle = INK; x.font = '800 104px ' + fam;
+      x.fillText(card.dataset.name, W / 2, 1060);
+      x.fillStyle = INK2; x.font = '400 40px ' + fam;
+      wrapText(x, card.dataset.line, W / 2, 1135, W - 300, 54, 2);
+      var rows = [[I.id_type, card.dataset.type], [I.id_fav, card.dataset.fav], [I.id_born, I.id_born_v], [I.id_status, I.id_status_v]];
+      var y = 1290, L = ar ? W - 170 : 170, Rx = ar ? 170 : W - 170;
+      rows.forEach(function (r) {
+        x.textAlign = ar ? 'right' : 'left'; x.fillStyle = INK2; x.font = '400 34px ' + fam; x.fillText(r[0], L, y);
+        x.fillStyle = INK; x.font = '700 40px ' + fam; x.fillText(fitText(x, r[1], W - 340), L, y + 50);
+        y += 108;
+      });
+      // the stamp
+      x.save(); x.translate(ar ? 300 : W - 300, 900); x.rotate(ar ? 0.1 : -0.1);
+      x.font = '800 ' + (ar ? 52 : 50) + 'px ' + fam; x.textAlign = 'center'; x.direction = ar ? 'rtl' : 'ltr';
+      var sw = x.measureText(I.id_stamp).width + 64;
+      rr(-sw / 2, -60, sw, 104, 20); x.fillStyle = PAPER; x.fill(); x.lineWidth = 8; x.strokeStyle = ACC; x.stroke();
+      x.fillStyle = ACC; x.fillText(I.id_stamp, 0, 18); x.restore();
+      x.direction = 'ltr'; x.textAlign = 'center'; x.fillStyle = INK; x.font = '700 40px "Nunito", sans-serif';
+      x.font = '700 34px "Nunito", sans-serif'; x.fillText(fitText(x, 'loopaholiccrochet.com' + location.pathname, W - 160), W / 2, H - 90);
+      cv.toBlob(function (blob) {
+        btn.disabled = false;
+        var fname = 'loopaholic-' + card.dataset.creature + '.png';
+        var file = new File([blob], fname, { type: 'image/png' });
+        var text = fmt(I.share_text, { name: card.dataset.name, title: card.dataset.title });
+        var url = location.origin + location.pathname;
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+          navigator.share({ files: [file], text: text + ' ' + url }).then(function () { track('share_card', { creature: card.dataset.creature, method: 'share' }); }, function () {});
+        } else {
+          var a = document.createElement('a');
+          a.href = URL.createObjectURL(blob); a.download = fname;
+          document.body.appendChild(a); a.click(); a.remove();
+          setTimeout(function () { URL.revokeObjectURL(a.href); }, 4000);
+          toast(I.share_saved);
+          track('share_card', { creature: card.dataset.creature, method: 'download' });
+        }
+      }, 'image/png');
+    });
+  }
+  function fitText(x, s, max) {
+    if (x.measureText(s).width <= max) return s;
+    while (s.length > 1 && x.measureText(s + '…').width > max) s = s.slice(0, -1);
+    return s + '…';
+  }
+  function wrapText(x, s, cx, y, max, lh, lines) {
+    var words = String(s).split(' '), line = '', n = 0;
+    for (var i = 0; i < words.length; i++) {
+      var t = line ? line + ' ' + words[i] : words[i];
+      if (x.measureText(t).width > max && line) {
+        x.fillText(line, cx, y); y += lh; line = words[i];
+        if (++n === lines - 1) { line = words.slice(i).join(' '); break; }
+      } else line = t;
+    }
+    x.fillText(fitText(x, line, max), cx, y);
+  }
+})();

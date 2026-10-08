@@ -1,0 +1,26 @@
+<!doctype html><html><body style="margin:0;background:transparent">
+<canvas id="c"></canvas>
+<script type="importmap">{"imports":{"three":"./three/build/three.module.js","three/addons/":"./three/examples/jsm/"}}</script>
+<script type="module">
+import * as THREE from 'three';
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+const P=new URLSearchParams(location.search);
+const S=+P.get('s')||400, N=+P.get('n')||18, SPAN=+P.get('span')||110;
+const r=new THREE.WebGLRenderer({canvas:c,antialias:true,alpha:true,preserveDrawingBuffer:true});
+r.setSize(S,S);r.setPixelRatio(1);r.outputColorSpace=THREE.SRGBColorSpace;r.setClearColor(0,0);
+const scene=new THREE.Scene();
+const cam=new THREE.PerspectiveCamera(28,1,0.01,100);
+const g=await new GLTFLoader().loadAsync('models/'+P.get('id')+'.glb');
+const m=g.scene;
+m.traverse(o=>{if(o.isMesh){o.material=new THREE.MeshLambertMaterial({vertexColors:true});}});
+scene.add(new THREE.HemisphereLight(0xffffff,0xcfc3dc,1.35));const dl=new THREE.DirectionalLight(0xffffff,0.75);dl.position.set(-1,2,3);scene.add(dl);
+const box=new THREE.Box3().setFromObject(m);const ctr=box.getCenter(new THREE.Vector3());m.position.sub(ctr);
+const piv=new THREE.Group();piv.add(m);scene.add(piv);
+m.updateMatrixWorld(true);let rh=0,hy=0;const v=new THREE.Vector3();
+m.traverse(o=>{if(o.isMesh){const p=o.geometry.attributes.position;for(let k=0;k<p.count;k+=3){v.fromBufferAttribute(p,k).applyMatrix4(o.matrixWorld);rh=Math.max(rh,Math.hypot(v.x,v.z));hy=Math.max(hy,Math.abs(v.y));}}});
+const half=Math.max(rh,hy)*1.06;const t=Math.tan(THREE.MathUtils.degToRad(14));
+const d=half/t+rh;cam.position.set(0,half*0.12,d);cam.lookAt(0,0,0);
+window.frames_=[];
+for(let i=0;i<N;i++){const a=THREE.MathUtils.degToRad(-SPAN/2+SPAN*i/(N-1));piv.rotation.y=a;r.render(scene,cam);window.frames_.push(c.toDataURL('image/png'));}
+window.done=true;
+</script></body></html>

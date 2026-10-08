@@ -127,6 +127,7 @@ h3 { font-size: var(--text-1); }
 p, li, dd { text-wrap: pretty; }
 p { margin: 0; }
 img, svg, picture { display: block; max-width: 100%; }
+[hidden] { display: none !important; }
 img { height: auto; }
 a { color: var(--color-accent); text-decoration-thickness: 0.08em; text-underline-offset: 0.18em; }
 :where(ul, ol)[role="list"] { list-style: none; margin: 0; padding: 0; }
@@ -311,13 +312,9 @@ bdi, [dir="ltr"] { unicode-bidi: isolate; }
 .hero { padding-block: var(--space-m) var(--space-2xl); }
 .hero-grid { display: grid; gap: var(--space-xl); align-items: center; }
 .hero h1 { font-size: var(--text-4); max-inline-size: 14ch; }
-/* 390: the photo and its loupe come first, so the signature is in the first screen */
-@media (max-width: 52.49em) {
-  .hero-grid { gap: var(--space-l); }
-  .hero-grid > :last-child { order: -1; }
-  .hero .gallery { inline-size: 72%; max-inline-size: 18rem; }
-  .hero .loupe { inline-size: 46%; inset-inline-end: -34%; inset-block-end: 6%; }
-}
+/* 390: the encounter (a close-up of real stitches in the open loop) comes first in the DOM and the view */
+@media (max-width: 52.49em) { .hero-grid { gap: var(--space-l); } }
+@media (min-width: 52.5em) { .hero-grid > .encounter { order: 1; } }
 :lang(ar) .hero h1 { max-inline-size: 13ch; }
 .hero .lead { margin-block-start: var(--space-s); }
 .hero .actions { margin-block-start: var(--space-l); }
@@ -475,3 +472,138 @@ body.has-sticky .site-footer { padding-block-end: calc(var(--space-xl) + 4.5rem)
   .loupe-hint .hint-hover { display: inline; }
 }
 @media (hover: hover) and (max-width: 52.49em) { .loupe-hint { display: none; } }
+
+/* ==== the Stitch Book game layer (game.js; docs-design/GAME.md) ====
+   One signature, reused: the kit's open loop. Unmet = open ring; meeting someone
+   stitches it shut (the one orchestrated motion), and the closed ring is the loupe. */
+:root {
+  --color-ring-open: #CDBBDD;   /* lilac 300: decoration only (the open loop), never text */
+  --color-shadow: #D9CCE6;      /* silhouettes are baked in this tone (make_game_assets.py) */
+}
+.ring { position: absolute; inset: 0; inline-size: 100%; block-size: 100%; overflow: visible; pointer-events: none; transform: rotate(-90deg); }
+:root:lang(ar) .ring { transform: rotate(-90deg) scaleY(-1); }   /* stitches run with the reading direction */
+.ring circle { fill: none; stroke-width: 5; stroke-linecap: round; }
+.ring-track { stroke: var(--color-ring-open); stroke-dasharray: 84 16; stroke-dashoffset: -8; }
+.ring-stitch { stroke: var(--color-accent); stroke-dasharray: 0 100; opacity: 0; }
+.is-closing .ring-stitch, .is-met .ring-stitch, html:not(.game-on) .slot .ring-stitch { opacity: 1; }
+.is-closing .ring-stitch { stroke-dasharray: 100 0; transition: stroke-dasharray 600ms steps(14, end); }
+.is-met .ring-stitch { stroke-dasharray: 100 0; }
+.is-met .ring-track { stroke: transparent; }
+.squash { animation: squash 400ms var(--ease-out); }
+@keyframes squash { 0% { transform: scale(1); } 30% { transform: scale(1.07, .92); } 60% { transform: scale(.97, 1.04); } 100% { transform: scale(1); } }
+.sparks { position: absolute; inset-block-start: 50%; inset-inline-start: 50%; pointer-events: none; }
+.sparks i { position: absolute; inline-size: 10px; block-size: 10px; margin: -5px; border-radius: 50%; background: var(--color-accent); animation: spark 600ms var(--ease-out) forwards; }
+.sparks i:nth-child(even) { background: var(--color-ring-open); inline-size: 8px; block-size: 8px; }
+@keyframes spark { from { transform: translate(0, 0) scale(.4); opacity: 1; } to { transform: translate(calc(var(--dx) * 2.2), calc(var(--dy) * 2.2)) scale(1); opacity: 0; } }
+
+/* header: ring + "4/36" */
+.book-link { display: inline-flex; align-items: center; gap: var(--space-3xs); }
+.book-ring { inline-size: 1.125rem; block-size: 1.125rem; border-radius: 50%; border: 3px solid var(--color-accent); border-block-start-color: transparent; transform: rotate(35deg); flex: none; }
+.book-count { font-variant-numeric: tabular-nums; font-weight: var(--weight-strong); }
+.book-count:empty { display: none; }
+.nav .key .book-word { position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+@media (min-width: 52.5em) { .nav .key .book-word { position: static; inline-size: auto; block-size: auto; clip-path: none; } }
+.bump .book-ring { animation: squash 400ms var(--ease-out); }
+
+/* toast */
+.toast {
+  position: fixed; z-index: 40; inset-inline: var(--space-s); inset-block-end: calc(var(--space-s) + env(safe-area-inset-bottom));
+  max-inline-size: 26rem; margin-inline: auto; padding: var(--space-xs) var(--space-m);
+  border-radius: var(--radius-pill); background: var(--color-text); color: var(--color-band-text);
+  font-size: var(--text--1); font-weight: var(--weight-strong); text-align: center;
+  opacity: 0; transform: translateY(1rem); pointer-events: none;
+  transition: opacity var(--dur-2) var(--ease-out), transform var(--dur-2) var(--ease-out);
+}
+.toast.on { opacity: 1; transform: none; }
+.toast:empty { display: none; }
+body.has-sticky .toast { inset-block-end: calc(5rem + env(safe-area-inset-bottom)); }
+
+/* type stamp: a word in an ink outline pill, never a colour code */
+.type-stamp { display: inline-block; padding: 0 var(--space-xs); border: 1.5px solid var(--color-text); border-radius: var(--radius-pill); font-size: var(--text--1); font-weight: var(--weight-strong); line-height: 1.7; }
+
+/* home: the encounter */
+.enc { display: grid; gap: var(--space-m); justify-items: center; text-align: center; }
+.enc-stage { position: relative; inline-size: min(78%, 17rem); aspect-ratio: 1; }
+@media (min-width: 52.5em) { .enc-stage { inline-size: min(100%, 26rem); } }
+.enc-tile, .slot-art .tile { position: absolute; inset: 7%; border-radius: 50%; aspect-ratio: auto; }
+.enc-tile img, .enc-tile picture, .slot-art .tile picture, .slot-art .tile img { position: absolute; inset: 0; inline-size: 100%; block-size: 100%; object-fit: contain; }
+.enc-tile .clue img { object-fit: cover; }
+.enc-btn[aria-disabled] { pointer-events: none; }
+.enc-tile .reveal, .slot-art .tile picture { transition: opacity var(--dur-3) var(--ease-out); }
+.enc-stage:not(.is-met) .reveal { opacity: 0; }
+.enc-btn { position: absolute; inset-block-end: 2%; inset-inline: 0; margin-inline: auto; inline-size: max-content; box-shadow: var(--shadow-2); }
+.enc-panel { display: grid; gap: var(--space-2xs); justify-items: center; max-inline-size: 26rem; }
+.enc-peek { font-size: var(--text-1); color: var(--color-text-muted); }
+.enc-title { font-size: var(--text-3); font-weight: var(--weight-strong); line-height: var(--leading-snug); }
+.enc-title:focus { outline: none; }
+.enc-line { font-size: var(--text-1); }
+.enc-progress { color: var(--color-text-muted); font-size: var(--text--1); }
+.enc-panel .actions { justify-content: center; margin-block-start: var(--space-2xs); }
+
+/* the Stitch Book */
+.book-progress { display: grid; gap: var(--space-2xs); margin-block-start: var(--space-m); max-inline-size: 30rem; }
+.book-progress [data-book-progress] { font-weight: var(--weight-strong); }
+.bar-track { block-size: 0.5rem; border-radius: var(--radius-pill); background: var(--color-surface-2); overflow: hidden; }
+.bar-fill { display: block; block-size: 100%; inline-size: 0; background: var(--color-accent); border-radius: inherit; transition: inline-size var(--dur-3) var(--ease-out); }
+.set + .set { margin-block-start: var(--space-xl); }
+.set h2 { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-2xs) var(--space-s); margin-block-end: var(--space-m); }
+.set-count { margin-inline-start: 0.4em; font-weight: var(--weight-body); color: var(--color-text-muted); font-variant-numeric: tabular-nums; }
+.set-tally { font-size: var(--text-0); font-weight: var(--weight-body); color: var(--color-text-muted); font-variant-numeric: tabular-nums; }
+.set-done { display: none; }
+.set.is-done .set-done { display: inline-block; align-self: center; padding: 0 var(--space-xs); border: 1.5px solid var(--color-accent); border-radius: var(--radius-pill); color: var(--color-accent); font-size: var(--text--1); line-height: 1.7; }
+.slots { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-m) var(--space-s); }
+@media (min-width: 40em) { .slots { grid-template-columns: repeat(4, 1fr); } }
+@media (min-width: 52.5em) { .slots { grid-template-columns: repeat(6, 1fr); } }
+.slot { display: grid; gap: var(--space-3xs); color: var(--color-text); text-decoration: none; text-align: center; -webkit-tap-highlight-color: transparent; }
+.slot-art { position: relative; display: block; aspect-ratio: 1; margin-block-end: var(--space-2xs); }
+.slot-art .tile { inset: 9%; }
+.slot .sil { z-index: 1; }
+.slot-name { font-weight: var(--weight-strong); line-height: var(--leading-snug); }
+.slot-title { font-size: var(--text--1); color: var(--color-text-muted); line-height: var(--leading-snug); }
+.slot.is-unmet .slot-name { visibility: hidden; }
+.slot.is-unmet .slot-title { display: none; }
+.slot.is-unmet .slot-name::before { content: "?"; visibility: visible; display: block; color: var(--color-text-muted); }
+.slot.is-unmet .slot-art .tile picture { opacity: 0; }
+html:not(.game-on) .slot .ring-stitch, .slot.is-met .ring-stitch { stroke-dasharray: 100 0; }
+html:not(.game-on) .slot .ring-track { stroke: transparent; }
+.slot:focus-visible { outline-offset: 4px; border-radius: var(--radius-md); }
+@media (hover: hover) { .slot:hover .slot-name { color: var(--color-accent); } .slot.is-unmet:hover .ring-track { stroke: var(--color-accent); } }
+.book-fiction { margin-block-start: var(--space-xl); max-inline-size: var(--measure); }
+
+/* product page: the creature card */
+.called { margin-block: var(--space-2xs); }
+.called a { font-weight: var(--weight-strong); }
+.order-h { font-size: var(--text-2); margin-block-end: var(--space-2xs); }
+.creature { display: grid; gap: var(--space-s); margin-block-start: var(--space-xl); padding: var(--space-m); border-radius: var(--radius-lg); background: var(--color-surface-2); scroll-margin-block-start: var(--space-m); }
+.cr-head { display: flex; align-items: center; gap: var(--space-s); }
+.cr-head h2 { font-size: var(--text-2); }
+.cr-head .cr-type { margin-block-start: var(--space-3xs); }
+.cr-badge { position: relative; flex: none; inline-size: 4.5rem; aspect-ratio: 1; }
+.cr-badge img { position: absolute; inset: 10%; inline-size: 80%; block-size: 80%; border-radius: 50%; object-fit: cover; background: var(--color-surface); }
+.cr-line { font-size: var(--text-1); line-height: var(--leading-snug); }
+.cr-facts { margin: 0; }
+.cr-facts dt { font-size: var(--text--1); color: var(--color-text-muted); }
+.cr-facts dd { margin: 0; font-weight: var(--weight-strong); }
+.cr-fiction { font-size: var(--text--1); color: var(--color-text-muted); }
+.cr-actions .btn { background: var(--color-surface); }
+.copy-name { background: none; border: 0; padding: 0; font: inherit; font-weight: var(--weight-strong); color: var(--color-accent); text-decoration: underline; text-decoration-thickness: 0.08em; text-underline-offset: 0.18em; cursor: pointer; }
+button.text-link { background: none; border: 0; padding: 0; font: inherit; font-weight: var(--weight-strong); color: var(--color-accent); text-decoration: underline; text-underline-offset: 0.18em; cursor: pointer; }
+
+/* turn the 3D sketch */
+.gallery.is-turning > .tile, .gallery.is-turning > .loupe { visibility: hidden; }
+.turn { position: absolute; inset: 0; display: grid; grid-template-rows: 1fr auto auto; border-radius: var(--radius-lg); background: var(--color-surface-2); overflow: hidden; z-index: 3; }
+.turn-stage { background-repeat: no-repeat; background-position: 50% 0; cursor: grab; touch-action: pan-y; opacity: 0; transition: opacity var(--dur-2) var(--ease-out); }
+.turn-stage.ready { opacity: 1; }
+.turn-stage:active { cursor: grabbing; }
+.turn-stage:focus-visible { outline-offset: -4px; border-radius: var(--radius-lg); }
+.turn-bar { direction: ltr; display: flex; align-items: center; justify-content: space-between; gap: var(--space-s); padding: var(--space-xs); }
+.turn-step { display: inline-grid; place-items: center; inline-size: var(--tap); block-size: var(--tap); border-radius: 50%; border: 2px solid var(--color-border-strong); background: var(--color-surface); color: var(--color-text); font: inherit; font-size: var(--text-2); line-height: 1; cursor: pointer; }
+.turn-note { margin: 0; padding-inline: var(--space-s); padding-block-end: var(--space-xs); text-align: center; font-size: var(--text--1); color: var(--color-text-muted); }
+.answer { font-size: var(--text-1); line-height: var(--leading-body); }
+.prose .grid { margin-block: var(--space-s) var(--space-m); }
+
+@media (prefers-reduced-motion: reduce) {
+  .is-closing .ring-stitch { transition: none; }
+  .squash, .bump .book-ring { animation: none; }
+  .toast, .bar-fill, .turn-stage, .enc-tile .reveal { transition: none; }
+}

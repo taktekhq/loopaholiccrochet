@@ -326,6 +326,121 @@ else:
     for _lang in T:  # "Message us … On Instagram." becomes channel-neutral
         T[_lang]["how"][1] = (T[_lang]["how"][1][0], T[_lang]["how"][1][1].replace("On Instagram.", "On WhatsApp or Instagram.").replace("على إنستغرام.", "على واتساب أو إنستغرام."))
 
+# ------------------------------------------------------------- the game ----
+# The Stitch Book: every piece is a character you meet (docs-design/GAME.md). The names,
+# types and stories in creatures.json are make-believe and say so on every card; nothing
+# in them may describe materials, safety, size, price or making (the claims guard walks it).
+CREATURES = json.load(open(os.path.join(ROOT, "creatures.json"), encoding="utf-8"))
+CR = CREATURES["creatures"]
+TYPES = CREATURES["types"]
+TYPE_ORDER = ["cozy", "sea", "garden", "nibbles", "darling", "storybook"]
+# Models that hold up from the front ±50° (docs-design/GAME.md, critic round 0); the rest keep the photo only.
+TURN_IDS = {"p003", "p013", "p017", "p063", "p070", "p072", "p076", "p077", "p092", "p251", "p369"}
+TURN_FRAMES = 18
+GUIDES = json.load(open(os.path.join(ROOT, "guides.json"), encoding="utf-8"))["guides"]
+
+GAME_T = {
+    "en": {
+        "nav_book": "Stitch Book", "nav_guides": "Guides",
+        "book_link_label": "Your Stitch Book",
+        "enc_h": "Meet a Loopaholic",
+        "enc_peek": "Whose stitches are these?",
+        "enc_btn": "Meet them",
+        "enc_met": "You met {name}!",
+        "enc_card": "See {name}’s card",
+        "enc_again": "Meet someone else",
+        "enc_full": "You’ve met all {total}. Your Stitch Book is full.",
+        "enc_full_link": "Open your Stitch Book",
+        "progress": "{n} of {total} in your Stitch Book",
+        "book_title": "Stitch Book: meet the Loopaholic characters",
+        "book_h1": "Your Stitch Book",
+        "book_lead": "Every piece in the shop is a character with a name and a story. Meet them all; your book stays on this device.",
+        "book_hint": "Tap a shadow to meet who’s in it.",
+        "book_nojs": "Each card below leads to the real piece in the shop.",
+        "book_fiction": "The names and stories are make-believe. The pieces are real, crocheted by hand once you order.",
+        "book_types_label": "Types",
+        "book_unmet": "Not met yet. Tap to meet.",
+        "book_reset": "Start the book over",
+        "book_reset_confirm": "Forget everyone you’ve met on this device?",
+        "book_meta": "Meet the characters of Loopaholic’s handmade crochet pieces: names, types and little stories, each linked to the real piece.",
+        "set_done": "Complete",
+        "card_h": "Meet {name}",
+        "card_called": "This one’s called {name}.",
+        "card_type": "Type",
+        "card_fav": "Favourite thing",
+        "card_fiction": "The name and story are make-believe; the piece in the photo is real.",
+        "card_turn": "Turn {name} around",
+        "card_share": "Share {name}’s card",
+        "turn_note": "A 3D sketch made from the photo: colours and stitches differ from the real piece.",
+        "turn_back": "Back to the photo",
+        "turn_left": "Turn left", "turn_right": "Turn right",
+        "turn_label": "3D sketch of {name}. Drag, or use the arrow keys, to turn.",
+        "home_h": "Take {name} home?",
+        "copy_name": "Copy the name for your message",
+        "copied": "Copied: {title}",
+        "joined": "In your Stitch Book now: {name}. {n} of {total}.",
+        "share_text": "Hint: I’d love {name} ({title}) from Loopaholic.",
+        "share_saved": "Card saved. Post it to your story, or send it to a friend.",
+        "id_title": "Loopaholic friend card",
+        "id_name": "Name", "id_type": "Type", "id_fav": "Favourite thing",
+        "id_born": "Born", "id_born_v": "Lebanon, stitch by stitch",
+        "id_status": "Status", "id_status_v": "Made when someone orders",
+        "id_stamp": "Someone get me this",
+        "guides_h": "Guides",
+    },
+    "ar": {
+        "nav_book": "دفتر الغُرَز", "nav_guides": "أدلّة",
+        "book_link_label": "دفتر الغُرَز",
+        "enc_h": "تعرّفوا على شخصية من Loopaholic",
+        "enc_peek": "لمن هذه الغُرَز؟",
+        "enc_btn": "تعرّفوا عليه",
+        "enc_met": "تعرّفتم على {name}!",
+        "enc_card": "بطاقة {name}",
+        "enc_again": "تعرّفوا على شخصية أخرى",
+        "enc_full": "تعرّفتم على الشخصيات الـ{total} كلّها. اكتمل دفتركم.",
+        "enc_full_link": "افتحوا دفتر الغُرَز",
+        "progress": "{n} من {total} في دفتر الغُرَز",
+        "book_title": "دفتر الغُرَز: تعرّفوا على شخصيات Loopaholic",
+        "book_h1": "دفتر الغُرَز",
+        "book_lead": "كل قطعة في المتجر شخصية لها اسم وحكاية. تعرّفوا عليها كلّها؛ يبقى دفتركم محفوظًا على هذا الجهاز.",
+        "book_hint": "اضغطوا على ظلّ لتتعرّفوا على صاحبه.",
+        "book_nojs": "كل بطاقة هنا توصلكم إلى القطعة الحقيقية في المتجر.",
+        "book_fiction": "الأسماء والحكايات من الخيال. أمّا القطع فحقيقية، تُحاك يدويًا بالكروشيه بعد طلبها.",
+        "book_types_label": "الأنواع",
+        "book_unmet": "لم تتعرّفوا عليه بعد. اضغطوا للتعرّف.",
+        "book_reset": "ابدؤوا الدفتر من جديد",
+        "book_reset_confirm": "هل تريدون نسيان كل من تعرّفتم عليهم على هذا الجهاز؟",
+        "book_meta": "تعرّفوا على شخصيات قطع Loopaholic اليدوية: أسماء وأنواع وحكايات صغيرة، وكل بطاقة توصل إلى القطعة الحقيقية.",
+        "set_done": "اكتملت",
+        "card_h": "تعرّفوا على {name}",
+        "card_called": "اسم هذه الشخصية {name}.",
+        "card_type": "النوع",
+        "card_fav": "الشيء المفضّل",
+        "card_fiction": "الاسم والحكاية من الخيال، أمّا القطعة في الصورة فحقيقية.",
+        "card_turn": "أديروا {name}",
+        "card_share": "شاركوا بطاقة {name}",
+        "turn_note": "مجسّم تقريبي ثلاثي الأبعاد مأخوذ من الصورة: ألوانه وغرزه تختلف عن القطعة الحقيقية.",
+        "turn_back": "العودة إلى الصورة",
+        "turn_left": "إلى اليسار", "turn_right": "إلى اليمين",
+        "turn_label": "مجسّم تقريبي لـ{name}. اسحبوا، أو استعملوا الأسهم، للتدوير.",
+        "home_h": "تأخذون {name} إلى البيت؟",
+        "copy_name": "انسخوا الاسم لرسالتكم",
+        "copied": "نُسخ: {title}",
+        "joined": "في دفتر الغُرَز الآن: {name}. {n} من {total}.",
+        "share_text": "تلميح: حدا يجبلي {name} من Loopaholic؟",
+        "share_saved": "حُفظت البطاقة. انشروها في الستوري أو أرسلوها لصديق.",
+        "id_title": "بطاقة تعريف من Loopaholic",
+        "id_name": "الاسم", "id_type": "النوع", "id_fav": "الشيء المفضّل",
+        "id_born": "مكان الولادة", "id_born_v": "لبنان، غرزة غرزة",
+        "id_status": "الحالة", "id_status_v": "تُصنع عندما يطلبها أحد",
+        "id_stamp": "حدا يجبلي ياه",
+        "guides_h": "أدلّة",
+    },
+}
+for _lang in T:
+    T[_lang].update(GAME_T[_lang])
+
+
 # ------------------------------------------------------- claims guard (R2b) ----
 FORBIDDEN = [
     (r"\bsafe", "safe/safety"), (r"آمن", "آمن"), (r"(?i)\bcertif", "certified"), (r"(?i)non-?toxic", "non-toxic"),
@@ -357,6 +472,8 @@ def check_claims():
                 problems.append(f"{where}: '{label}' in {obj[:90]!r}")
     walk(CATALOG, "catalog")
     walk(T, "copy")
+    walk(CREATURES, "creatures")
+    walk(GUIDES, "guides")
     return problems
 
 
@@ -396,18 +513,25 @@ def build_css():
         f.write(css.strip() + "\n")
 JS_SRC = "assets/js/site.js"     # edit this one
 JS = "assets/js/site.min.js"     # generated by build_js(), the one pages load
+GAME_JS_SRC = "assets/js/game.js"
+GAME_JS = "assets/js/game.min.js"
 
 
 def build_js():
     """Conservative minify: comments and indentation go, line breaks stay (no ASI risk)."""
-    src = open(os.path.join(ROOT, JS_SRC), encoding="utf-8").read()
+    for src_rel, out_rel in ((JS_SRC, JS), (GAME_JS_SRC, GAME_JS)):
+        _min_js(src_rel, out_rel)
+
+
+def _min_js(src_rel, out_rel):
+    src = open(os.path.join(ROOT, src_rel), encoding="utf-8").read()
     js = re.sub(r"/\*.*?\*/", "", src, flags=re.S)
     out = []
     for line in js.splitlines():
         line = re.sub(r"\s+//\s.*$", "", line).strip()
         if line and not line.startswith("//"):
             out.append(line)
-    with open(os.path.join(ROOT, JS), "w", encoding="utf-8") as f:
+    with open(os.path.join(ROOT, out_rel), "w", encoding="utf-8") as f:
         f.write("\n".join(out) + "\n")
 FONT_LATIN = "assets/fonts/nunito-latin.woff2"
 FONT_AR = "assets/fonts/baloo-bhaijaan2-arabic.woff2"
@@ -540,7 +664,7 @@ def steps(items, compact=False, row=False, level="h3"):
 # --------------------------------------------------------------- shell ----
 
 
-NAV = [("nav_home", "/", "home"), ("nav_shop", "/shop/", "shop"), ("nav_custom", "/custom-orders/", "custom"),
+NAV = [("nav_home", "/", "home"), ("nav_shop", "/shop/", "shop"), ("nav_book", "/book/", "book"), ("nav_custom", "/custom-orders/", "custom"),
        ("nav_shipping", "/shipping/", "shipping"), ("nav_about", "/about/", "about"), ("nav_faq", "/faq/", "faq")]
 
 
@@ -550,7 +674,13 @@ def nav_links(t, active, key_only_shop=False):
         if key_only_shop and name == "home":
             continue
         cur = ' aria-current="page"' if name == active else ""
-        cls = ' class="key"' if (key_only_shop and name == "shop") else ""
+        cls = ' class="key"' if (key_only_shop and name in ("shop", "book")) else ""
+        if name == "book":
+            # the Stitch Book: ring + "4/36" (filled by game.js); on phones the word hides behind the ring
+            label = (f'<span class="book-ring" aria-hidden="true"></span><span class="book-word">{t[key]}</span>'
+                     f'<span class="book-count" data-book-count></span>')
+            out.append(f'<li{cls}><a class="book-link" href="{L(t, href)}"{cur}>{label}</a></li>')
+            continue
         out.append(f'<li{cls}><a href="{L(t, href)}"{cur}>{t[key]}</a></li>')
     return "".join(out)
 
@@ -641,10 +771,59 @@ def page_shell(t, *, title, description, canonical_path, body, extra_head="", ac
 </main>
 {footer(t, alt_path)}
 {sticky}
+<div class="toast" role="status" aria-live="polite" data-toast></div>
+{game_i18n(t)}
 <script src="{v(JS)}" defer></script>
+<script src="{v(GAME_JS)}" defer></script>
 </body>
 </html>
 """
+
+
+GAME_JS_KEYS = ["enc_met", "enc_card", "enc_again", "enc_full", "enc_full_link", "enc_btn", "enc_peek", "progress", "book_unmet",
+                "book_reset_confirm", "joined", "copied", "share_text", "share_saved", "turn_label", "id_title", "id_name",
+                "id_type", "id_fav", "id_born", "id_born_v", "id_status", "id_status_v", "id_stamp", "nav_book",
+                "turn_left", "turn_right", "turn_back", "turn_note"]
+
+
+def game_i18n(t):
+    data = {k: t[k] for k in GAME_JS_KEYS}
+    data.update(lang=t["lang"], total=len(PRODUCTS), book=L(t, "/book/"))
+    return f'<script type="application/json" id="game-i18n">{json.dumps(data, ensure_ascii=False)}</script>'
+
+
+def creatures_json(t):
+    """Every creature, for the home encounter (book and product pages read their own markup)."""
+    lang = t["lang"]
+    data = [{"id": p["id"], "name": CR[p["id"]]["name"][lang], "type": TYPES[CR[p["id"]]["type"]][lang],
+             "line": CR[p["id"]]["line"][lang], "title": p["title"][lang], "url": L(t, f"/shop/{p['slug']}/")} for p in PRODUCTS]
+    return f'<script type="application/json" id="creatures">{json.dumps(data, ensure_ascii=False)}</script>'
+
+
+def ring_svg(cls="ring"):
+    """The kit's open loop. game.js closes the gap stitch by stitch when you meet someone."""
+    return (f'<svg class="{cls}" viewBox="0 0 100 100" aria-hidden="true" focusable="false">'
+            f'<circle class="ring-track" cx="50" cy="50" r="44" pathLength="100"/>'
+            f'<circle class="ring-stitch" cx="50" cy="50" r="44" pathLength="100"/></svg>')
+
+
+def creature_card(p, t):
+    c, lang = CR[p["id"]], t["lang"]
+    name = esc(c["name"][lang])
+    f = lambda key: t[key].replace("{name}", name)
+    turn = (f'<button class="btn btn-secondary" type="button" data-turn="{v("assets/game/turn/" + p["id"] + ".webp")}" '
+            f'data-frames="{TURN_FRAMES}">{f("card_turn")}</button>') if p["id"] in TURN_IDS else ""
+    return f'''<section class="creature" id="creature" data-creature="{p['id']}" data-name="{name}" data-title="{esc(p['title'][lang])}" data-type="{esc(TYPES[c['type']][lang])}" data-fav="{esc(c['fav'][lang])}" data-line="{esc(c['line'][lang])}" data-img="{img_base(p['id'])}/w800.jpg" aria-labelledby="cr-h">
+  <div class="cr-head">
+    <span class="cr-badge"><img src="{img_base(p['id'])}/w400.webp" width="400" height="400" alt="" loading="lazy" decoding="async">{ring_svg()}</span>
+    <div><h2 id="cr-h">{f("card_h")}</h2><p class="cr-type"><span class="type-stamp">{esc(TYPES[c['type']][lang])}</span></p></div>
+  </div>
+  <p class="cr-line">{esc(c['line'][lang])}</p>
+  <dl class="cr-facts"><div><dt>{t['card_fav']}</dt><dd>{esc(c['fav'][lang])}</dd></div></dl>
+  <p class="cr-story">{esc(c['story'][lang])}</p>
+  <div class="actions cr-actions" data-game-only hidden>{turn}<button class="btn btn-secondary" type="button" data-share>{f("card_share")}</button></div>
+  <p class="cr-fiction">{t['card_fiction']}</p>
+</section>'''
 
 
 def footer(t, alt_path):
@@ -657,11 +836,14 @@ def footer(t, alt_path):
       </div>
       <nav aria-labelledby="f-shop"><h2 id="f-shop">{t['footer_shop']}</h2><ul role="list">
         <li><a href="{L(t, '/shop/')}">{t['nav_shop']}</a></li>
-        <li><a href="{L(t, '/custom-orders/')}">{t['nav_custom']}</a></li></ul></nav>
+        <li><a href="{L(t, '/custom-orders/')}">{t['nav_custom']}</a></li>
+        <li><a href="{L(t, '/book/')}">{t['nav_book']}</a></li></ul></nav>
       <nav aria-labelledby="f-help"><h2 id="f-help">{t['footer_info']}</h2><ul role="list">
         <li><a href="{L(t, '/shipping/')}">{t['nav_shipping']}</a></li>
         <li><a href="{L(t, '/faq/')}">{t['nav_faq']}</a></li>
         <li><a href="{L(t, '/about/')}">{t['nav_about']}</a></li></ul></nav>
+      <nav aria-labelledby="f-guides"><h2 id="f-guides">{t['guides_h']}</h2><ul role="list">
+        {''.join(f'<li><a href="{L(t, "/guides/" + g["slug"] + "/")}">{esc(g[t["lang"]]["h1"])}</a></li>' for g in GUIDES)}</ul></nav>
       <nav aria-labelledby="f-follow"><h2 id="f-follow">{t['footer_follow']}</h2><ul role="list">
         <li><a href="{INSTAGRAM}">{handle(t)}</a></li></ul></nav>
     </div>
@@ -718,20 +900,27 @@ def build_home(t, outdir):
     path_en, path_ar = "/", "/ar/"
     hero = BY_ID[HOME_HERO_ID]
     featured = [BY_ID[i] for i in FEATURED_IDS]
+    sb = img_base(hero["id"])
     body = f'''<section class="hero">
   <div class="wrap hero-grid">
-    <div>
+    <div class="encounter" data-encounter aria-labelledby="enc-h">
+      <h2 class="vh" id="enc-h">{t['enc_h']}</h2>
+      <div class="enc" data-id="{hero['id']}">
+        <div class="enc-stage">
+          <span class="tile enc-tile"><picture class="clue"><source type="image/avif" srcset="{sb}/stitch.avif"><source type="image/webp" srcset="{sb}/stitch.webp"><img src="{sb}/stitch.jpg" width="400" height="400" alt="{esc(t['loupe_alt'])}" fetchpriority="high" decoding="async"></picture></span>
+          {ring_svg()}
+          <a class="btn btn-primary enc-btn" href="{L(t, '/shop/' + hero['slug'] + '/')}#creature">{t['enc_btn']}</a>
+        </div>
+        <div class="enc-panel"><p class="enc-peek">{t['enc_peek']}</p></div>
+      </div>
+      {creatures_json(t)}
+    </div>
+    <div class="hero-copy">
       <h1>{t['hero_h1']}</h1>
       <p class="lead">{t['hero_lead']}</p>
       <div class="actions">
-        <a class="btn btn-primary" href="{L(t, '/shop/')}">{t['cta_shop']}</a>
+        <a class="btn btn-secondary" href="{L(t, '/shop/')}">{t['cta_shop']}</a>
         <a class="text-link" href="#how">{t['how_link']}</a>
-      </div>
-    </div>
-    <div>
-      <div class="gallery">
-        <a class="tile" href="{L(t, '/shop/' + hero['slug'] + '/')}" aria-label="{esc(hero['title'][t['lang']])}">{picture(hero['id'], '', '(min-width: 52.5em) 34rem, 92vw', eager=True)}</a>
-        {loupe(hero['id'], t)}
       </div>
     </div>
   </div>
@@ -844,13 +1033,17 @@ def build_product(p, t, outdir):
     </div>
     <div class="pdp-info">
       <h1>{esc(title)}</h1>
+      <p class="called"><a href="#creature">{t['card_called'].replace('{name}', esc(CR[p['id']]['name'][t['lang']]))}</a></p>
       <p>{esc(desc)}</p>
       <dl class="facts">{facts_html}</dl>
       <div class="order">
+        <h2 class="order-h">{t['home_h'].replace('{name}', esc(CR[p['id']]['name'][t['lang']]))}</h2>
         <p class="price-note">{t['price_note']}</p>
         <div class="actions">{order_cta(t, ctx, wa_text, cta_id="order-cta")}</div>
         <p class="note">{with_handle(t, note)}</p>
+        <p data-game-only hidden><button class="text-link copy-name" type="button" data-copy="{esc(title)}">{t['copy_name']}</button></p>
       </div>
+      {creature_card(p, t)}
       <div class="aside" id="how">
         <h2>{t['how_h']}</h2>
         {steps(t['how'], compact=True, level="h3")}
@@ -878,6 +1071,61 @@ def build_product(p, t, outdir):
                        body=body, extra_head=head, active="shop", path_en=path_en, path_ar=path_ar,
                        og_image=f"{BASE_URL}{img_base(p['id'])}/og.jpg", sticky=sticky)
     write(outdir, f"shop/{p['slug']}/index.html", html_)
+
+
+def build_book(t, outdir):
+    path_en, path_ar = "/book/", "/ar/book/"
+    lang = t["lang"]
+    by_type = {k: [p for p in PRODUCTS if CR[p["id"]]["type"] == k] for k in TYPE_ORDER}
+    chips = "".join(f'<li><a class="chip" href="#t-{k}">{TYPES[k][lang]} <span class="set-count" data-set-count="{k}">{len(v)}</span></a></li>'
+                    for k, v in by_type.items())
+    sections = []
+    for k, items in by_type.items():
+        slots = "".join(
+            f'<li><a class="slot" href="{L(t, "/shop/" + p["slug"] + "/")}" data-id="{p["id"]}" data-name="{esc(CR[p["id"]]["name"][lang])}" data-line="{esc(CR[p["id"]]["line"][lang])}">'
+            f'<span class="slot-art"><span class="tile">{picture(p["id"], "", "(min-width: 52.5em) 12rem, 30vw")}'
+            f'<img class="sil" src="{v("assets/game/sil/" + p["id"] + ".webp")}" width="400" height="400" alt="" loading="lazy" decoding="async" hidden></span>{ring_svg()}</span>'
+            f'<span class="slot-name">{esc(CR[p["id"]]["name"][lang])}</span><span class="slot-title">{esc(p["title"][lang])}</span></a></li>'
+            for p in items)
+        sections.append(f'<section class="set" id="t-{k}" data-set="{k}" aria-labelledby="h-{k}"><h2 id="h-{k}">{TYPES[k][lang]} '
+                        f'<span class="set-tally" data-set-tally></span><span class="set-done">{t["set_done"]}</span></h2><ul class="slots" role="list">{slots}</ul></section>')
+    body = f'''<div class="wrap page-head book-head">
+  <h1>{t['book_h1']}</h1>
+  <p class="lead">{t['book_lead']}</p>
+  <div class="book-progress" data-game-only hidden><p data-book-progress></p><div class="bar-track" aria-hidden="true"><span class="bar-fill" data-book-bar></span></div><p class="muted small">{t['book_hint']}</p></div>
+  <p class="muted small" data-nojs>{t['book_nojs']}</p>
+</div>
+<nav class="chips-bar" aria-label="{t['book_types_label']}"><div class="wrap"><ul class="chips" role="list">{chips}</ul></div></nav>
+<div class="wrap section book-body">
+  {''.join(sections)}
+  <p class="muted small book-fiction">{t['book_fiction']}</p>
+  <p data-game-only hidden><button class="text-link" type="button" data-book-reset>{t['book_reset']}</button></p>
+</div>'''
+    crumbs = breadcrumb_ld(t, [(t["breadcrumb_home"], L(t, "/")), (t["nav_book"], L(t, "/book/"))])
+    html_ = page_shell(t, title=f"{t['book_title']} | {t['site_name']}" if lang == "en" else f"{t['book_title']} | {t['site_name']}",
+                       description=t["book_meta"], canonical_path=path_en if lang == "en" else path_ar,
+                       body=body, extra_head=crumbs, active="book", path_en=path_en, path_ar=path_ar)
+    write(outdir, "book/index.html", html_)
+
+
+def build_guide(g, t, outdir):
+    lang = t["lang"]
+    c = g[lang]
+    rel = f"guides/{g['slug']}"
+    path_en, path_ar = f"/{rel}/", f"/ar/{rel}/"
+    secs = []
+    for sec in c["sections"]:
+        tiles = [BY_ID[i] for i in sec.get("piece_ids", []) if i in BY_ID]
+        secs.append(f'<h2>{esc(sec["h2"])}</h2>\n<p>{esc(sec["body"])}</p>' + (grid(tiles, t, meta=False) if tiles else ""))
+    faq = "\n".join(f'<div class="qa"><h3>{esc(x["q"])}</h3><p>{esc(x["a"])}</p></div>' for x in c["faq"])
+    inner = (f'<p class="answer">{esc(c["answer"])}</p>\n' + "\n".join(secs) +
+             f'\n<h2>{t["faq_title"]}</h2>\n{faq}')
+    head = ld({"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
+        {"@type": "Question", "name": x["q"], "acceptedAnswer": {"@type": "Answer", "text": x["a"]}} for x in c["faq"]]})
+    head += "\n" + breadcrumb_ld(t, [(t["breadcrumb_home"], L(t, "/")), (c["h1"], L(t, f"/{rel}/"))])
+    title = c["title"] if t["site_name"] in c["title"] or "Loopaholic" in c["title"] else f'{c["title"]} | {t["site_name"]}'
+    prose_page(t, outdir, rel=rel, title_text=title, head_title=esc(c["h1"]), lead="", inner=inner,
+               description=c["description"], active="guides", extra_head=head, aside=how_aside(t))
 
 
 def build_custom(t, outdir):
@@ -957,6 +1205,8 @@ def build_about(t, outdir):
 
 def build_faq(t, outdir):
     inner = "\n".join(f'<div class="qa"><h2>{esc(q)}</h2><p>{esc(a)}</p></div>' for q, a in t["faq"])
+    inner += (f'\n<div class="qa"><h2>{t["guides_h"]}</h2><ul>' +
+              "".join(f'<li><a href="{L(t, "/guides/" + g["slug"] + "/")}">{esc(g[t["lang"]]["h1"])}</a></li>' for g in GUIDES) + "</ul></div>")
     faq_ld = ld({"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
         {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in t["faq"]]})
     prose_page(t, outdir, rel="faq", title_text=f"{t['faq_title']} | {t['site_name']}", head_title=t["faq_title"],
@@ -1008,10 +1258,10 @@ def write(outdir, relpath, content):
 
 
 def build_sitemap(outdir):
-    urls = ["/", "/shop/", "/custom-orders/", "/shipping/", "/about/", "/faq/"]
-    urls += [f"/shop/{p['slug']}/" for p in PRODUCTS]
-    urls += ["/ar/", "/ar/shop/", "/ar/custom-orders/", "/ar/shipping/", "/ar/about/", "/ar/faq/"]
-    urls += [f"/ar/shop/{p['slug']}/" for p in PRODUCTS]
+    pages = ["/", "/shop/", "/book/", "/custom-orders/", "/shipping/", "/about/", "/faq/"]
+    pages += [f"/guides/{g['slug']}/" for g in GUIDES]
+    pages += [f"/shop/{p['slug']}/" for p in PRODUCTS]
+    urls = pages + ["/ar" + u for u in pages]
     lastmod = CATALOG.get("updated", "2026-10-08")
     entries = "\n".join(f"  <url><loc>{BASE_URL}{u}</loc><lastmod>{lastmod}</lastmod></url>" for u in urls)
     xml = f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n{entries}\n</urlset>\n'
@@ -1058,6 +1308,9 @@ def main():
         build_shipping(t, sub)
         build_about(t, sub)
         build_faq(t, sub)
+        build_book(t, sub)
+        for g in GUIDES:
+            build_guide(g, t, sub)
     build_404(outdir)
     build_sitemap(outdir)
     build_robots(outdir)
