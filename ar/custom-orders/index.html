@@ -19,6 +19,15 @@
 <meta property="og:image" content="https://loopaholiccrochet.com/assets/img/og.jpg">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="stylesheet" href="/assets/css/style.css">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-EQ20EYFSY3"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  if (!(navigator.webdriver || /bot|crawl|spider|headless|lighthouse/i.test(navigator.userAgent) || (screen.width === 800 && screen.height === 600))) {
+    gtag('js', new Date());
+    gtag('config', 'G-EQ20EYFSY3', { anonymize_ip: true });
+  }
+</script>
 
 </head>
 <body>
@@ -51,8 +60,8 @@
       <li>تدفعين دفعة أولى للبدء، نصنع القطعة يدويًا، ونرسل صورًا قبل الشحن.</li>
     </ol>
     <div class="cta-row" style="justify-content:flex-start">
-      <a class="btn btn-primary" href="https://instagram.com/loopaholic.crochet">ابدئي طلبًا خاصًا</a>
-      <a class="btn btn-outline" href="https://instagram.com/loopaholic.crochet">راسلينا على إنستغرام</a>
+      <a class="btn btn-primary" href="https://instagram.com/loopaholic.crochet" onclick="gtag('event','whatsapp_click',{page:'custom-orders'})">ابدئي طلبًا خاصًا</a>
+      <a class="btn btn-outline" href="https://instagram.com/loopaholic.crochet" onclick="gtag('event','instagram_click',{page:'custom-orders'})">راسلينا على إنستغرام</a>
     </div>
   </div>
 </section>

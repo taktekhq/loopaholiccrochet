@@ -11,6 +11,7 @@ import shutil
 ROOT = os.path.dirname(os.path.abspath(__file__))
 DOMAIN = "loopaholiccrochet.com"
 BASE_URL = f"https://{DOMAIN}"
+GA = "G-EQ20EYFSY3"
 INSTAGRAM = "https://instagram.com/loopaholic.crochet"
 INSTAGRAM_HANDLE = "@loopaholic.crochet"
 # No business WhatsApp number is confirmed yet (ask in workstream log).
@@ -214,6 +215,15 @@ def page_shell(t, *, title, description, canonical_path, body, extra_head="", ac
 <meta property="og:image" content="{og_image}">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="stylesheet" href="/assets/css/style.css">
+<script async src="https://www.googletagmanager.com/gtag/js?id={GA}"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){{dataLayer.push(arguments);}}
+  if (!(navigator.webdriver || /bot|crawl|spider|headless|lighthouse/i.test(navigator.userAgent) || (screen.width === 800 && screen.height === 600))) {{
+    gtag('js', new Date());
+    gtag('config', '{GA}', {{ anonymize_ip: true }});
+  }}
+</script>
 {extra_head}
 </head>
 <body>
@@ -389,7 +399,7 @@ def build_product(p, t, outdir):
       <img src="/{p['image']['main']}" alt="{title}" width="800" height="800">
       <div>
         <h1>{title}</h1>
-        <div class="price-block"><a href="{wa_href}">{t['price_cta']}</a></div>
+        <div class="price-block"><a href="{wa_href}" onclick="gtag('event','whatsapp_click',{{product:'{p['slug']}'}})">{t['price_cta']}</a></div>
         <div class="meta-row">
           <span class="pill">{t['size_label']}: {p['size_approx']}</span>
           <span class="pill">{t['colors_label']}: {colors}</span>
@@ -400,12 +410,12 @@ def build_product(p, t, outdir):
         <h2 style="font-size:1.1rem;margin-top:1.4em">{t['order_lebanon_title']}</h2>
         <p>{t['order_lebanon_body']}</p>
         <div class="order-actions">
-          <a class="btn btn-primary" href="{wa_href}">{t['order_whatsapp']}</a>
-          <a class="btn btn-outline" href="{INSTAGRAM}">{t['order_instagram']}</a>
+          <a class="btn btn-primary" href="{wa_href}" onclick="gtag('event','whatsapp_click',{{product:'{p['slug']}'}})">{t['order_whatsapp']}</a>
+          <a class="btn btn-outline" href="{INSTAGRAM}" onclick="gtag('event','instagram_click',{{product:'{p['slug']}'}})">{t['order_instagram']}</a>
         </div>
 
         <h2 style="font-size:1.1rem;margin-top:1.4em">{t['order_intl_title']}</h2>
-        {intl_block}
+        {intl_block.replace('class="btn btn-primary"', f'class="btn btn-primary" onclick="gtag(\'event\',\'buy_click\',{{product:\'{p["slug"]}\'}})"')}
       </div>
     </div>
   </div>
@@ -438,8 +448,8 @@ def build_custom(t, outdir):
       <li>{t['custom_how_3']}</li>
     </ol>
     <div class="cta-row" style="justify-content:flex-start">
-      <a class="btn btn-primary" href="{wa_href}">{t['custom_cta']}</a>
-      <a class="btn btn-outline" href="{INSTAGRAM}">{t['order_instagram']}</a>
+      <a class="btn btn-primary" href="{wa_href}" onclick="gtag('event','whatsapp_click',{{page:'custom-orders'}})">{t['custom_cta']}</a>
+      <a class="btn btn-outline" href="{INSTAGRAM}" onclick="gtag('event','instagram_click',{{page:'custom-orders'}})">{t['order_instagram']}</a>
     </div>
   </div>
 </section>
@@ -529,8 +539,11 @@ def build_sitemap(outdir):
     xml = f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n{entries}\n</urlset>\n'
     write(outdir, "sitemap.xml", xml)
 
+INDEXNOW_KEY = "ea77b6da080977a1becb866c3314f534"  # same key used on every other Taktek domain
+
 def build_robots(outdir):
     write(outdir, "robots.txt", f"User-agent: *\nAllow: /\n\nSitemap: {BASE_URL}/sitemap.xml\n")
+    write(outdir, f"{INDEXNOW_KEY}.txt", INDEXNOW_KEY + "\n")
 
 def build_cname(outdir):
     write(outdir, "CNAME", DOMAIN + "\n")
