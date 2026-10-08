@@ -13,3 +13,5 @@ Not served. Spec: `../GAME.md`. Concepts: `../game-concepts.md`. Live before: `.
 
 Files: `r1/ r2/ r3/` (screens per round: home-enc, home-met, book, book-closing, book-full, pdp, pdp-card, pdp-turn, pdp-turned, share-card, guide), `playtest-en-390.mp4` (15 s headless-Chromium play-test).
 Measured locally on r4: axe 0 WCAG violations (2.0–2.2 A/AA) on 14 pages, EN and AR. No overflow at 320/390/1440. Lighthouse mobile 98–99 (indicative: the XPS was loaded).
+
+Live (deployed 8 Oct 23:32, commit d0af55a): `live/` (same screens on loopaholiccrochet.com, EN and AR, 390 and 1440). Lighthouse mobile on live: perf 97–98, a11y/BP/SEO 100, LCP 1.4–1.7 s, CLS 0 (/, /ar/, /book/, /shop/elephant-plush/, a guide). IndexNow: 90 URLs, HTTP 200.
