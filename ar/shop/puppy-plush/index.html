@@ -28,7 +28,7 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preload" href="/assets/fonts/baloo-bhaijaan2-arabic.woff2?v=643bd83b53" as="font" type="font/woff2" crossorigin>
 <style>@font-face{font-family:"Baloo Switch";font-weight:400 800;font-display:swap;src:url("/assets/fonts/baloo-bhaijaan2-switch.woff2?v=139c7c7bfe") format("woff2");unicode-range:U+0600-06FF, U+0750-077F, U+0870-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC}@font-face{font-family:"Nunito";font-style:normal;font-weight:200 1000;font-display:swap;src:url("/assets/fonts/nunito-latin.woff2?v=ba344451ea") format("woff2");unicode-range:U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD}@font-face{font-family:"Baloo Bhaijaan 2";font-style:normal;font-weight:400 800;font-display:swap;src:url("/assets/fonts/baloo-bhaijaan2-arabic.woff2?v=643bd83b53") format("woff2");unicode-range:U+0600-06FF, U+0750-077F, U+0870-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC}</style>
-<link rel="stylesheet" href="/assets/css/site.min.css?v=e8a61df815">
+<link rel="stylesheet" href="/assets/css/site.min.css?v=e75f8cb80e">
 <script>
 window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
 if(!(navigator.webdriver||/bot|crawl|spider|headless|lighthouse/i.test(navigator.userAgent)||(screen.width===800&&screen.height===600))){
@@ -46,11 +46,11 @@ addEventListener('DOMContentLoaded',function(){(window.requestIdleCallback||func
 <header class="site-header">
   <div class="wrap bar">
     <a class="logo" href="/ar/" aria-label="لوباهوليك، الصفحة الرئيسية"><img src="/assets/img/lockup.svg?v=9d35b7ae96" width="636" height="106" alt=""></a>
-    <nav class="nav" aria-label="الرئيسية"><ul role="list"><li class="key"><a href="/ar/shop/" aria-current="page">المتجر</a></li><li><a href="/ar/custom-orders/">طلب خاص</a></li><li><a href="/ar/shipping/">الشحن</a></li><li><a href="/ar/about/">عن الحرفة</a></li><li><a href="/ar/faq/">الأسئلة الشائعة</a></li></ul></nav>
+    <nav class="nav" aria-label="الرئيسية"><ul role="list"><li class="key"><a href="/ar/shop/" aria-current="page">المتجر</a></li><li class="key"><a class="book-link" href="/ar/book/"><span class="book-ring" aria-hidden="true"></span><span class="book-word">دفتر الغُرَز</span> <span class="book-count" data-book-count></span></a></li><li><a href="/ar/custom-orders/">طلب خاص</a></li><li><a href="/ar/shipping/">الشحن</a></li><li><a href="/ar/about/">عن الحرفة</a></li><li><a href="/ar/faq/">الأسئلة الشائعة</a></li></ul></nav>
     <a class="lang" href="/shop/puppy-plush/" hreflang="en" lang="en">English</a>
     <details class="menu">
       <summary aria-label="القائمة" aria-expanded="false"><svg class="icon icon-open" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg><svg class="icon icon-close" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></summary>
-      <nav class="menu-sheet" aria-label="كل الصفحات"><ul role="list"><li><a href="/ar/">الرئيسية</a></li><li><a href="/ar/shop/" aria-current="page">المتجر</a></li><li><a href="/ar/custom-orders/">طلب خاص</a></li><li><a href="/ar/shipping/">الشحن</a></li><li><a href="/ar/about/">عن الحرفة</a></li><li><a href="/ar/faq/">الأسئلة الشائعة</a></li></ul></nav>
+      <nav class="menu-sheet" aria-label="كل الصفحات"><ul role="list"><li><a href="/ar/">الرئيسية</a></li><li><a href="/ar/shop/" aria-current="page">المتجر</a></li><li><a class="book-link" href="/ar/book/"><span class="book-ring" aria-hidden="true"></span><span class="book-word">دفتر الغُرَز</span> <span class="book-count" data-book-count></span></a></li><li><a href="/ar/custom-orders/">طلب خاص</a></li><li><a href="/ar/shipping/">الشحن</a></li><li><a href="/ar/about/">عن الحرفة</a></li><li><a href="/ar/faq/">الأسئلة الشائعة</a></li></ul></nav>
     </details>
   </div>
 </header>
@@ -70,14 +70,28 @@ addEventListener('DOMContentLoaded',function(){(window.requestIdleCallback||func
     </div>
     <div class="pdp-info">
       <h1>جرو كروشيه محشو</h1>
+      <p class="called"><a href="#creature">اسم هذه الشخصية كعكة.</a></p>
       <p>جرو كروشيه بلونين بيج وكريمي، يجلس بأذنين مسترخيتين وخطم مستدير.</p>
       <dl class="facts"><div><dt>الألوان في الصورة</dt><dd>بني فاتح، كريمي</dd></div></dl>
       <div class="order">
+        <h2 class="order-h">تأخذون كعكة إلى البيت؟</h2>
         <p class="price-note">تُصنع عند الطلب، ونؤكد السعر في المحادثة.</p>
         <div class="actions"><a class="btn btn-primary btn-block" id="order-cta" data-order-cta href="https://wa.me/96181511232?text=%D8%B7%D9%84%D8%A8%20%D9%85%D9%86%20Loopaholic%3A%20%D8%AC%D8%B1%D9%88%20%D9%83%D8%B1%D9%88%D8%B4%D9%8A%D9%87%20%D9%85%D8%AD%D8%B4%D9%88%0Ahttps%3A//loopaholiccrochet.com/ar/shop/puppy-plush/%0A%D9%85%D8%B1%D8%AD%D8%A8%D8%A7%D9%8B%21%20%D8%A3%D9%88%D8%AF%20%D8%B7%D9%84%D8%A8%20%D9%87%D8%B0%D9%87%20%D8%A7%D9%84%D9%82%D8%B7%D8%B9%D8%A9.%20%D9%85%D9%86%D8%B7%D9%82%D8%AA%D9%8A%3A%20" onclick="gtag('event','whatsapp_click',{product:'puppy-plush'})"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 20.5l1.3-4.2A8.5 8.5 0 1 1 8 19.4z"/><path d="M9 8.6c.2 2.9 2.9 5.9 6.3 6.4l1-1.3-1.9-1-1 .9c-1-.4-2.2-1.6-2.6-2.6l.9-1-1-1.9z"/></svg><span>اطلبوا على واتساب</span></a>
 <a class="btn btn-secondary" href="https://ig.me/m/loopaholic.crochet" onclick="gtag('event','instagram_click',{product:'puppy-plush'})"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.3" cy="6.7" r=".6" fill="currentColor"/></svg><span>راسلونا على إنستغرام</span></a></div>
         <p class="note">يفتح واتساب برسالة عن هذه القطعة. نرد عليكم بالسعر والألوان ومدة التصنيع.</p>
+        
       </div>
+      <section class="creature" id="creature" data-creature="p036" data-name="كعكة" data-title="جرو كروشيه محشو" data-type="دافي" data-fav="صوت المفتاح في القفل" data-line="يستقبل الجميع عند الباب وكأنهم غابوا سنة كاملة." data-img="/assets/img/p/p036/w800.jpg" aria-labelledby="cr-h">
+  <div class="cr-head">
+    <span class="cr-badge"><img src="/assets/img/p/p036/w400.webp" width="400" height="400" alt="" loading="lazy" decoding="async"><svg class="ring" viewBox="0 0 100 100" aria-hidden="true" focusable="false"><circle class="ring-track" cx="50" cy="50" r="44" pathLength="100"/><circle class="ring-stitch" cx="50" cy="50" r="44" pathLength="100"/></svg></span>
+    <div><h2 id="cr-h">تعرّفوا على كعكة</h2><p class="cr-type"><span class="type-stamp">دافي</span></p></div>
+  </div>
+  <p class="cr-line">يستقبل الجميع عند الباب وكأنهم غابوا سنة كاملة.</p>
+  <dl class="cr-facts"><div><dt>الشيء المفضّل</dt><dd>صوت المفتاح في القفل</dd></div></dl>
+  <p class="cr-story">دفن كعكة جوربًا في كل أصيص على الشرفة. ويسمّي ذلك خطة ادّخار.</p>
+  <div class="actions cr-actions" data-game-only hidden><button class="btn btn-secondary" type="button" data-share>شاركوا بطاقة كعكة</button></div>
+  <p class="cr-fiction">الاسم والحكاية من الخيال، أمّا القطعة في الصورة فحقيقية.</p>
+</section>
       <div class="aside" id="how">
         <h2>كيف يتم الطلب</h2>
         <ol class="steps steps-compact" role="list"><li><h3>اختاروا قطعة</h3><p>تصفّحوا المتجر، أو أخبرونا بفكرة لطلب خاص.</p></li><li><h3>راسلونا</h3><p>على واتساب أو إنستغرام. نتفق معكم هناك على السعر والألوان ومدة التصنيع.</p></li><li><h3>نصنعها باليد</h3><p>بعد الاتفاق على السعر والألوان، نحيك قطعتكم ونرتّب التوصيل.</p></li></ol>
@@ -107,18 +121,24 @@ addEventListener('DOMContentLoaded',function(){(window.requestIdleCallback||func
       </div>
       <nav aria-labelledby="f-shop"><h2 id="f-shop">المتجر</h2><ul role="list">
         <li><a href="/ar/shop/">المتجر</a></li>
-        <li><a href="/ar/custom-orders/">طلب خاص</a></li></ul></nav>
+        <li><a href="/ar/custom-orders/">طلب خاص</a></li>
+        <li><a href="/ar/book/">دفتر الغُرَز</a></li></ul></nav>
       <nav aria-labelledby="f-help"><h2 id="f-help">مساعدة</h2><ul role="list">
         <li><a href="/ar/shipping/">الشحن</a></li>
         <li><a href="/ar/faq/">الأسئلة الشائعة</a></li>
         <li><a href="/ar/about/">عن الحرفة</a></li></ul></nav>
+      <nav aria-labelledby="f-guides"><h2 id="f-guides">أدلّة</h2><ul role="list">
+        <li><a href="/ar/guides/handmade-crochet-toys-lebanon/">ألعاب كروشيه يدوية في لبنان</a></li><li><a href="/ar/guides/crochet-amigurumi-gift/">هدية أميغورومي كروشيه لكل مناسبة</a></li></ul></nav>
       <nav aria-labelledby="f-follow"><h2 id="f-follow">تابعونا</h2><ul role="list">
         <li><a href="https://instagram.com/loopaholic.crochet"><bdi dir="ltr">@loopaholic.crochet</bdi></a></li></ul></nav>
     </div>
     <div class="foot-base"><span>© <span dir="ltr">2026</span> <bdi dir="ltr">Loopaholic</bdi></span><a class="foot-lang" href="/shop/puppy-plush/" hreflang="en" lang="en">English</a></div>
   </div>
 </footer>
-<div class="sticky-cta" aria-hidden="true"><span class="name">جرو كروشيه محشو</span><a tabindex="-1" class="btn btn-primary" href="https://wa.me/96181511232?text=%D8%B7%D9%84%D8%A8%20%D9%85%D9%86%20Loopaholic%3A%20%D8%AC%D8%B1%D9%88%20%D9%83%D8%B1%D9%88%D8%B4%D9%8A%D9%87%20%D9%85%D8%AD%D8%B4%D9%88%0Ahttps%3A//loopaholiccrochet.com/ar/shop/puppy-plush/%0A%D9%85%D8%B1%D8%AD%D8%A8%D8%A7%D9%8B%21%20%D8%A3%D9%88%D8%AF%20%D8%B7%D9%84%D8%A8%20%D9%87%D8%B0%D9%87%20%D8%A7%D9%84%D9%82%D8%B7%D8%B9%D8%A9.%20%D9%85%D9%86%D8%B7%D9%82%D8%AA%D9%8A%3A%20" onclick="gtag('event','whatsapp_click',{product:'puppy-plush'})"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 20.5l1.3-4.2A8.5 8.5 0 1 1 8 19.4z"/><path d="M9 8.6c.2 2.9 2.9 5.9 6.3 6.4l1-1.3-1.9-1-1 .9c-1-.4-2.2-1.6-2.6-2.6l.9-1-1-1.9z"/></svg><span>اطلبوا على واتساب</span></a></div>
+<aside class="sticky-cta" aria-label="اطلبوا على واتساب" aria-hidden="true"><span class="name">جرو كروشيه محشو</span><a tabindex="-1" class="btn btn-primary" href="https://wa.me/96181511232?text=%D8%B7%D9%84%D8%A8%20%D9%85%D9%86%20Loopaholic%3A%20%D8%AC%D8%B1%D9%88%20%D9%83%D8%B1%D9%88%D8%B4%D9%8A%D9%87%20%D9%85%D8%AD%D8%B4%D9%88%0Ahttps%3A//loopaholiccrochet.com/ar/shop/puppy-plush/%0A%D9%85%D8%B1%D8%AD%D8%A8%D8%A7%D9%8B%21%20%D8%A3%D9%88%D8%AF%20%D8%B7%D9%84%D8%A8%20%D9%87%D8%B0%D9%87%20%D8%A7%D9%84%D9%82%D8%B7%D8%B9%D8%A9.%20%D9%85%D9%86%D8%B7%D9%82%D8%AA%D9%8A%3A%20" onclick="gtag('event','whatsapp_click',{product:'puppy-plush'})"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 20.5l1.3-4.2A8.5 8.5 0 1 1 8 19.4z"/><path d="M9 8.6c.2 2.9 2.9 5.9 6.3 6.4l1-1.3-1.9-1-1 .9c-1-.4-2.2-1.6-2.6-2.6l.9-1-1-1.9z"/></svg><span>اطلبوا على واتساب</span></a></aside>
+<div class="toast" role="status" aria-live="polite" data-toast></div>
+<script type="application/json" id="game-i18n">{"enc_met": "تعرّفتم على {name}!", "enc_card": "بطاقة {name}", "enc_again": "تعرّفوا على شخصية أخرى", "enc_full": "تعرّفتم على الشخصيات الـ{total} كلّها. اكتمل دفتركم.", "enc_full_link": "افتحوا دفتر الغُرَز", "enc_btn": "تعرّفوا عليه", "enc_peek": "لمن هذه الغُرَز؟", "progress": "{n} من {total} في دفتر الغُرَز", "book_unmet": "{set}، الظلّ {i} من {n}: لم تتعرّفوا عليه بعد. تعرّفوا عليه.", "book_reset_confirm": "هل تريدون نسيان كل من تعرّفتم عليهم على هذا الجهاز؟", "joined": "في دفتر الغُرَز الآن: {name}. {n} من {total}.", "copied": "نُسخ: {title}", "share_text": "تلميح: حدا يجبلي {name} من Loopaholic؟", "share_saved": "حُفظت البطاقة. انشروها في الستوري أو أرسلوها لصديق.", "turn_label": "مجسّم تقريبي لـ{name}. اسحبوا، أو استعملوا الأسهم، للتدوير.", "id_title": "بطاقة تعريف من Loopaholic", "id_name": "الاسم", "id_type": "النوع", "id_fav": "الشيء المفضّل", "id_born": "مكان الولادة", "id_born_v": "لبنان، غرزة غرزة", "id_status": "الحالة", "id_status_v": "تُصنع عندما يطلبها أحد", "id_stamp": "حدا يجبلي ياه", "nav_book": "دفتر الغُرَز", "turn_left": "إلى اليسار", "turn_right": "إلى اليمين", "turn_back": "العودة إلى الصورة", "turn_note": "مجسّم تقريبي ثلاثي الأبعاد مأخوذ من الصورة: ألوانه وغرزه تختلف عن القطعة الحقيقية.", "lang": "ar", "total": 36, "book": "/ar/book/", "home": "/ar/"}</script>
 <script src="/assets/js/site.min.js?v=e9620e994e" defer></script>
+<script src="/assets/js/game.min.js?v=f226e0f55d" defer></script>
 </body>
 </html>

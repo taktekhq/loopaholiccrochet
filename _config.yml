@@ -8,3 +8,7 @@ exclude:
   - make_brand_images.py
   - catalog.json
   - __pycache__
+  - make_game_assets.py
+  - creatures.json
+  - guides.json
+  - tools

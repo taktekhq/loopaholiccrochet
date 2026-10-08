@@ -1,0 +1,714 @@
+{
+ "types": {
+  "cozy": {
+   "en": "Cozy",
+   "ar": "دافي"
+  },
+  "sea": {
+   "en": "Sea",
+   "ar": "بحري"
+  },
+  "garden": {
+   "en": "Garden",
+   "ar": "جنينة"
+  },
+  "nibbles": {
+   "en": "Nibbles",
+   "ar": "نقرشات"
+  },
+  "darling": {
+   "en": "Darling",
+   "ar": "دلّوع"
+  },
+  "storybook": {
+   "en": "Storybook",
+   "ar": "حكايات"
+  }
+ },
+ "creatures": {
+  "p003": {
+   "type": "cozy",
+   "name": {
+    "en": "Pebble",
+    "ar": "سحاب"
+   },
+   "line": {
+    "en": "Listens with both ears, then remembers everything you said.",
+    "ar": "يسمع بأذنيه الاثنتين، ولا ينسى كلمة واحدة مما قلت."
+   },
+   "fav": {
+    "en": "rainy afternoons by the window",
+    "ar": "العصريات الممطرة قرب الشباك"
+   },
+   "story": {
+    "en": "Pebble once walked to the end of the corniche just to hear the waves gossip. He came back with a seashell and three new secrets.",
+    "ar": "مشى سحاب مرّة حتى آخر الكورنيش ليسمع الموج وهو يثرثر. عاد بصدفة وثلاثة أسرار جديدة."
+   }
+  },
+  "p005": {
+   "type": "cozy",
+   "name": {
+    "en": "Domino",
+    "ar": "ياسمينة"
+   },
+   "line": {
+    "en": "Never leaves the house without a flower behind her ear.",
+    "ar": "لا تخرج من البيت من دون وردة خلف أذنها."
+   },
+   "fav": {
+    "en": "jasmine on a summer balcony",
+    "ar": "الياسمين على شرفة صيفية"
+   },
+   "story": {
+    "en": "Domino tried wearing a hat once, but it hid the flower, so the hat had to go. She says black and white goes with everything anyway.",
+    "ar": "جرّبت ياسمينة القبعة مرّة، لكنها غطّت الوردة، فاستغنت عنها. وتقول إن الأبيض والأسود يليقان بكل شيء."
+   }
+  },
+  "p008": {
+   "type": "storybook",
+   "name": {
+    "en": "Mimi & Momo",
+    "ar": "لولو ومرجانة"
+   },
+   "line": {
+    "en": "Twin mermaids who finish each other’s sentences, mostly wrong.",
+    "ar": "حوريتان توأم، تكمل إحداهما جملة الأخرى، وغالبًا بشكل خاطئ."
+   },
+   "fav": {
+    "en": "racing dolphins to Byblos",
+    "ar": "سباق الدلافين حتى جبيل"
+   },
+   "story": {
+    "en": "Mimi swears she saw the moon swim. Momo says it was a jellyfish, and they’ve been arguing happily about it ever since.",
+    "ar": "تقسم لولو أنها رأت القمر يسبح. وتقول مرجانة إنه كان قنديل بحر، ومن يومها وهما تتجادلان بسعادة."
+   }
+  },
+  "p009": {
+   "type": "cozy",
+   "name": {
+    "en": "Pepper",
+    "ar": "نمّورة"
+   },
+   "line": {
+    "en": "Stares at you with green eyes until you share your breakfast.",
+    "ar": "تحدّق فيك بعينيها الخضراوين حتى تقاسمها فطورك."
+   },
+   "fav": {
+    "en": "the warm spot on the sofa",
+    "ar": "البقعة الدافئة على الكنبة"
+   },
+   "story": {
+    "en": "Pepper believes her stripes make her a real tiger. The neighbor’s dog has agreed, just to keep the peace.",
+    "ar": "تؤمن نمّورة أن خطوطها تجعلها نمرة حقيقية. وكلب الجيران وافقها، كرمى للسلام فقط."
+   }
+  },
+  "p012": {
+   "type": "garden",
+   "name": {
+    "en": "Violet",
+    "ar": "سوسنة"
+   },
+   "line": {
+    "en": "Stands tall, speaks rarely, and always gets the last word.",
+    "ar": "تقف شامخة، قليلة الكلام، ولها دائمًا الكلمة الأخيرة."
+   },
+   "fav": {
+    "en": "the quiet before guests arrive",
+    "ar": "الهدوء قبل وصول الضيوف"
+   },
+   "story": {
+    "en": "Violet was told purple was too dramatic. She bloomed anyway, and now every vase in the house wants to be her friend.",
+    "ar": "قالوا لسوسنة إن البنفسجي لون مسرحي أكثر من اللازم. فتفتّحت رغمًا عنهم، وصارت كل مزهرية في البيت تريد صداقتها."
+   }
+  },
+  "p013": {
+   "type": "garden",
+   "name": {
+    "en": "Nila",
+    "ar": "نيلوفر"
+   },
+   "line": {
+    "en": "Floats through life and never spills a drop of drama.",
+    "ar": "تطفو فوق الحياة ولا تُسقط قطرة دراما واحدة."
+   },
+   "fav": {
+    "en": "the first coffee of the day",
+    "ar": "فنجان القهوة الأول في النهار"
+   },
+   "story": {
+    "en": "Nila lived on a pond until she heard about Lebanese coffee. She moved to the table the next morning and never looked back.",
+    "ar": "عاشت نيلوفر على بحيرة إلى أن سمعت عن القهوة اللبنانية. في الصباح التالي انتقلت إلى الطاولة ولم تنظر إلى الوراء."
+   }
+  },
+  "p014": {
+   "type": "nibbles",
+   "name": {
+    "en": "Ruby",
+    "ar": "توتة"
+   },
+   "line": {
+    "en": "Wears a flower crown and treats every day like a celebration.",
+    "ar": "تلبس تاجًا من الزهر وتعتبر كل يوم مناسبة للاحتفال."
+   },
+   "fav": {
+    "en": "being the center of the table",
+    "ar": "أن تكون في وسط الطاولة"
+   },
+   "story": {
+    "en": "Ruby was picked for a fruit salad once and politely declined. She had better plans: a shelf, a view, and a lot of compliments.",
+    "ar": "اختاروا توتة مرّة لسلطة فواكه، فاعتذرت بلطف. كانت عندها خطط أحلى: رفّ، وإطلالة، وكثير من المديح."
+   }
+  },
+  "p016": {
+   "type": "cozy",
+   "name": {
+    "en": "Lulu",
+    "ar": "لوزة"
+   },
+   "line": {
+    "en": "Hears gossip three gardens away and keeps every word to herself.",
+    "ar": "تسمع الأخبار من ثلاث جنائن بعيدة، وتحفظها كلها لنفسها."
+   },
+   "fav": {
+    "en": "almond blossoms in March",
+    "ar": "زهر اللوز في آذار"
+   },
+   "story": {
+    "en": "Lulu’s ears flop down when she’s thinking. They’ve been down all week, which means she’s planning a surprise for someone.",
+    "ar": "تتدلّى أذنا لوزة حين تفكّر. وهما متدلّيتان طوال الأسبوع، يعني أنها تحضّر مفاجأة لأحد ما."
+   }
+  },
+  "p017": {
+   "type": "storybook",
+   "name": {
+    "en": "Sami",
+    "ar": "سامي"
+   },
+   "line": {
+    "en": "Has a plan for every afternoon and a snack for every plan.",
+    "ar": "عنده خطة لكل عصرية، وزوّادة لكل خطة."
+   },
+   "fav": {
+    "en": "football in the alley after school",
+    "ar": "الطابة في الزاروب بعد المدرسة"
+   },
+   "story": {
+    "en": "Sami’s red sweater is lucky; he scored three goals in it. His mom says the sweater deserves a rest, but he’s not convinced.",
+    "ar": "كنزة سامي الحمراء تجلب الحظ، فقد سجّل فيها ثلاثة أهداف. أمّه تقول إن الكنزة تستحق استراحة، لكنه غير مقتنع."
+   }
+  },
+  "p021": {
+   "type": "sea",
+   "name": {
+    "en": "Otto",
+    "ar": "بحّور"
+   },
+   "line": {
+    "en": "Eight arms, eight opinions, and every one of them is a hug.",
+    "ar": "ثماني أذرع، وثمانية آراء، وكلها عناق."
+   },
+   "fav": {
+    "en": "tidying shells by color",
+    "ar": "ترتيب الأصداف حسب ألوانها"
+   },
+   "story": {
+    "en": "Otto tried to wave at every fish in the bay at once. He got tangled, laughed for an hour, and made forty new friends.",
+    "ar": "حاول بحّور أن يلوّح لكل سمكة في البحر دفعة واحدة. تشابكت أذرعه، فضحك ساعة كاملة، وكسب أربعين صديقًا جديدًا."
+   }
+  },
+  "p036": {
+   "type": "cozy",
+   "name": {
+    "en": "Biscuit",
+    "ar": "كعكة"
+   },
+   "line": {
+    "en": "Greets everyone at the door like they’ve been gone for a year.",
+    "ar": "يستقبل الجميع عند الباب وكأنهم غابوا سنة كاملة."
+   },
+   "fav": {
+    "en": "the sound of keys in the lock",
+    "ar": "صوت المفتاح في القفل"
+   },
+   "story": {
+    "en": "Biscuit has buried one sock in every pot on the balcony. He calls it a savings plan.",
+    "ar": "دفن كعكة جوربًا في كل أصيص على الشرفة. ويسمّي ذلك خطة ادّخار."
+   }
+  },
+  "p043": {
+   "type": "garden",
+   "name": {
+    "en": "Sip & Sway",
+    "ar": "نور ونوّار"
+   },
+   "line": {
+    "en": "Two tulips sharing one mug and absolutely no secrets.",
+    "ar": "زهرتا توليب تتقاسمان فنجانًا واحدًا ولا تخبّئان أي سرّ."
+   },
+   "fav": {
+    "en": "a ribbon tied just right",
+    "ar": "شريطة معقودة كما يجب"
+   },
+   "story": {
+    "en": "Sip likes mornings, Sway likes evenings, so they take turns standing tallest. Open the box and they’ll both pretend they were awake.",
+    "ar": "نور تحب الصباح، ونوّار تحب المساء، فتتناوبان على الوقوف بشموخ. افتحوا العلبة وستتظاهران أنهما كانتا مستيقظتين."
+   }
+  },
+  "p046": {
+   "type": "nibbles",
+   "name": {
+    "en": "Swirl",
+    "ar": "قشطة"
+   },
+   "line": {
+    "en": "Sweet on the outside, sassy underneath the frosting.",
+    "ar": "حلوة من الخارج، وتحت الكريمة شخصية لا يُستهان بها."
+   },
+   "fav": {
+    "en": "a strawberry worn like a hat",
+    "ar": "حبّة فراولة تلبسها كقبعة"
+   },
+   "story": {
+    "en": "Swirl entered a bakery beauty contest and won by a cherry. She keeps the ribbon under her frosting, right next to her ego.",
+    "ar": "شاركت قشطة في مسابقة جمال للحلويات وفازت بفارق حبّة كرز. تخبّئ الوسام تحت الكريمة، بجانب غرورها."
+   }
+  },
+  "p063": {
+   "type": "cozy",
+   "name": {
+    "en": "Mango",
+    "ar": "نطّوط"
+   },
+   "line": {
+    "en": "Long arms, longer stories, and a laugh you hear from the garden.",
+    "ar": "ذراعان طويلتان، وحكايات أطول، وضحكة تُسمع من الجنينة."
+   },
+   "fav": {
+    "en": "bananas, obviously",
+    "ar": "الموز، طبعًا"
+   },
+   "story": {
+    "en": "Mango once hung by his tail from the fig tree to watch the sunset upside down. He says it looks better that way, and nobody can prove otherwise.",
+    "ar": "تعلّق نطّوط مرّة بغصن التينة ليرى الغروب بالمقلوب. يقول إنه أجمل هكذا، ولا أحد يستطيع أن يثبت العكس."
+   }
+  },
+  "p064": {
+   "type": "cozy",
+   "name": {
+    "en": "Tallulah",
+    "ar": "نخلة"
+   },
+   "line": {
+    "en": "Sees everything first and politely pretends to be surprised.",
+    "ar": "ترى كل شيء قبل الجميع، ثم تتظاهر بلطف أنها متفاجئة."
+   },
+   "fav": {
+    "en": "the top shelf, where the view is",
+    "ar": "الرف العلوي، حيث المنظر"
+   },
+   "story": {
+    "en": "Tallulah counts her spots every night and gets a different number each time. She’s decided it means new ones are sprouting for luck.",
+    "ar": "تعدّ نخلة بقعها كل ليلة، وتخرج برقم مختلف في كل مرة. وقرّرت أن هذا يعني أن بقعًا جديدة تنبت لها للحظ."
+   }
+  },
+  "p065": {
+   "type": "garden",
+   "name": {
+    "en": "Scarlet",
+    "ar": "جوري"
+   },
+   "line": {
+    "en": "A hopeless romantic with excellent posture.",
+    "ar": "رومانسية حتى النخاع، وقامتها مستقيمة دائمًا."
+   },
+   "fav": {
+    "en": "being handed over with a blush",
+    "ar": "أن تُهدى مع احمرار الخدّين"
+   },
+   "story": {
+    "en": "Scarlet has been part of three proposals and one grand apology. She says the apology was the most romantic of all.",
+    "ar": "شاركت جوري في ثلاثة طلبات زواج واعتذار واحد عظيم. وتقول إن الاعتذار كان أكثرها رومانسية."
+   }
+  },
+  "p066": {
+   "type": "garden",
+   "name": {
+    "en": "Sunny",
+    "ar": "بسمة"
+   },
+   "line": {
+    "en": "Smiles at strangers, clouds, and especially Mondays.",
+    "ar": "تبتسم للغرباء، وللغيوم، وخصوصًا ليوم الاثنين."
+   },
+   "fav": {
+    "en": "a sunny patch of grass",
+    "ar": "رقعة عشب مشمسة"
+   },
+   "story": {
+    "en": "Sunny got tired of standing in a field, so she grew legs and went for a walk. She’s been visiting friends ever since.",
+    "ar": "ملّت بسمة من الوقوف في الحقل، فنبتت لها ساقان وخرجت تتمشّى. ومن يومها وهي تزور الأصحاب."
+   }
+  },
+  "p070": {
+   "type": "cozy",
+   "name": {
+    "en": "Bella",
+    "ar": "رنّة"
+   },
+   "line": {
+    "en": "Announces herself with a jingle and expects applause.",
+    "ar": "تعلن وصولها برنّة جرس وتنتظر التصفيق."
+   },
+   "fav": {
+    "en": "fresh clover and a good audience",
+    "ar": "البرسيم الطازج وجمهور يقدّر"
+   },
+   "story": {
+    "en": "Bella’s bell rings whenever she has a good idea. The farm hasn’t had a quiet afternoon since spring.",
+    "ar": "يرنّ جرس رنّة كلما خطرت لها فكرة حلوة. ومنذ الربيع لم تعرف المزرعة عصرية هادئة واحدة."
+   }
+  },
+  "p072": {
+   "type": "cozy",
+   "name": {
+    "en": "Rumble",
+    "ar": "غضنفر"
+   },
+   "line": {
+    "en": "Roars at thunderstorms, then asks for a hug right after.",
+    "ar": "يزأر في وجه الرعد، ثم يطلب عناقًا على الفور."
+   },
+   "fav": {
+    "en": "a sunbeam on the rug",
+    "ar": "شعاع شمس على السجادة"
+   },
+   "story": {
+    "en": "Rumble practices his roar in the mirror every morning. So far it sounds like a purr, but he’s very proud of his mane.",
+    "ar": "يتمرّن غضنفر على الزئير أمام المرآة كل صباح. حتى الآن يخرج الصوت خرخرة، لكنه فخور جدًا بلبدته."
+   }
+  },
+  "p076": {
+   "type": "garden",
+   "name": {
+    "en": "Goldie",
+    "ar": "شمسة"
+   },
+   "line": {
+    "en": "Follows the sun all day and still has time to cheer you on.",
+    "ar": "تلاحق الشمس طوال النهار، ويبقى لديها وقت لتشجيعك."
+   },
+   "fav": {
+    "en": "golden hour on the balcony",
+    "ar": "ساعة الغروب الذهبية على الشرفة"
+   },
+   "story": {
+    "en": "Goldie turned her face to the window for so long that the sun started waving back. Now they meet every morning at seven.",
+    "ar": "أدارت شمسة وجهها نحو الشباك طويلًا حتى بدأت الشمس تلوّح لها. والآن تلتقيان كل صباح عند السابعة."
+   }
+  },
+  "p092": {
+   "type": "sea",
+   "name": {
+    "en": "Finley",
+    "ar": "باشا"
+   },
+   "line": {
+    "en": "Poses on his stand like a museum piece and loves the attention.",
+    "ar": "يقف على منصّته كتحفة في متحف، ويعشق الأضواء."
+   },
+   "fav": {
+    "en": "a dramatic entrance",
+    "ar": "الدخول الاستعراضي"
+   },
+   "story": {
+    "en": "Finley is the gentlest shark in the Mediterranean; he apologises to fish before swimming past. He just likes looking fierce in photos.",
+    "ar": "باشا أطيب قرش في المتوسط، يعتذر من السمك قبل أن يسبح بجانبه. هو فقط يحب أن يبدو مخيفًا في الصور."
+   }
+  },
+  "p093": {
+   "type": "cozy",
+   "name": {
+    "en": "Loop",
+    "ar": "لفلوف"
+   },
+   "line": {
+    "en": "Curls up for every conversation and never misses a detail.",
+    "ar": "يلتفّ حول كل حديث ولا تفوته تفصيلة."
+   },
+   "fav": {
+    "en": "a long, slow nap in the sun",
+    "ar": "قيلولة طويلة هادئة في الشمس"
+   },
+   "story": {
+    "en": "Loop tried stretching out straight once. It felt strange, so he went back to his favorite circle and called it home.",
+    "ar": "حاول لفلوف مرّة أن يتمدّد مستقيمًا. شعر بالغرابة، فعاد إلى دائرته المفضّلة وسمّاها بيتًا."
+   }
+  },
+  "p099": {
+   "type": "cozy",
+   "name": {
+    "en": "Romeo",
+    "ar": "حبّوب"
+   },
+   "line": {
+    "en": "Literally all heart, and not one bit shy about it.",
+    "ar": "قلب من رأسه حتى قدميه، ولا يعرف الخجل."
+   },
+   "fav": {
+    "en": "handing out balloons",
+    "ar": "توزيع البالونات"
+   },
+   "story": {
+    "en": "Romeo keeps his balloons tied close so he never runs out of love to give. He’s handed out hundreds, and somehow he’s still got more.",
+    "ar": "يربط حبّوب بالوناته قربه كي لا ينفد حبّه أبدًا. وزّع منها المئات، ومع ذلك ما زال عنده المزيد."
+   }
+  },
+  "p103": {
+   "type": "cozy",
+   "name": {
+    "en": "Hugo",
+    "ar": "حنّون"
+   },
+   "line": {
+    "en": "Arms always open, just in case someone needs a hug.",
+    "ar": "ذراعاه مفتوحتان دائمًا، تحسّبًا لأي أحد يحتاج عناقًا."
+   },
+   "fav": {
+    "en": "hugs for no reason at all",
+    "ar": "العناق بلا مناسبة"
+   },
+   "story": {
+    "en": "Hugo climbed down from his eucalyptus tree because nobody up there wanted a cuddle. He’s been much happier on the sofa.",
+    "ar": "نزل حنّون عن شجرته لأن أحدًا هناك لم يكن يريد حضنًا. ومن يومها وهو أسعد على الكنبة."
+   }
+  },
+  "p104": {
+   "type": "sea",
+   "name": {
+    "en": "Shelby",
+    "ar": "رزان"
+   },
+   "line": {
+    "en": "Takes the scenic route every time, and is never late.",
+    "ar": "تختار الطريق الأجمل دائمًا، ولا تتأخر أبدًا."
+   },
+   "fav": {
+    "en": "warm currents and slow mornings",
+    "ar": "التيارات الدافئة والصباحات الهادئة"
+   },
+   "story": {
+    "en": "Shelby swam from Tyre to Batroun to visit a cousin. She arrived three weeks later, rested, tanned and full of stories.",
+    "ar": "سبحت رزان من صور إلى البترون لتزور ابنة خالتها. وصلت بعد ثلاثة أسابيع، مرتاحة ومسمرّة ومليئة بالحكايات."
+   }
+  },
+  "p150": {
+   "type": "cozy",
+   "name": {
+    "en": "Barnaby",
+    "ar": "كستنا"
+   },
+   "line": {
+    "en": "Old-fashioned, dependable, and an excellent secret-keeper.",
+    "ar": "تقليدي، يُعتمد عليه، ويحفظ الأسرار ببراعة."
+   },
+   "fav": {
+    "en": "chestnuts roasting in winter",
+    "ar": "الكستناء المشوية في الشتاء"
+   },
+   "story": {
+    "en": "Barnaby sits at the end of the same bed every night, keeping watch for bad dreams. Not one has made it past him yet.",
+    "ar": "يجلس كستنا كل ليلة في طرف السرير نفسه يحرس من الأحلام المزعجة. ولم يتمكّن حلم واحد من تجاوزه حتى الآن."
+   }
+  },
+  "p154": {
+   "type": "darling",
+   "name": {
+    "en": "Quincy",
+    "ar": "مشمشة"
+   },
+   "line": {
+    "en": "Hums off-key on purpose because it makes everyone laugh.",
+    "ar": "تدندن خارج اللحن عن قصد لأن ذلك يُضحك الجميع."
+   },
+   "fav": {
+    "en": "puddle-hopping after the rain",
+    "ar": "القفز فوق البرك بعد المطر"
+   },
+   "story": {
+    "en": "Quincy tried to join the swans’ choir but kept quacking the chorus too early. The swans now save her a spot at the front.",
+    "ar": "حاولت مشمشة أن تنضم إلى جوقة البجع، لكنها كانت تبدأ اللازمة قبل وقتها. والآن يحجز لها البجع مكانًا في الصف الأول."
+   }
+  },
+  "p160": {
+   "type": "darling",
+   "name": {
+    "en": "Dozy",
+    "ar": "نعسان"
+   },
+   "line": {
+    "en": "Permanently sleepy, and very proud of it.",
+    "ar": "يعيش على القيلولة، وفخور بذلك أشدّ الفخر."
+   },
+   "fav": {
+    "en": "counting clouds instead of sheep",
+    "ar": "عدّ الغيوم بدلًا من الخراف"
+   },
+   "story": {
+    "en": "Dozy fell asleep in a meadow and woke up with a daisy on his head. He’s worn it ever since and calls it his thinking cap.",
+    "ar": "نام نعسان في مرج أخضر واستيقظ وعلى رأسه أقحوانة. ومن يومها لم يخلعها، ويسمّيها قبعة التفكير."
+   }
+  },
+  "p173": {
+   "type": "storybook",
+   "name": {
+    "en": "Clara",
+    "ar": "جديلة"
+   },
+   "line": {
+    "en": "Practices pirouettes down the hallway whenever music plays.",
+    "ar": "تتمرّن على الدوران في الممرّ كلّما سمعت موسيقى."
+   },
+   "fav": {
+    "en": "the hush before the curtain rises",
+    "ar": "السكون قبل رفع الستارة"
+   },
+   "story": {
+    "en": "Clara braids her hair before every show for luck. Once she forgot, spun twice as fast, and decided luck is mostly practice.",
+    "ar": "تجدل جديلة شعرها قبل كل عرض لتجلب الحظ. نسيت مرّة، فدارت بسرعة مضاعفة، واستنتجت أن الحظ معظمه تمرين."
+   }
+  },
+  "p188": {
+   "type": "cozy",
+   "name": {
+    "en": "Zigzag",
+    "ar": "شطرنج"
+   },
+   "line": {
+    "en": "Couldn’t choose between black and white, so wears both.",
+    "ar": "لم يستطع الاختيار بين الأبيض والأسود، فارتدى الاثنين."
+   },
+   "fav": {
+    "en": "a pattern nobody else can pull off",
+    "ar": "نقشة لا يجرؤ غيره على ارتدائها"
+   },
+   "story": {
+    "en": "Zigzag was invited to a chess club and mistaken for the board. He played along and won four games without moving.",
+    "ar": "دُعي شطرنج إلى نادٍ للشطرنج، فظنّوه رقعة اللعب. جاراهم وفاز بأربع مباريات من دون أن يتحرك."
+   }
+  },
+  "p207": {
+   "type": "cozy",
+   "name": {
+    "en": "Bumble",
+    "ar": "عسلة"
+   },
+   "line": {
+    "en": "A cat in a bee costume, fully committed to the role.",
+    "ar": "قطة لبست زيّ نحلة، وما زالت مندمجة في الدور حتى اليوم."
+   },
+   "fav": {
+    "en": "a spoon of honey, no questions asked",
+    "ar": "ملعقة عسل، بلا أسئلة"
+   },
+   "story": {
+    "en": "Bumble wore her bee hood to one party and never took it off. The flowers in the garden have started bowing when she walks past.",
+    "ar": "لبست عسلة قبعة النحلة في حفلة واحدة ولم تخلعها بعدها. وصارت أزهار الجنينة تنحني لها كلما مرّت."
+   }
+  },
+  "p251": {
+   "type": "storybook",
+   "name": {
+    "en": "Tippy",
+    "ar": "رقّوصة"
+   },
+   "line": {
+    "en": "Dances on her toes so nobody hears her raid the cheese.",
+    "ar": "ترقص على رؤوس أصابعها كي لا يسمعها أحد وهي تغزو الجبنة."
+   },
+   "fav": {
+    "en": "halloumi after rehearsal",
+    "ar": "لقمة حلّوم بعد التمرين"
+   },
+   "story": {
+    "en": "Tippy auditioned for the cats’ ballet and got the lead. The cats still haven’t noticed she’s a mouse.",
+    "ar": "تقدّمت رقّوصة لتجربة أداء في باليه القطط ففازت بالدور الأول. وحتى اليوم لم تنتبه القطط أنها فأرة."
+   }
+  },
+  "p318": {
+   "type": "darling",
+   "name": {
+    "en": "Trumpet",
+    "ar": "زمّور"
+   },
+   "line": {
+    "en": "Toots a hello at everyone, including the furniture.",
+    "ar": "يطلق تحية بخرطومه لكل من يمرّ، حتى الكراسي."
+   },
+   "fav": {
+    "en": "a parade, any parade",
+    "ar": "أي استعراض، أيًّا كان"
+   },
+   "story": {
+    "en": "Trumpet practices his trumpet call at sunrise to wake the birds. The birds have started waking him instead, just to be first.",
+    "ar": "يتمرّن زمّور على النفخ عند الشروق ليوقظ العصافير. فصارت العصافير توقظه هي، فقط لتسبقه."
+   }
+  },
+  "p369": {
+   "type": "garden",
+   "name": {
+    "en": "Sprig",
+    "ar": "خزامى"
+   },
+   "line": {
+    "en": "Calm in a crisis and dreams of summer in the mountains.",
+    "ar": "هادئة وقت الأزمات، وتحلم بصيف في الجبل."
+   },
+   "fav": {
+    "en": "a breeze from an open window",
+    "ar": "نسمة من شباك مفتوح"
+   },
+   "story": {
+    "en": "Sprig never asks for water and never complains about the view. She just sways gently and turns the whole room into a holiday.",
+    "ar": "لا تطلب خزامى ماء ولا تشتكي من المنظر. تتمايل بهدوء فقط، فتحوّل الغرفة كلها إلى عطلة."
+   }
+  },
+  "p445": {
+   "type": "nibbles",
+   "name": {
+    "en": "Maki & Tama",
+    "ar": "سوسو وزوزو"
+   },
+   "line": {
+    "en": "Best friends who keep daring each other to try the wasabi.",
+    "ar": "صديقان حميمان، يتحدّى كل منهما الآخر أن يجرّب الوسابي."
+   },
+   "fav": {
+    "en": "sitting side by side on a black plate",
+    "ar": "الجلوس جنبًا إلى جنب على صحن أسود"
+   },
+   "story": {
+    "en": "Maki wears pink, Tama wears a yellow omelette scarf, and they argue about who’s tastier. The chopsticks refuse to pick a side.",
+    "ar": "سوسو يلبس الوردي، وزوزو يلفّ وشاحًا أصفر من العجّة، ويتجادلان حول من الأطيب. وعيدان الطعام ترفض الانحياز."
+   }
+  },
+  "p077": {
+   "type": "nibbles",
+   "name": {
+    "en": "Peeps",
+    "ar": "نجلا"
+   },
+   "line": {
+    "en": "Wide-eyed about everything, from sunrises to spoons.",
+    "ar": "تنظر إلى كل شيء بعينين مذهولتين، من الشروق إلى الملاعق."
+   },
+   "fav": {
+    "en": "a good plot twist",
+    "ar": "مفاجأة غير متوقعة في القصة"
+   },
+   "story": {
+    "en": "Peeps once watched a whole cooking show without blinking. She still won’t say whose side she was on when the jam came out.",
+    "ar": "تابعت نجلا برنامج طبخ كاملًا من دون أن ترمش. وحتى اليوم لا تقول مع من وقفت حين ظهر المربّى."
+   }
+  }
+ }
+}
