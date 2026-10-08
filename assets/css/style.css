@@ -449,7 +449,8 @@ bdi, [dir="ltr"] { unicode-bidi: isolate; }
 .foot-brand p { margin-block-start: var(--space-s); color: var(--color-band-muted); max-inline-size: 30ch; }
 .foot-grid h2 { font-size: var(--text--1); font-weight: var(--weight-strong); color: var(--color-band-muted); margin-block-end: var(--space-2xs); }
 :lang(ar) .foot-grid h2 { font-size: var(--text-0); }
-.foot-grid ul a { display: inline-flex; align-items: center; min-block-size: var(--tap); text-decoration: none; }
+.foot-grid ul a { display: inline-flex; align-items: center; min-block-size: var(--tap); text-decoration: none; overflow-wrap: anywhere; }
+.foot-grid ul a bdi { min-inline-size: 0; overflow-wrap: anywhere; }
 @media (hover: hover) { .site-footer ul a:hover { text-decoration: underline; color: var(--color-band-text); } }
 .foot-lang { display: inline-flex; align-items: center; min-block-size: var(--tap); color: var(--color-band-text) !important; text-decoration: none; }
 @media (hover: hover) { .foot-lang:hover { text-decoration: underline; } }
@@ -533,7 +534,7 @@ body.has-sticky .toast { inset-block-end: calc(5rem + env(safe-area-inset-bottom
 .enc-stage:not(.is-met) .reveal { opacity: 0; }
 /* the zoom-out: the photo starts magnified on the clue's stitches and settles to the whole piece */
 .enc-tile .reveal img { transform-origin: var(--ox, 50%) var(--oy, 50%); }
-.enc-stage:not(.is-met) .reveal img { transform: scale(3.2); }
+.enc-stage:not(.is-met) .reveal img { transform: translate(calc(50% - var(--ox, 50%)), calc(50% - var(--oy, 50%))) scale(var(--z, 3)); }
 .enc-stage.is-met .reveal img { transition: transform 700ms var(--ease-out); }
 .enc-stage.is-met .clue { opacity: 0; transition: opacity var(--dur-2) var(--ease-out); }
 .enc-panel.is-pending { opacity: 0; }

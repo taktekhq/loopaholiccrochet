@@ -105,7 +105,7 @@
         var stage = live.querySelector('.enc-stage'), tile = live.querySelector('.enc-tile');
         var pic = photo(c.id, c.title);
         pic.className = 'reveal';
-        if (c.c) { pic.querySelector('img').style.setProperty('--ox', (c.c[0] * 100) + '%'); pic.querySelector('img').style.setProperty('--oy', (c.c[1] * 100) + '%'); }
+        if (c.c) { var ri = pic.querySelector('img').style; ri.setProperty('--ox', (c.c[0] * 100) + '%'); ri.setProperty('--oy', (c.c[1] * 100) + '%'); ri.setProperty('--z', c.z || 3); }
         tile.appendChild(pic);
         // the panel is laid out now, while the tap still counts as input (no layout shift later), and fades in once the ring is shut
         var panel = live.querySelector('.enc-panel');
@@ -177,15 +177,19 @@
     };
     slots.forEach(function (s) {
       var id = s.dataset.id, sil = s.querySelector('.sil'), name = s.dataset.name;
+      var set = s.closest('[data-set]'), list = set.querySelectorAll('.slot');
       if (has(id)) { s.classList.add('is-met'); return; }
       s.classList.add('is-unmet');
       sil.hidden = false;
-      s.setAttribute('aria-label', I.book_unmet);
+      s.setAttribute('aria-label', fmt(I.book_unmet, { set: set.querySelector('h2').firstChild.textContent.trim(), i: Array.prototype.indexOf.call(list, s) + 1, n: list.length }));
+      s.setAttribute('role', 'button');
+      s.addEventListener('keydown', function (e) { if (e.key === ' ' && s.classList.contains('is-unmet')) { e.preventDefault(); s.click(); } });
       s.addEventListener('click', function (e) {
         if (!s.classList.contains('is-unmet')) return;
         e.preventDefault();
         s.classList.remove('is-unmet');
         s.removeAttribute('aria-label');
+        s.removeAttribute('role');
         var art = s.querySelector('.slot-art');
         closeRing(art, function () {
           sil.hidden = true;

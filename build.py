@@ -337,6 +337,7 @@ TYPE_ORDER = ["cozy", "sea", "garden", "nibbles", "darling", "storybook"]
 # Models that hold up from the front ±50° (docs-design/GAME.md, critic round 0); the rest keep the photo only.
 TURN_IDS = {"p003", "p013", "p017", "p063", "p070", "p072", "p076", "p077", "p092", "p251", "p369"}
 TURN_FRAMES = 18
+STITCH_ZOOM = {"p251": 4}   # photo px per clue px (make_images.py crops 400 of 1200 px; p251's crop is 300)
 GUIDES = json.load(open(os.path.join(ROOT, "guides.json"), encoding="utf-8"))["guides"]
 
 GAME_T = {
@@ -356,11 +357,11 @@ GAME_T = {
         "book_title": "Stitch Book: meet the Loopaholic characters",
         "book_h1": "Your Stitch Book",
         "book_lead": "Every piece in the shop is a character with a name and a story. Meet them all; your book stays on this device.",
-        "book_hint": "Tap a shadow to meet who’s in it.",
+        "book_hint": "Tap or click a shadow to meet who’s in it.",
         "book_nojs": "Each card below leads to the real piece in the shop.",
         "book_fiction": "The names and stories are make-believe. The pieces are real, crocheted by hand once you order.",
         "book_types_label": "Types",
-        "book_unmet": "Not met yet. Tap to meet.",
+        "book_unmet": "{set}, shadow {i} of {n}: not met yet. Meet them.",
         "book_reset": "Start the book over",
         "book_reset_confirm": "Forget everyone you’ve met on this device?",
         "book_meta": "Meet the characters of Loopaholic’s handmade crochet pieces: names, types and little stories, each linked to the real piece.",
@@ -409,7 +410,7 @@ GAME_T = {
         "book_nojs": "كل بطاقة هنا توصلكم إلى القطعة الحقيقية في المتجر.",
         "book_fiction": "الأسماء والحكايات من الخيال. أمّا القطع فحقيقية، تُحاك يدويًا بالكروشيه بعد طلبها.",
         "book_types_label": "الأنواع",
-        "book_unmet": "لم تتعرّفوا عليه بعد. اضغطوا للتعرّف.",
+        "book_unmet": "{set}، الظلّ {i} من {n}: لم تتعرّفوا عليه بعد. تعرّفوا عليه.",
         "book_reset": "ابدؤوا الدفتر من جديد",
         "book_reset_confirm": "هل تريدون نسيان كل من تعرّفتم عليهم على هذا الجهاز؟",
         "book_meta": "تعرّفوا على شخصيات قطع Loopaholic اليدوية: أسماء وأنواع وحكايات صغيرة، وكل بطاقة توصل إلى القطعة الحقيقية.",
@@ -797,7 +798,7 @@ def game_i18n(t):
 def creatures_json(t):
     """Every creature, for the home encounter (book and product pages read their own markup)."""
     lang = t["lang"]
-    data = [{"id": p["id"], "name": CR[p["id"]]["name"][lang], "c": STITCH_CENTRES.get(p["id"], [0.5, 0.5]), "type": TYPES[CR[p["id"]]["type"]][lang],
+    data = [{"id": p["id"], "name": CR[p["id"]]["name"][lang], "c": STITCH_CENTRES.get(p["id"], [0.5, 0.5]), "z": STITCH_ZOOM.get(p["id"], 3), "type": TYPES[CR[p["id"]]["type"]][lang],
              "line": CR[p["id"]]["line"][lang], "title": p["title"][lang], "url": L(t, f"/shop/{p['slug']}/")} for p in PRODUCTS]
     return f'<script type="application/json" id="creatures">{json.dumps(data, ensure_ascii=False)}</script>'
 
