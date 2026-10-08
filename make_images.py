@@ -61,7 +61,7 @@ def reground(src):
 
 # Where the most textured window isn't crochet (the gift box's ribbons), pin the crop
 # to the crocheted part by hand: (x, y) of the top-left corner in the 1200 px photo.
-STITCH_AT = {"p043": (440, 760), "p012": (540, 280)}
+STITCH_AT = {"p043": (440, 760), "p012": (540, 280), "p005": (480, 175)}
 
 
 def stitch_crop(img, bg, size=300, pid=None):

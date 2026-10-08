@@ -25,13 +25,13 @@ outline button; nothing else changes.
 | Name | Hex | Role | Contrast |
 |---|---|---|---|
 | Paper | `#FAF7FC` | page | |
-| Lilac tile | `#F2ECF7` | the one photo ground, chips, sunken bands | ink 13.4:1, ink-2 5.0:1 |
+| Lilac tile | `#F2ECF7` | the one photo ground, chips, sunken bands | ink 13.1:1, ink-2 5.0:1 |
 | White | `#FFFFFF` | menu sheet, sticky bar | |
-| Ink | `#2B2233` | text, footer ground | 14.9:1 on paper |
+| Ink | `#2B2233` | text, footer ground | 14.3:1 on paper |
 | Ink-2 | `#6D6177` | meta, captions | 5.5:1 on paper |
 | Line | `#E4DBEB` | hairlines (decorative only) | |
-| Loop purple | `#7B4FA6` | actions, links, focus, current page, the logo ring | white on it 6.0:1, as text 6.1:1 |
-| Loop purple deep | `#5E3A82` | hover/pressed | white 8.9:1 |
+| Loop purple | `#7B4FA6` | actions, links, focus, current page, the logo ring | white on it 6.0:1, as text 5.6:1 |
+| Loop purple deep | `#5E3A82` | hover/pressed | white 8.7:1 |
 
 Extension to the kit, written down: the kit's focus `#B388DD` is 2.6:1 on paper, so the focus ring
 uses Loop purple (2 px + 2 px offset, ≥ 3:1 on every surface). Light-only site
@@ -115,5 +115,5 @@ At ≥ 52.5em the full nav is inline. Language switch and menu ≥ 44 px.
 - No ALL-CAPS eyebrows, no "A · B · C" meta strings, no `→` on buttons, no emoji icons.
 - 1-2-3 numbering only on the real 3-step ordering sequence.
 - No scroll fade-ups; the only motion is button press, menu open and the sticky bar slide.
-- One expressive thing (the loupe); deleted before shipping: a stitch-pattern divider between home
+- One expressive thing (the loupe); dropped from the plan before building: a stitch-pattern divider between home
   sections (one accessory too many).

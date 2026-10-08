@@ -87,7 +87,7 @@ T = {
         "how_lead": "There’s no cart and no checkout. You order in a conversation with the person who makes it.",
         "how": [
             ("Pick a piece", "Browse the shop, or bring an idea for a custom order."),
-            ("Message us", "On Instagram. We confirm the price, colours and making time with you there."),
+            ("Message us", "On Instagram. We confirm the price, colors and making time with you there."),
             ("We make it by hand", "In Lebanon, pay by Whish or cash on delivery. Outside Lebanon, we quote shipping in the chat."),
         ],
         "made_h": "Made by hand in Lebanon",
@@ -99,17 +99,17 @@ T = {
         "shop_title": "Shop",
         "shop_lead": "Every piece is crocheted by hand when you order it. Prices are confirmed by message.",
         "chips_label": "Categories",
-        "cant_find_h": "Can’t find it?", "cant_find_b": "Ask for a different colour, a name, or a piece that doesn’t exist yet.",
+        "cant_find_h": "Can’t find it?", "cant_find_b": "Ask for a different color, a name, or a piece that doesn’t exist yet.",
         "cant_find_link": "Custom orders",
         "breadcrumb_label": "Breadcrumb", "breadcrumb_home": "Home", "breadcrumb_shop": "Shop",
-        "size_label": "Size", "colors_label": "Colours in the photo", "lead_label": "Making time", "days": "days",
+        "size_label": "Size", "colors_label": "Colors in the photo", "lead_label": "Making time", "days": "days",
         "made_to_order": "Made to order",
         "price_note": "Made to order. Price confirmed in the chat.",
         "order_whatsapp": "Order on WhatsApp", "order_instagram": "Order on Instagram",
         "message_instagram": "Message on Instagram",
-        "order_note_ig": "Opens a direct message to @loopaholic.crochet. We reply with the price, colours and making time.",
+        "order_note_ig": "Opens a direct message to @loopaholic.crochet. We reply with the price, colors and making time.",
         "order_note_short": "Opens a direct message to @loopaholic.crochet.",
-        "order_note_wa": "Opens WhatsApp with a message about this piece. We reply with the price, colours and making time.",
+        "order_note_wa": "Opens WhatsApp with a message about this piece. We reply with the price, colors and making time.",
         "order_intl_title": "Ordering from outside Lebanon",
         "order_intl_body_live": "Pay online by card; shipping is calculated at checkout.",
         "buy_now": "Buy now",
@@ -119,9 +119,9 @@ T = {
         "delivery_link": "Shipping details",
         "related_title": "More pieces like this",
         "custom_title": "Custom orders",
-        "custom_lead": "Want a colour swap, a name, or a piece that doesn’t exist yet? We take commissions.",
-        "custom_body_1": "Most of our plushies and dolls can be made in different colours or sizes on request. We also make fully custom pieces: a name in crochet letters, a character, or a gift built around an idea you bring us.",
-        "custom_body_2": "Two examples: a crochet letter for a nursery, and a small flower keychain made as a party favour.",
+        "custom_lead": "Want a color swap, a name, or a piece that doesn’t exist yet? We take commissions.",
+        "custom_body_1": "Most of our plushies and dolls can be made in different colors or sizes on request. We also make fully custom pieces: a name in crochet letters, a character, or a gift built around an idea you bring us.",
+        "custom_body_2": "Two examples: a crochet letter for a nursery, and a small flower keychain made as a party favor.",
         "letter_d": "Crochet letter D", "daisy": "Daisy keychain",
         "custom_how_title": "How it works",
         "custom_how": [
@@ -153,7 +153,7 @@ T = {
             ("Do you ship outside Lebanon?", "Yes, to the Gulf and internationally. Shipping cost is quoted by hand on WhatsApp or Instagram for now, based on your location and what you’re ordering."),
             ("How do I pay?", "In Lebanon: Whish transfer or cash on delivery. Internationally: online card payment is coming; for now, message us and we’ll arrange it."),
             ("How much does a piece cost?", "We don’t list prices on the site. Message us on WhatsApp or Instagram with the piece you want and we’ll confirm a price before you order."),
-            ("Can I change the colours?", "Usually yes. Message us with the colours you’d like and we’ll confirm if it works for that piece."),
+            ("Can I change the colors?", "Usually yes. Message us with the colors you’d like and we’ll confirm if it works for that piece."),
             ("What are the pieces made from?", "Message us on WhatsApp or Instagram and we’ll confirm the materials for the specific piece you’re asking about."),
             ("Can I return or exchange a piece?", "Because every piece is made to order just for you, we can’t accept returns for a change of mind. If a piece arrives damaged or wrong, message us within 48 hours and we’ll make it right."),
             ("Are the pieces suitable for babies and small children?", "Our baby pieces haven’t been through any testing, so we make no claim about which ages they suit. Message us before ordering for an infant, and always supervise young children with any small handmade item."),
@@ -357,7 +357,18 @@ def v(rel):
     return f"/{rel}?v={asset_hash(rel)}"
 
 
-CSS = "assets/css/style.css"
+CSS_SRC = "assets/css/style.css"   # edit this one
+CSS = "assets/css/site.min.css"     # generated by build_css(), the one pages load
+
+
+def build_css():
+    src = open(os.path.join(ROOT, CSS_SRC), encoding="utf-8").read()
+    css = re.sub(r"/\*.*?\*/", "", src, flags=re.S)
+    css = re.sub(r"\s+", " ", css)
+    css = re.sub(r"\s*([{};,>])\s*", r"\1", css)
+    css = re.sub(r":\s+", ":", css.replace(";}", "}"))
+    with open(os.path.join(ROOT, CSS), "w", encoding="utf-8") as f:
+        f.write(css.strip() + "\n")
 JS = "assets/js/site.js"
 FONT_LATIN = "assets/fonts/nunito-latin.woff2"
 FONT_AR = "assets/fonts/baloo-bhaijaan2-arabic.woff2"
@@ -675,7 +686,7 @@ def build_home(t, outdir):
 </section>
 <section class="section band" id="how" aria-labelledby="how-h">
   <div class="wrap">
-    <div class="head"><h2 id="how-h">{t['how_h']}</h2><p class="muted" style="max-inline-size:var(--measure)">{t['how_lead']}</p></div>
+    <div class="head"><h2 id="how-h">{t['how_h']}</h2><p class="muted measure">{t['how_lead']}</p></div>
     {steps(t['how'], row=True)}
   </div>
 </section>
@@ -818,7 +829,7 @@ def build_custom(t, outdir):
   <h1>{t['custom_title']}</h1>
   <p class="lead">{t['custom_lead']}</p>
 </div>
-<div class="wrap section" style="padding-block-start:0">
+<div class="wrap section flush">
   <div class="prose">
     <p>{t['custom_body_1']}</p>
     <p>{t['custom_body_2']}</p>
@@ -849,7 +860,7 @@ def prose_page(t, outdir, *, rel, title_text, head_title, lead, inner, descripti
   <h1>{head_title}</h1>
   {f'<p class="lead">{lead}</p>' if lead else ''}
 </div>
-<div class="wrap section prose-layout" style="padding-block-start:0">
+<div class="wrap section flush prose-layout">
   <div class="prose">
 {inner}
   </div>
@@ -952,6 +963,7 @@ def main():
     if problems:
         sys.exit("Build stopped: forbidden claim(s) in catalog/copy (owner rule R2b):\n  " + "\n  ".join(problems))
     outdir = ROOT
+    build_css()
     for lang in ("en", "ar"):
         t = T[lang]
         sub = outdir if lang == "en" else os.path.join(outdir, "ar")

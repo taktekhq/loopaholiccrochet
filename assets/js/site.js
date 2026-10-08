@@ -18,12 +18,13 @@
   var bar = document.querySelector('.sticky-cta');
   if (inline && bar && 'IntersectionObserver' in window) {
     document.body.classList.add('has-sticky');
+    // the root is stretched far below the viewport, so "not intersecting" means
+    // "scrolled above the top", even when a fast scroll jumps straight past it
     new IntersectionObserver(function (entries) {
-      var e = entries[0];
-      var past = !e.isIntersecting && e.boundingClientRect.top < 0;
+      var past = !entries[0].isIntersecting;
       bar.classList.toggle('on', past);
       bar.setAttribute('aria-hidden', past ? 'false' : 'true');
       bar.querySelector('a').tabIndex = past ? 0 : -1;
-    }).observe(inline);
+    }, { rootMargin: '0px 0px 100000px 0px' }).observe(inline);
   }
 })();

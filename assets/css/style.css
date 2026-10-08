@@ -51,14 +51,14 @@
   --color-surface:       #FAF7FC;  /* paper */
   --color-surface-2:     #F2ECF7;  /* lilac tile: the one photo ground, chips, bands */
   --color-surface-raised:#FFFFFF;  /* menu sheet, sticky bar */
-  --color-text:          #2B2233;  /* ink 14.9:1 paper, 13.4:1 tile */
-  --color-text-muted:    #6D6177;  /* ink-2 5.5:1 paper, 5.0:1 tile */
+  --color-text:          #2B2233;  /* ink 14.3:1 paper, 13.1:1 tile */
+  --color-text-muted:    #6D6177;  /* ink-2 5.5:1 paper, 5.0:1 tile, 5.8:1 white */
   --color-border:        #E4DBEB;  /* decorative hairline */
-  --color-border-strong: #8C7F96;  /* 3.6:1 paper: chip and outline-button edges */
-  --color-accent:        #7B4FA6;  /* loop purple 6.1:1 as text; actions only */
-  --color-accent-hover:  #5E3A82;  /* 8.9:1 */
-  --color-accent-subtle: #E9DDF4;  /* current chip; ink on it 12.2:1 */
-  --color-accent-ink:    #FFFFFF;  /* on accent 6.0:1, on hover 8.9:1 */
+  --color-border-strong: #8C7F96;  /* 3.5:1 paper: outline-button and language-switch edges */
+  --color-accent:        #7B4FA6;  /* loop purple 5.6:1 as text (5.2:1 on tile); actions only */
+  --color-accent-hover:  #5E3A82;  /* 8.2:1 */
+  --color-accent-subtle: #E9DDF4;  /* chip hover; ink on it 11.7:1 */
+  --color-accent-ink:    #FFFFFF;  /* on accent 6.0:1, on hover 8.7:1 */
   --color-focus:         #7B4FA6;  /* kit focus #B388DD is 2.6:1 on paper, so the ring uses the accent */
   --color-band:          #2B2233;  /* footer ground (ink) */
   --color-band-text:     #F1EBF6;  /* 13.0:1 on band */
@@ -409,3 +409,6 @@ bdi, [dir="ltr"] { unicode-bidi: isolate; }
 }
 body.has-sticky .site-footer { padding-block-end: calc(var(--space-xl) + 5rem); }
 @media (min-width: 52.5em) { body.has-sticky .site-footer { padding-block-end: var(--space-xl); } }
+.prose > :first-child h2 { margin-block-start: 0; }
+.measure { max-inline-size: var(--measure); }
+.section.flush { padding-block-start: 0; }
