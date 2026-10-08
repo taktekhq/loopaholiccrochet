@@ -9,9 +9,11 @@ python3 build.py              # regenerate every page from catalog.json
 python3 make_brand_images.py  # regenerate og.jpg / favicon / touch icon
 ```
 
-- `catalog.json` — every product, EN + AR, with a `price_is_draft` flag. See
-  `PRICING.md` for how the draft prices were set and what still needs Rana's
-  sign-off.
+- `catalog.json` — every product, EN + AR. No prices: the site shows "Ask for
+  the price on WhatsApp" until Rana confirms real prices. Draft prices and
+  pricing notes live in the private `monetization` repo
+  (`private/loopaholic-draft-prices.json`, `private/loopaholic-pricing-notes.md`),
+  not here — this repo is public.
 - `assets/img/products/<id>/` — product photos (no people/faces/home details).
 - `assets/img/custom/` — example custom-order pieces shown on `/custom-orders/`.
 - Generated output: `/`, `/shop/`, `/shop/<slug>/`, `/custom-orders/`,

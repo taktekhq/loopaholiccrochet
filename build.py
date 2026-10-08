@@ -50,8 +50,8 @@ T = {
         "nav_shipping": "Shipping", "nav_about": "About", "nav_faq": "FAQ",
         "hero_lead": "Every piece is crocheted by hand, one stitch at a time — amigurumi plushies, dolls, flowers and baby gifts, made to order and shipped worldwide.",
         "cta_shop": "Shop the collection", "cta_instagram": "See more on Instagram",
-        "shop_title": "Shop", "shop_lead": "Every piece below is made to order by hand. Prices marked “draft” are estimates — message us to confirm before you order.",
-        "draft_tag": "draft price", "price_from": "From",
+        "shop_title": "Shop", "shop_lead": "Every piece below is made to order by hand. Message us on WhatsApp or Instagram for the price.",
+        "price_cta": "Ask for the price on WhatsApp",
         "badge_handmade": "Handmade in Lebanon", "badge_handmade_d": "Every piece is crocheted by hand, start to finish.",
         "badge_order": "Made to order", "badge_order_d": "We start your piece once you order — no stock sitting on a shelf.",
         "badge_ship": "Ships worldwide", "badge_ship_d": "Lebanon, the Gulf, and internationally.",
@@ -59,7 +59,6 @@ T = {
         "breadcrumb_home": "Home", "breadcrumb_shop": "Shop",
         "size_label": "Size", "colors_label": "Colors", "lead_label": "Made-to-order time",
         "days": "days",
-        "price_draft_note": "This price is a draft estimate based on similar handmade pieces. Message us to confirm the final price before ordering.",
         "order_lebanon_title": "Order in Lebanon",
         "order_lebanon_body": "Message us on WhatsApp or Instagram to confirm color, size and price, then pay by Whish or cash on delivery.",
         "order_whatsapp": "Order on WhatsApp", "order_instagram": "Message on Instagram",
@@ -87,7 +86,7 @@ T = {
         "shipping_note_h": "Good to know",
         "shipping_note_b": "Every piece is made to order, so shipping starts after the made-to-order time on the product page, not the day you order. Customs fees outside Lebanon are the buyer’s responsibility.",
         "about_title": "About the craft",
-        "about_body_1": "Loopaholic makes amigurumi — crocheted, stuffed figures — and crochet flowers entirely by hand, one stitch at a time. Nothing is machine-made or mass-produced: every plushie, doll and flower on this site is an individual piece, crocheted to order with soft cotton or acrylic yarn and hypoallergenic stuffing.",
+        "about_body_1": "Loopaholic makes amigurumi — crocheted, stuffed figures — and crochet flowers entirely by hand, one stitch at a time. Nothing is machine-made or mass-produced: every plushie, doll and flower on this site is handmade in Lebanon and made to order.",
         "about_body_2": "Because each piece is made by hand after you order it, small variations — a slightly different stitch, a shade of yarn — are part of what makes it one of a kind, not a flaw.",
         "about_body_3": "Follow the latest pieces and works in progress on Instagram.",
         "faq_title": "FAQ",
@@ -95,11 +94,11 @@ T = {
             ("How long does an order take to make?", "Most plushies and dolls take 10–28 days to crochet, and flowers take 5–12 days — the exact range is on each product page. Custom orders usually take a bit longer. We’ll confirm a date when you order."),
             ("Do you ship outside Lebanon?", "Yes — to the Gulf and internationally. Shipping cost is quoted by hand on WhatsApp or Instagram for now, based on your location and what you’re ordering."),
             ("How do I pay?", "In Lebanon: Whish transfer or cash on delivery. Internationally: online card payment (coming soon) — for now, message us and we’ll arrange it."),
-            ("Are the prices on the site final?", "Prices marked “draft” are estimates based on similar handmade pieces and may change slightly once we confirm the exact design, size and yarn with you — always before you pay."),
+            ("How much does a piece cost?", "We don’t list prices on the site — message us on WhatsApp or Instagram with the piece you want and we’ll confirm a price before you order."),
             ("Can I change the colors?", "Usually yes. Message us with the colors you’d like and we’ll confirm if it works for that piece."),
-            ("What are the pieces made from?", "Soft cotton or acrylic yarn and hypoallergenic polyester stuffing. A few pieces use a small wooden ring or wire stem — noted on the product page."),
+            ("What are the pieces made from?", "Message us on WhatsApp or Instagram — we’ll confirm the materials for the specific piece you’re asking about."),
             ("Can I return or exchange a piece?", "Because every piece is made to order just for you, we can’t accept returns for a change of mind. If a piece arrives damaged or wrong, message us within 48 hours and we’ll make it right."),
-            ("Is this safe for babies and small children?", "Baby pieces use hypoallergenic stuffing and secure stitching, but like any small handmade item, always supervise young children while they use it."),
+            ("Is this safe for babies and small children?", "We haven’t completed safety testing for baby items, so we don’t make any safety or age claim. Message us if you have questions before ordering for an infant, and always supervise young children with any small handmade item."),
         ],
         "footer_tagline": "Handmade crochet from Lebanon, shipped worldwide.",
         "footer_shop": "Shop", "footer_info": "Info", "footer_follow": "Follow",
@@ -114,8 +113,8 @@ T = {
         "nav_shipping": "الشحن", "nav_about": "عن الحرفة", "nav_faq": "الأسئلة الشائعة",
         "hero_lead": "كل قطعة مكروشية يدويًا، غرزة بعد غرزة — حيوانات محشوة وعرائس وزهور وهدايا أطفال، تُصنع عند الطلب وتُشحن حول العالم.",
         "cta_shop": "تصفّح المجموعة", "cta_instagram": "المزيد على إنستغرام",
-        "shop_title": "المتجر", "shop_lead": "كل قطعة أدناه تُصنع يدويًا عند الطلب. الأسعار المحددة بـ “سعر مبدئي” هي تقديرية — راسلينا للتأكيد قبل الطلب.",
-        "draft_tag": "سعر مبدئي", "price_from": "من",
+        "shop_title": "المتجر", "shop_lead": "كل قطعة أدناه تُصنع يدويًا عند الطلب. راسلينا على واتساب أو إنستغرام لمعرفة السعر.",
+        "price_cta": "اسألينا عن السعر على واتساب",
         "badge_handmade": "مصنوع يدويًا في لبنان", "badge_handmade_d": "كل قطعة مكروشية بالكامل باليد.",
         "badge_order": "تُصنع عند الطلب", "badge_order_d": "نبدأ قطعتك بعد الطلب — لا مخزون جاهز على الرف.",
         "badge_ship": "شحن عالمي", "badge_ship_d": "لبنان، دول الخليج، وحول العالم.",
@@ -123,7 +122,6 @@ T = {
         "breadcrumb_home": "الرئيسية", "breadcrumb_shop": "المتجر",
         "size_label": "القياس", "colors_label": "الألوان", "lead_label": "مدة التصنيع",
         "days": "أيام",
-        "price_draft_note": "هذا سعر مبدئي يعتمد على قطع يدوية مشابهة. راسلينا لتأكيد السعر النهائي قبل الطلب.",
         "order_lebanon_title": "الطلب داخل لبنان",
         "order_lebanon_body": "راسلينا على واتساب أو إنستغرام لتأكيد اللون والقياس والسعر، ثم الدفع عبر Whish أو الدفع عند التسليم.",
         "order_whatsapp": "الطلب عبر واتساب", "order_instagram": "راسلينا على إنستغرام",
@@ -151,7 +149,7 @@ T = {
         "shipping_note_h": "جيد أن تعرفي",
         "shipping_note_b": "كل قطعة تُصنع عند الطلب، فتبدأ مدة الشحن بعد مدة التصنيع المذكورة في صفحة المنتج، لا من يوم الطلب. رسوم الجمارك خارج لبنان على مسؤولية المشتري.",
         "about_title": "عن الحرفة",
-        "about_body_1": "تصنع لوباهوليك قطع الأميغورومي — شخصيات كروشيه محشوة — وزهور الكروشيه بالكامل باليد، غرزة بعد غرزة. لا شيء مصنوع بالآلة أو بكميات كبيرة: كل حيوان محشو وعروسة وزهرة في هذا المتجر قطعة فردية، تُكرشَه عند الطلب بخيوط قطنية أو أكريليك ناعمة وحشوة لا تسبب الحساسية.",
+        "about_body_1": "تصنع لوباهوليك قطع الأميغورومي — شخصيات كروشيه محشوة — وزهور الكروشيه بالكامل باليد، غرزة بعد غرزة. لا شيء مصنوع بالآلة أو بكميات كبيرة: كل حيوان محشو وعروسة وزهرة في هذا المتجر مصنوع يدويًا في لبنان وعند الطلب.",
         "about_body_2": "لأن كل قطعة تُصنع يدويًا بعد الطلب، الاختلافات الصغيرة — غرزة مختلفة قليلًا، درجة لون — هي ما يجعلها فريدة، لا عيبًا.",
         "about_body_3": "تابعي أحدث القطع والأعمال الجارية على إنستغرام.",
         "faq_title": "الأسئلة الشائعة",
@@ -159,11 +157,11 @@ T = {
             ("كم تستغرق مدة تصنيع الطلب؟", "معظم القطع المحشوة والعرائس تستغرق 10–28 يومًا للكروشيه، والزهور 5–12 يومًا — المدة الدقيقة مذكورة في صفحة كل منتج. الطلبات الخاصة تستغرق غالبًا أطول. نؤكد تاريخًا عند الطلب."),
             ("هل تشحنون خارج لبنان؟", "نعم — إلى دول الخليج وحول العالم. تكلفة الشحن تُحدد يدويًا عبر واتساب أو إنستغرام حاليًا، حسب موقعك وما تطلبينه."),
             ("كيف أدفع؟", "داخل لبنان: تحويل Whish أو الدفع عند التسليم. دوليًا: الدفع الإلكتروني بالبطاقة (قريبًا) — حاليًا راسلينا وسنرتب الدفع."),
-            ("هل الأسعار على الموقع نهائية؟", "الأسعار المحددة بـ “سعر مبدئي” هي تقديرات تعتمد على قطع يدوية مشابهة وقد تتغير قليلًا بعد تأكيد التصميم والقياس والخيوط معك — دائمًا قبل الدفع."),
+            ("كم تكلفة القطعة؟", "لا نضع الأسعار على الموقع — راسلينا على واتساب أو إنستغرام بالقطعة التي تريدينها وسنؤكد السعر قبل الطلب."),
             ("هل يمكنني تغيير الألوان؟", "غالبًا نعم. راسلينا بالألوان التي تريدينها وسنؤكد إن كانت متاحة لتلك القطعة."),
-            ("من ماذا تُصنع القطع؟", "خيوط قطنية أو أكريليك ناعمة وحشوة بوليستر لا تسبب الحساسية. بعض القطع تستخدم حلقة خشبية صغيرة أو ساقًا سلكية — مذكور في صفحة المنتج."),
+            ("من ماذا تُصنع القطع؟", "راسلينا على واتساب أو إنستغرام — سنؤكد لك المواد الخاصة بالقطعة التي تسألين عنها."),
             ("هل يمكنني استرجاع أو استبدال قطعة؟", "لأن كل قطعة تُصنع خصيصًا عند الطلب، لا يمكننا قبول الاسترجاع لمجرد تغيير الرأي. إذا وصلت القطعة تالفة أو خاطئة، راسلينا خلال 48 ساعة وسنصلح الأمر."),
-            ("هل هذا مناسب وآمن للأطفال الصغار؟", "قطع الأطفال تستخدم حشوة لا تسبب الحساسية وغرزًا متينة، ولكن كأي قطعة يدوية صغيرة، يجب مراقبة الأطفال الصغار دائمًا عند استخدامها."),
+            ("هل هذا مناسب وآمن للأطفال الصغار؟", "لم نكمل بعد اختبارات السلامة لقطع الأطفال، ولذلك لا نقدّم أي تأكيد على السلامة أو الفئة العمرية. راسلينا إذا كان لديك سؤال قبل الطلب لطفل رضيع، وراقبي الأطفال الصغار دائمًا عند استخدام أي قطعة يدوية صغيرة."),
         ],
         "footer_tagline": "كروشيه يدوي من لبنان، يُشحن حول العالم.",
         "footer_shop": "المتجر", "footer_info": "معلومات", "footer_follow": "تابعونا",
@@ -258,8 +256,6 @@ def product_jsonld(p, t):
     offer = {
         "@type": "Offer",
         "url": f"{BASE_URL}/shop/{p['slug']}/",
-        "priceCurrency": CATALOG["currency"],
-        "price": str(p["price_usd"]),
         "availability": "https://schema.org/MadeToOrder" if p.get("made_to_order") else "https://schema.org/InStock",
         "itemCondition": "https://schema.org/NewCondition",
     }
@@ -279,12 +275,11 @@ def product_jsonld(p, t):
 def product_card(p, t):
     path = f"/shop/{p['slug']}/" if t["lang"] == "en" else f"/ar/shop/{p['slug']}/"
     title = p["title"][t["lang"]]
-    draft = f'<span class="draft-tag">{t["draft_tag"]}</span>' if p.get("price_is_draft") else ""
     return f'''<a class="card" href="{path}">
   <img src="/{p['image']['thumb']}" alt="{title}" loading="lazy" width="400" height="400">
   <div class="body">
     <h3>{title}</h3>
-    <div class="price">${p['price_usd']}{draft}</div>
+    <div class="price">{t['price_cta']}</div>
   </div>
 </a>'''
 
@@ -371,8 +366,6 @@ def build_product(p, t, outdir):
     desc = p["description"][t["lang"]]
     colors = ", ".join(p["colors"])
     lead_lo, lead_hi = p["lead_time_days"]
-    draft_note = f'<p class="draft-note">{t["price_draft_note"]}</p>' if p.get("price_is_draft") else ""
-    draft_tag = f'<span class="draft-tag">{t["draft_tag"]}</span>' if p.get("price_is_draft") else ""
 
     wa_text = f"Hi! I'd like to order: {p['title']['en']}" if t["lang"] == "en" else f"مرحبا، أريد طلب: {p['title']['ar']}"
     wa_href = whatsapp_link(wa_text)
@@ -396,8 +389,7 @@ def build_product(p, t, outdir):
       <img src="/{p['image']['main']}" alt="{title}" width="800" height="800">
       <div>
         <h1>{title}</h1>
-        <div class="price-block">${p['price_usd']} {draft_tag}</div>
-        {draft_note}
+        <div class="price-block"><a href="{wa_href}">{t['price_cta']}</a></div>
         <div class="meta-row">
           <span class="pill">{t['size_label']}: {p['size_approx']}</span>
           <span class="pill">{t['colors_label']}: {colors}</span>
