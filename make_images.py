@@ -9,7 +9,7 @@ For every photo in catalog.json (+ the two custom-order examples) it writes
 assets/img/p/<id>/
   w400|w800|w1200 .avif/.webp   the re-grounded square photo
   w800.jpg, w1200.jpg           JPEG fallback / JSON-LD / OG source
-  stitch.avif/.webp/.jpg        300 px crop of the piece at full resolution,
+  stitch.avif/.webp/.jpg        400 px crop of the piece at full resolution (1:1 pixels),
                                 shown in the ring "loupe" (a crop, not a new shot)
   og.jpg                        1200x630 link preview
 """
@@ -30,24 +30,49 @@ KIT = os.path.expanduser("~/taktekhq/brand/products/loopaholic")
 OUT = os.path.join(ROOT, "assets", "img", "p")
 
 
+def box_mean(x, size):
+    return ndimage.uniform_filter(x.astype(np.float32), size=size, mode="nearest")
+
+
 def reground(src):
     a = np.asarray(Image.open(src).convert("RGB")).astype(np.int16)
     d = np.abs(a - OLD).max(axis=2)
     near = d <= 10
     lab, n = ndimage.label(near)
+    idx = np.arange(n + 1)
     keep = np.zeros(n + 1, bool)
     border = np.unique(np.concatenate([lab[0], lab[-1], lab[:, 0], lab[:, -1]]))
     keep[border] = True
-    # enclosed holes (the inside of a teether ring, gaps between legs): the ground is
-    # a synthetic flat fill, so a big component that is mostly the exact colour is ground.
-    exact = (d == 0)
-    sizes = ndimage.sum(np.ones_like(d), lab, range(n + 1))
-    exacts = ndimage.sum(exact, lab, range(n + 1))
-    for i in range(1, n + 1):
-        if sizes[i] >= 1500 and exacts[i] / sizes[i] >= 0.5:
-            keep[i] = True
+    # Enclosed pockets of the old ground (inside a teether ring, between legs and arms).
+    # The ground is a smooth flat fill: its mean distance from the cream is ~2-4, while
+    # cream or white yarn is textured and sits at 6+. Size floor keeps tiny specks alone.
+    sizes = ndimage.sum(np.ones_like(d), lab, idx)
+    mean_d = ndimage.mean(d, lab, idx)
+    keep |= (sizes >= 200) & (mean_d <= 4.5)
     keep[0] = False
     bg = keep[lab]
+
+    # Matte clean-up, outside the piece only:
+    # 1) erode the matte by 1 px everywhere (the cut-out's own edge pixel);
+    # 2) on light yarn, the cut left a grey contour up to 3 px wide. A pixel within 3 px
+    #    of the ground that is much darker than the yarn 4-7 px further in is that contour,
+    #    not yarn, so it becomes ground too.
+    bg = ndimage.binary_dilation(bg, iterations=1)
+    lum = a.mean(axis=2)
+    dist = ndimage.distance_transform_edt(~bg)
+    inner = (dist >= 4) & (dist <= 7)
+    w_in = box_mean(inner, 9)
+    ref = np.where(w_in > 0, box_mean(np.where(inner, lum, 0), 9) / np.maximum(w_in, 1e-6), 0)
+    halo = (~bg) & (dist <= 3) & (ref > 130) & (lum < ref - 20) & (lum > 60)
+    # only contour that actually touches the ground (grow from the edge inward)
+    halo = ndimage.binary_propagation(halo & (dist <= 1.5), mask=halo)
+    bg |= halo
+    # specks: loose bits of the old cut (dust, stray matte) not attached to the piece
+    plab, pn = ndimage.label(~bg)
+    if pn > 1:
+        psz = ndimage.sum(np.ones_like(d), plab, np.arange(pn + 1))
+        bg |= (psz < 60)[plab] & (plab > 0)
+
     out = a.copy()
     out[bg] = NEW
     # antialiased fringe: 2 px band next to the ground, shifted only as far as it is
@@ -59,20 +84,35 @@ def reground(src):
     return Image.fromarray(out.astype(np.uint8)), bg
 
 
-# Where the most textured window isn't crochet (the gift box's ribbons), pin the crop
-# to the crocheted part by hand: (x, y) of the top-left corner in the 1200 px photo.
-STITCH_AT = {"p043": (440, 760), "p012": (540, 280), "p005": (480, 175)}
+# Where the most textured window isn't crochet (the gift box's ribbons) or hugs the
+# silhouette, pin the crop by hand: (x, y) of the top-left corner in the 1200 px photo.
+STITCH_AT = {"p043": (390, 710), "p012": (490, 230), "p005": (430, 200), "p445": (260, 330), "p251": (470, 450, 300)}
+# Photos that are a scene (their own backdrop), not a cut-out: crop to the photo itself
+# and let it fill the tile, instead of a photo-in-a-box on the lilac ground.
+SCENE = {"p445"}
 
 
-def stitch_crop(img, bg, size=300, pid=None):
+def scene_crop(src):
+    a = np.asarray(Image.open(src).convert("RGB")).astype(np.int16)
+    off = np.abs(a - OLD).max(axis=2) > 10
+    rows, cols = np.where(off.mean(axis=1) > 0.5)[0], np.where(off.mean(axis=0) > 0.5)[0]
+    y0, y1, x0, x1 = rows.min(), rows.max(), cols.min(), cols.max()
+    side = min(y1 - y0, x1 - x0) - 8          # inset 4 px so no cream edge survives
+    cy, cx = (y0 + y1) // 2, (x0 + x1) // 2
+    im = Image.open(src).convert("RGB").crop((cx - side // 2, cy - side // 2, cx + side // 2, cy + side // 2))
+    im = im.resize((1200, 1200), Image.LANCZOS)
+    return im, np.zeros((1200, 1200), bool)
+
+
+def stitch_crop(img, bg, size=400, pid=None):
     """The most textured size x size window that lies wholly on the piece."""
     if pid in STITCH_AT:
-        x, y = STITCH_AT[pid]
-        return img.crop((x, y, x + size, y + size))
+        x, y, s = (STITCH_AT[pid] + (size,))[:3]
+        return img.crop((x, y, x + s, y + s)).resize((size, size), Image.LANCZOS)
     g = np.asarray(img.convert("L")).astype(np.float32)
     lap = np.abs(ndimage.laplace(ndimage.gaussian_filter(g, 1.0)))
     off = ndimage.binary_dilation(bg, iterations=6).astype(np.float32)
-    for s in (size, 260, 220, 180):
+    for s in (size, 340, 300, 260, 220):
         ii_e = np.pad(lap.cumsum(0).cumsum(1), ((1, 0), (1, 0)))
         ii_b = np.pad(off.cumsum(0).cumsum(1), ((1, 0), (1, 0)))
         H, W = g.shape
@@ -127,7 +167,7 @@ def one(job):
     if True:
         d = os.path.join(OUT, pid)
         os.makedirs(d, exist_ok=True)
-        img, bg = reground(os.path.join(ROOT, src))
+        img, bg = scene_crop(os.path.join(ROOT, src)) if pid in SCENE else reground(os.path.join(ROOT, src))
         save_set(img, d + "/")
         st = stitch_crop(img, bg, pid=pid)
         st.save(f"{d}/stitch.avif", quality=62, speed=4)

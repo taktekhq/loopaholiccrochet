@@ -17,7 +17,7 @@ real person makes it, and know how to order without a cart or a public price.
 | Shipping / About / FAQ | Answer the objection | none (text links to Shop / DM) |
 | 404 | Get back | Shop link |
 
-Same label for the same action everywhere: EN "Order on Instagram", AR «اطلبي على إنستغرام».
+Same label for the same action everywhere: EN "Order on Instagram", AR «اطلبوا على إنستغرام» (AR copy addresses readers in the gender-neutral plural, overseer decision, round 2).
 When `HAS_WHATSAPP` turns on, the primary becomes "Order on WhatsApp" and Instagram drops to an
 outline button; nothing else changes.
 
@@ -117,3 +117,16 @@ At ≥ 52.5em the full nav is inline. Language switch and menu ≥ 44 px.
 - No scroll fade-ups; the only motion is button press, menu open and the sticky bar slide.
 - One expressive thing (the loupe); dropped from the plan before building: a stitch-pattern divider between home
   sections (one accessory too many).
+
+## Round 2 changes to this plan
+- Shop sections: single-piece categories (gift sets, seasonal, accessories) share one "Gifts & more" /
+  «هدايا وأكثر» section; each tile there shows its real category. A section that would leave one tile
+  alone on a 4-up row shows its first piece at 2×2.
+- Home at 390: photo + loupe first, then the h1 (signature in the first screen).
+- The loupe crop is 400 px of the 1200 px photo (1:1 pixels), pinned by hand where the most textured
+  window wasn't the right one (panda, lily, gift box, sushi, ballerina mouse).
+- Photo clean-up widened: the matte is eroded 1 px, and the grey cut-out contour on light yarn
+  (≤ 3 px) is treated as ground; old-ground pockets between legs are detected by smoothness.
+  The sushi photo (a scene, not a cut-out) is cropped to its own photo and fills the tile.
+- Kitten in a Bee Costume (p207) stays in the shop and keeps its page, but is not used on home or in
+  "More pieces like this": a sliver of a hand sits between its paws and can't be cropped out cleanly.

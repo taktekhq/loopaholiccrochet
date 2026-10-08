@@ -76,14 +76,23 @@
   --leading-body: 1.8;
   --tracking-display: 0;
   --measure: 60ch;
+  --weight-strong: 600;       /* Baloo reads a step heavier than Nunito at the same weight */
 }
 :lang(ar) { letter-spacing: 0 !important; }
 :lang(ar) :is(em, i, cite) { font-style: normal; font-weight: var(--weight-strong); }
 /* Arabic runs inside an English page (404) */
-:root:lang(en) [lang="ar"] { font-family: "Baloo Bhaijaan 2", sans-serif; font-size: 1.12em; line-height: 1.8; }
+:root:lang(en) [lang="ar"] {
+  --font-body: "Baloo Bhaijaan 2", "Baloo Switch", "Nunito", "Nunito Fallback", sans-serif;
+  --font-display: var(--font-body);
+  --leading-snug: 1.35;
+  --weight-strong: 600;
+  font-family: var(--font-body); line-height: 1.8;
+}
+:root:lang(en) [lang="ar"]:not(a) { font-size: 1.12em; }
 
 @font-face {
-  font-family: "Nunito Fallback"; src: local("Arial");
+  font-family: "Nunito Fallback";
+  src: local("Arial"), local("ArialMT"), local("Roboto"), local("Liberation Sans"), local("Helvetica");
   size-adjust: 100%; ascent-override: 101%; descent-override: 35%; line-gap-override: 0%;
 }
 
@@ -96,6 +105,7 @@ html {
   color: var(--color-text);
   scroll-padding-block-start: var(--space-xl);
 }
+html:has(body.has-sticky) { scroll-padding-block-end: 6rem; }
 body {
   margin: 0;
   font-size: var(--text-0);
@@ -167,11 +177,12 @@ bdi, [dir="ltr"] { unicode-bidi: isolate; }
   border-radius: var(--radius-pill); color: var(--color-text); text-decoration: none; font-weight: var(--weight-strong);
   font-size: var(--text--1);
 }
-:root:lang(ar) .nav a, :root:lang(ar) .menu summary { font-size: var(--text-0); }
+
 .nav a[aria-current="page"] { color: var(--color-accent); text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 0.4em; }
-.lang { border: 1px solid var(--color-border-strong); font-weight: var(--weight-body); }
-.lang:lang(ar) { font-family: "Baloo Bhaijaan 2", sans-serif; font-size: var(--text-0); }
-.lang:lang(en) { font-family: "Nunito", "Nunito Fallback", sans-serif; font-size: calc(var(--text--1) / var(--script-scale)); }
+.lang { border: 1px solid var(--color-border); font-weight: var(--weight-body); }
+/* each switch is set in its own script, at the size of the nav beside it */
+.lang:lang(ar) { font-family: "Baloo Bhaijaan 2", "Baloo Switch", sans-serif; font-size: calc(var(--text--1) * 1.12); }
+.lang:lang(en) { font-family: "Nunito", "Nunito Fallback", sans-serif; font-size: calc(var(--text--1) / var(--script-scale) * 1.05); }
 @media (max-width: 22.4em) { .nav { display: none; } }
 @media (min-width: 52.5em) {
   .nav li:not(.key) { display: list-item; list-style: none; }
@@ -202,7 +213,7 @@ bdi, [dir="ltr"] { unicode-bidi: isolate; }
   font-size: var(--text-1); font-weight: var(--weight-strong); border-block-end: 1px solid var(--color-border);
 }
 .menu-sheet li:last-child a { border-block-end: 0; }
-.menu-sheet a[aria-current="page"] { color: var(--color-accent); }
+.menu-sheet a[aria-current="page"] { color: var(--color-accent); text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 0.4em; }
 
 /* ==== icons ==== */
 .icon { inline-size: 1.25em; block-size: 1.25em; flex: none; }
@@ -244,12 +255,15 @@ bdi, [dir="ltr"] { unicode-bidi: isolate; }
 }
 .loupe img { inline-size: 100%; block-size: 100%; object-fit: cover; }
 @media (min-width: 52.5em) { .loupe { inset-inline-end: calc(-1 * var(--space-m)); inset-block-end: calc(-1 * var(--space-l)); } }
-.loupe-note { margin-block-start: var(--space-m); padding-inline-end: 38%; font-size: var(--text--1); color: var(--color-text-muted); }
 
 /* ==== piece (grid item: photo + name, no card chrome) ==== */
 .grid { display: grid; gap: var(--space-l) var(--space-s); grid-template-columns: repeat(2, minmax(0, 1fr)); }
 @media (min-width: 40em) { .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-xl) var(--space-m); } }
-@media (min-width: 75em) { .grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+@media (min-width: 75em) {
+  .grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .grid-feature > li:first-child { grid-column: span 2; grid-row: span 2; }
+  .grid-feature > li:first-child .tile { border-radius: var(--radius-lg); }
+}
 .piece { display: block; text-decoration: none; color: var(--color-text); border-radius: var(--radius-md); }
 .piece .tile { transition: transform var(--dur-2) var(--ease-out); }
 .piece-name { display: block; margin-block-start: var(--space-xs); font-size: var(--text-0); font-weight: var(--weight-strong); line-height: var(--leading-snug); }
@@ -280,15 +294,23 @@ bdi, [dir="ltr"] { unicode-bidi: isolate; }
 :lang(ar) .steps-compact p { font-size: var(--text-0); }
 
 /* ==== home ==== */
-.hero { padding-block: var(--space-l) var(--space-2xl); }
+.hero { padding-block: var(--space-m) var(--space-2xl); }
 .hero-grid { display: grid; gap: var(--space-xl); align-items: center; }
-.hero h1 { font-size: var(--text-5); max-inline-size: 14ch; }
+.hero h1 { font-size: var(--text-4); max-inline-size: 14ch; }
+/* 390: the photo and its loupe come first, so the signature is in the first screen */
+@media (max-width: 52.49em) {
+  .hero-grid { gap: var(--space-l); }
+  .hero-grid > :last-child { order: -1; }
+  .hero .gallery { inline-size: 72%; max-inline-size: 18rem; }
+  .hero .loupe { inline-size: 46%; inset-inline-end: -34%; inset-block-end: 6%; }
+}
 :lang(ar) .hero h1 { max-inline-size: 13ch; }
 .hero .lead { margin-block-start: var(--space-s); }
 .hero .actions { margin-block-start: var(--space-l); }
 .hero .gallery { max-inline-size: 34rem; margin-inline-end: var(--space-2xs); }
 @media (min-width: 52.5em) {
-  .hero { padding-block: var(--space-3xl); }
+  .hero { padding-block: var(--space-3xl) var(--space-2xl); }
+  .hero h1 { font-size: var(--text-5); }
   .hero-grid { grid-template-columns: 5fr 6fr; gap: var(--space-2xl); }
   .hero .gallery { margin-inline-start: auto; margin-inline-end: var(--space-m); }
 }
@@ -307,6 +329,7 @@ bdi, [dir="ltr"] { unicode-bidi: isolate; }
 }
 :lang(ar) .chip { font-size: var(--text-0); }
 @media (hover: hover) { .chip:hover { background: var(--color-accent-subtle); color: var(--color-text); } }
+.chip[aria-current="true"] { background: var(--color-text); color: var(--color-surface); }
 .shop-body { padding-block-start: var(--space-l); }
 .cat { scroll-margin-block-start: 5rem; }
 .cat + .cat { margin-block-start: var(--space-2xl); }
@@ -374,17 +397,28 @@ bdi, [dir="ltr"] { unicode-bidi: isolate; }
 :lang(ar) .examples figcaption { font-size: var(--text-0); }
 .examples figure { margin: 0; }
 .cta-block { margin-block-start: var(--space-xl) !important; }
+.head-cta { margin-block-start: var(--space-l); }
+.head-cta + p { margin-block-start: var(--space-xs); }
+.custom-layout { display: grid; grid-template-areas: "head" "body" "ex" "how"; padding-block-end: var(--space-2xl); }
+.c-head { grid-area: head; } .c-body { grid-area: body; } .c-ex { grid-area: ex; } .c-how { grid-area: how; margin-block-start: var(--space-xl); }
+@media (min-width: 52.5em) {
+  .custom-layout { grid-template-columns: minmax(0, 1fr) 22rem; grid-template-areas: "head ex" "body ex" "how ex"; column-gap: var(--space-3xl); align-items: start; }
+  .c-ex { grid-template-columns: 1fr; max-inline-size: none; margin-block: var(--space-2xl) 0; }
+}
 
 .prose-layout { display: grid; gap: var(--space-2xl); }
 @media (min-width: 52.5em) { .prose-layout { grid-template-columns: minmax(0, 1fr) 20rem; gap: var(--space-3xl); align-items: start; } }
 .side { background: var(--color-surface-2); border-radius: var(--radius-lg); padding: var(--space-m); }
-@media (min-width: 52.5em) { .side { position: sticky; inset-block-start: var(--space-l); margin-block-start: var(--space-xl); } }
+@media (min-width: 52.5em) { .side { position: sticky; inset-block-start: var(--space-l); } }
 .side h2 { font-size: var(--text-1); margin-block-end: var(--space-s); }
 .side .btn { margin-block-start: var(--space-m); }
 .trio { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-xs); margin-block-end: var(--space-l) !important; }
 
 /* ==== 404 ==== */
-.lost { padding-block: var(--space-3xl); }
+.lost { padding-block: var(--space-2xl) var(--space-3xl); }
+/* the loupe ring with nothing in it: the one brand moment on the error page */
+.lost-ring { inline-size: 7.5rem; aspect-ratio: 1; border-radius: 50%; border: var(--ring) solid var(--color-accent);
+  background: var(--color-surface-2); box-shadow: 0 0 0 3px var(--color-surface), var(--shadow-2); margin-block-end: var(--space-xl); }
 .lost-grid { display: grid; gap: var(--space-2xl); }
 @media (min-width: 52.5em) { .lost-grid { grid-template-columns: 1fr 1fr; } }
 .lost h1, .lost h2 { font-size: var(--text-3); }
@@ -402,6 +436,7 @@ bdi, [dir="ltr"] { unicode-bidi: isolate; }
 :lang(ar) .foot-grid h2 { font-size: var(--text-0); }
 .foot-grid ul a { display: inline-flex; align-items: center; min-block-size: var(--tap); text-decoration: none; }
 @media (hover: hover) { .site-footer ul a:hover { text-decoration: underline; color: var(--color-band-text); } }
+.foot-lang { display: inline-flex; align-items: center; gap: 0.35em; min-block-size: var(--tap); color: var(--color-band-text) !important; }
 .foot-base { margin-block-start: var(--space-xl); padding-block-start: var(--space-m); border-block-start: 1px solid rgb(241 235 246 / .2); font-size: var(--text--1); color: var(--color-band-muted); display: flex; flex-wrap: wrap; gap: var(--space-2xs) var(--space-l); justify-content: space-between; align-items: center; }
 @media (min-width: 52.5em) {
   .foot-grid { grid-template-columns: 2fr 1fr 1fr 1fr; }
