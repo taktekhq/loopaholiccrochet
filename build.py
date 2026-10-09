@@ -836,6 +836,14 @@ def creature_card(p, t):
 
 
 def footer(t, alt_path):
+    ctx = "{location:'footer'}"
+    if HAS_WHATSAPP:
+        wa_text = (f"{WA_MARK['en']} Hi! I have a question." if t["lang"] == "en"
+                   else f"{WA_MARK['ar']} مرحباً، لدي سؤال.")
+        order_link = (f'<li><a href="{esc(whatsapp_link(wa_text))}" {ga("whatsapp_click", ctx)}>'
+                      f'{t["order_whatsapp"]}</a></li>')
+    else:
+        order_link = f'<li><a href="{INSTAGRAM_DM}" {ga("instagram_click", ctx)}>{t["order_instagram"]}</a></li>'
     return f"""<footer class="site-footer">
   <div class="wrap">
     <div class="foot-grid">
@@ -844,6 +852,7 @@ def footer(t, alt_path):
         <p>{t['footer_tagline']}</p>
       </div>
       <nav aria-labelledby="f-shop"><h2 id="f-shop">{t['footer_shop']}</h2><ul role="list">
+        {order_link}
         <li><a href="{L(t, '/shop/')}">{t['nav_shop']}</a></li>
         <li><a href="{L(t, '/custom-orders/')}">{t['nav_custom']}</a></li>
         <li><a href="{L(t, '/book/')}">{t['nav_book']}</a></li></ul></nav>
